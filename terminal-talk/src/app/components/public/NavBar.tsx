@@ -33,13 +33,13 @@ export default function NavBar() {
       {/* Actions */}
       <div className="flex gap-4">
         <Link
-          href="/login"
+          href="/auth/login"
           className="px-5 py-2.5 text-base rounded-md border-2 border-transparent cursor-pointer transition-colors duration-200 text-black hover:text-zinc-900"
         >
           Sign In
         </Link>
         <Link
-          href="/register"
+          href="/auth/register"
           className="px-5 py-2.5 text-base rounded-md border-2 border-transparent cursor-pointer transition-colors duration-200 text-zinc-900 bg-zinc-100 hover:bg-zinc-200"
         >
           Get Started

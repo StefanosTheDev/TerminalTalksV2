@@ -12,7 +12,7 @@ export default function Home() {
       <Hero /> {/* Step 2: Render A Hero Page */}
       <Trusted />
       <HowItWorks />
-      {/* <FAQ /> */}
+      <FAQ />
       <Footer />
     </div>
   );

@@ -51,7 +51,7 @@ export default function HowItWorks() {
           </button>
         </div>
       </div>
-      <button> Get</button>
+      <button></button>
     </section>
   );
 }
