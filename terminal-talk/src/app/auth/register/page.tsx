@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-export default function Register Page() {
+export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* ←────────────────────── LEFT FORM ──────────────────────→ */}
