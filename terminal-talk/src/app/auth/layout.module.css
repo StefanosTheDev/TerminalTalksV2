@@ -1,203 +1,500 @@
-/* Professional Card Component */
+/* Professional Authentication Component - Dark SaaS Theme - CSS Module */
 
-/* Container - Centered card with modern styling */
+/* Main Container - Authentication Card with Design System Variables */
 .container {
+  /* Design System Variables - Scoped to container */
+  --color-background-primary: #0f0f0f;
+  --color-background-secondary: #1a1a1a;
+  --color-background-elevated: #1f1f1f;
+  --color-border-primary: rgba(255, 255, 255, 0.08);
+  --color-border-secondary: rgba(255, 255, 255, 0.12);
+  --color-border-hover: rgba(255, 255, 255, 0.16);
+  --color-border-focus: rgba(59, 130, 246, 0.4);
+
+  /* Text Colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a3a3a3;
+  --color-text-tertiary: #737373;
+  --color-text-inverse: #0f0f0f;
+
+  /* Brand Colors */
+  --color-brand-primary: #3b82f6;
+  --color-brand-primary-hover: #2563eb;
+  --color-brand-primary-active: #1d4ed8;
+
+  /* Interactive Colors */
+  --color-button-primary: #ffffff;
+  --color-button-primary-hover: #f8f8f8;
+  --color-button-primary-active: #f0f0f0;
+  --color-button-secondary: rgba(255, 255, 255, 0.05);
+  --color-button-secondary-hover: rgba(255, 255, 255, 0.08);
+
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  --space-3xl: 2.5rem;
+  --space-4xl: 3rem;
+
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.3);
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Inter', 'Helvetica Neue', sans-serif;
+
+  /* Positioning */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
-  /* Modern card design */
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 2.5rem;
+  /* Layout */
   width: 100%;
   max-width: 420px;
+  padding: var(--space-4xl) var(--space-3xl);
 
-  /* Professional shadows and effects */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
+  /* Visual Design */
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(24px) saturate(180%);
 
   /* Typography */
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Helvetica Neue', sans-serif;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
   line-height: 1.6;
 
-  /* Smooth interactions */
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Interactions */
+  transition: all var(--transition-smooth);
 }
 
 .container:hover {
   transform: translate(-50%, -52%);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-border-hover);
 }
 
-/* Title - Professional typography */
+/* Page Title */
 .title {
-  font-size: 2rem;
+  font-size: var(--font-size-3xl);
   font-weight: 700;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-2xl);
 
-  /* Subtle gradient text */
-  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  /* Enhanced gradient text */
+  background: linear-gradient(
+    135deg,
+    var(--color-text-primary) 0%,
+    var(--color-text-secondary) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 
-  /* Improved spacing */
-  letter-spacing: -0.02em;
+  /* Typography refinements */
+  letter-spacing: -0.025em;
   line-height: 1.2;
 }
 
-/* Description - Readable content */
+/* Description Text */
 .description {
-  color: #b0b0b0;
-  font-size: 1rem;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
   font-weight: 400;
   text-align: center;
-  margin-bottom: 2rem;
-
-  /* Better readability */
+  margin-bottom: var(--space-3xl);
   line-height: 1.5;
   letter-spacing: 0.01em;
 }
 
-/* Submit button - Professional CTA */
-.submit {
-  /* Layout */
+/* Form Field Group */
+.formGroup {
+  margin-bottom: var(--space-xl);
+}
+
+.formGroup:last-of-type {
+  margin-bottom: var(--space-3xl);
+}
+
+/* Form Labels */
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.01em;
+}
+
+/* Input Fields */
+.inputField {
   width: 100%;
-  padding: 0.875rem 1.5rem;
-  border: none;
-  border-radius: 8px;
+  padding: var(--space-md) var(--space-lg);
 
   /* Typography */
-  font-size: 1rem;
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+
+  /* Visual Design */
+  background: var(--color-background-elevated);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+
+  /* Interactions */
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.inputField::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.inputField:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-border-focus);
+  background: var(--color-background-secondary);
+}
+
+.inputField:hover:not(:focus) {
+  border-color: var(--color-border-hover);
+}
+
+/* Primary Submit Button */
+.submit {
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-lg);
+
+  /* Typography */
+  font-size: var(--font-size-base);
   font-weight: 600;
-  font-family: inherit;
+  font-family: var(--font-family-base);
+  letter-spacing: 0.01em;
 
-  /* Colors */
-  background: #ffffff;
-  color: #000000;
+  /* Visual Design */
+  background: var(--color-button-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 
-  /* Professional interactions */
+  /* Interactions */
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all var(--transition-fast);
+  outline: none;
+}
 
-  /* Subtle shadow */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+/* Sign up link section */
+.signUpSection {
+  text-align: center;
+  margin-top: var(--space-lg);
+}
+
+.signUpText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.signUpLink {
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.signUpLink:hover {
+  color: var(--color-brand-primary-hover);
+  text-decoration: underline;
 }
 
 .submit:hover {
-  background: #f5f5f5;
+  background: var(--color-button-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .submit:active {
   transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1);
+  background: var(--color-button-primary-active);
+  box-shadow: var(--shadow-sm);
 }
 
-.submit:focus {
+.submit:focus-visible {
+  box-shadow: var(--shadow-md), 0 0 0 3px var(--color-border-focus);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Social Login Buttons */
+.socialBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+
+  /* Layout */
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-md);
+
+  /* Typography */
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+
+  /* Visual Design */
+  background: var(--color-button-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+
+  /* Interactions */
+  cursor: pointer;
+  transition: all var(--transition-fast);
   outline: none;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15),
-    0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
-/* Responsive design */
+.socialBtn:hover {
+  background: var(--color-button-secondary-hover);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.socialBtn:focus-visible {
+  box-shadow: var(--shadow-md), 0 0 0 3px var(--color-border-focus);
+}
+
+.socialBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.socialBtn:last-child {
+  margin-bottom: 0;
+}
+
+/* Google OAuth Button (keeping for backward compatibility) */
+.googleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+
+  /* Layout */
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-md);
+
+  /* Typography */
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+
+  /* Visual Design */
+  background: var(--color-button-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+
+  /* Interactions */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.googleBtn:hover {
+  background: var(--color-button-secondary-hover);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.googleBtn:focus-visible {
+  box-shadow: var(--shadow-md), 0 0 0 3px var(--color-border-focus);
+}
+
+.googleBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Divider Section */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: var(--space-2xl) 0;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-secondary);
+}
+
+.dividerText {
+  padding: 0 var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Icon within buttons */
+.icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* Error States */
+.inputField.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.errorMessage {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Loading States */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Responsive Design */
 @media (max-width: 480px) {
   .container {
-    margin: 1rem;
-    padding: 2rem 1.5rem;
+    margin: var(--space-lg);
+    padding: var(--space-3xl) var(--space-2xl);
     max-width: none;
-    width: calc(100% - 2rem);
+    width: calc(100% - var(--space-2xl));
   }
 
   .title {
-    font-size: 1.75rem;
-    margin-bottom: 1.25rem;
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-xl);
   }
 
   .description {
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .formGroup {
+    margin-bottom: var(--space-lg);
+  }
+
+  .formGroup:last-of-type {
+    margin-bottom: var(--space-2xl);
   }
 }
 
-/* Dark theme enhancement */
-@media (prefers-color-scheme: dark) {
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .container {
-    background: #111111;
-    border-color: rgba(255, 255, 255, 0.08);
+    border-width: 0.5px;
+  }
+
+  .inputField,
+  .submit,
+  .googleBtn {
+    border-width: 0.5px;
   }
 }
 
-/* Reduced motion accessibility */
+/* Accessibility - Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .container,
-  .submit {
+  .submit,
+  .googleBtn,
+  .inputField {
     transition: none;
   }
 
   .container:hover {
     transform: translate(-50%, -50%);
   }
-}
-.googleBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 
-  /* sizing & spacing */
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  .loading::after {
+    animation: none;
+  }
+}
 
-  /* colors & borders */
-  background-color: #fff;
-  border: 1px solid #ddd;
-  color: #111;
-
-  /* shadow & transition */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
-
-  /* prevent text overflow */
-  white-space: nowrap;
-}
-.googleBtn:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-.googleBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.icon {
-  margin-right: 0.75rem;
-  flex-shrink: 0;
-} /* components/FormFields.module.css */
-.formGroup {
-  margin-bottom: 1rem;
-}
-.label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #1f1f1f;
-}
-.inputField {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  transition: border-color 0.2s;
-}
-.inputField:focus {
-  border-color: #3b82f6;
+/* Accessibility - High Contrast */
+@media (prefers-contrast: high) {
+  .container {
+    --color-border-primary: rgba(255, 255, 255, 0.3);
+    --color-border-secondary: rgba(255, 255, 255, 0.4);
+    --color-text-secondary: #d1d1d1;
+  }
 }

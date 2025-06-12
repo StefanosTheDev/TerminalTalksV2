@@ -8,7 +8,7 @@ import { Button } from '@/app/components/Button';
 import styles from '@/app/auth/layout.module.css';
 import { FcGoogle } from 'react-icons/fc';
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const { status } = useSession();
   const router = useRouter();
 
@@ -18,17 +18,29 @@ export default function RegisterPage() {
     }
   }, [status, router]);
 
+  const handleLogin = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    console.log('Submit to DB or Auth:', email, password);
+    console.log('Clicked');
+    // Example: await signInWithCredentials(email, password)
+  };
+
   return (
     <AuthLayout
-      title="Register Page"
-      description="Sign Up With Your Terminal  A Terminal Talks Account"
+      title="Register Your Acocunt"
+      description="Create A TerminalTalks account"
+      onSubmit={handleLogin}
+      footerText="Already Have An Account?"
+      footerLinkHref="Sign In"
     >
       <Button onClick={() => signIn('google')} className={styles.googleBtn}>
         <FcGoogle size={20} />
-        <h2> Sign in with google </h2>
-      </Button>
-      <Button onClick={() => signIn('google')} className={styles.submit}>
-        Sign In
+        <span>Continue With Google</span>
       </Button>
     </AuthLayout>
   );
