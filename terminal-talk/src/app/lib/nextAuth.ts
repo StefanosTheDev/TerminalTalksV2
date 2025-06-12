@@ -1,8 +1,6 @@
 // src/lib/nextAuth.ts
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { FirestoreAdapter } from '@next-auth/firebase-adapter';
-import { db } from './firebase';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,15 +9,37 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  adapter: FirestoreAdapter({ firestore: db }),
+
+  // ✅ Use JWTs for sessions instead of DB
+  session: {
+    strategy: 'jwt',
+  },
+
   pages: {
     signIn: '/auth/login',
     error: '/auth/login',
   },
+
   callbacks: {
-    async session({ session, user }) {
-      // Attach the user ID directly, using our extended Session type
-      session.user.id = user.id;
+    // 🔐 Fired whenever JWT is created or updated
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.picture = user.image;
+      }
+      return token;
+    },
+
+    // 💾 What gets returned from useSession() or getServerSession()
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.user.name = token.name;
+        session.user.image = token.picture;
+      }
       return session;
     },
   },

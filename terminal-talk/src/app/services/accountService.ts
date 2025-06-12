@@ -1,11 +1,50 @@
-import { db } from '@/app/lib/firebase';
-// Collection Names
+// Create User
+import prisma from '@/app/prisma/prismaClient';
 
-export async function getAllUsers() {
-  const snapshot = await db.collection('users').get();
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+export async function createAccount({
+  username,
+  email,
+  password,
+}: {
+  username: string;
+  email: string;
+  password: string;
+  role: string;
+}) {
+  const newAccount = await prisma.user.create({
+    data: {
+      username,
+      email,
+      password,
+    },
+  });
+  return newAccount;
 }
-console.log(getAllUsers);
+
+export async function getAccountById({ id }: { id: string }) {
+  const account = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!account) {
+    throw new Error('Account Not Found');
+  }
+  return account;
+}
+
+export async function deleteAccountById({ id }: { id: string }) {
+  const account = await prisma.user.delete({
+    where: {
+      id,
+    },
+  });
+  return account;
+}
+// Get All Users // Get THe Lectures set it to True. without yyah you wont get it.
+export async function getAllAccounts() {
+  const accounts = await prisma.user.findMany({
+    include: { lectures: true },
+  });
+  return accounts;
+}

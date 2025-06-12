@@ -1,0 +1,29 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  username  String?
+  email     String    @unique
+  password  String?   // Null for Google users
+  role      String    @default("user")
+  createdAt DateTime  @default(now())
+  lectures  Lecture[] // 1-to-many relationship
+}
+
+model Lecture {
+  id        String   @id @default(cuid())
+  userId    String
+  lecture   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // 
+}

@@ -1,23 +1,23 @@
-// next-auth.d.ts
-
-import { DefaultSession } from 'next-auth';
+// types/next-auth.d.ts
+import { DefaultSession, DefaultUser } from 'next-auth';
 
 declare module 'next-auth' {
-  /**
-   * Returned by `useSession()` and `getSession()`
-   */
   interface Session extends DefaultSession {
     user: {
-      /** The user's database ID */
       id: string;
-    } & DefaultSession['user'];
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
   }
 
-  /**
-   * (Optional) If you need to type `user` in callbacks
-   */
-  interface User {
+  interface User extends DefaultUser {
     id: string;
-    // add other custom properties here if you like
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
   }
 }

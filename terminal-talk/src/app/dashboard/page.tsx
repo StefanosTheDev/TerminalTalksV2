@@ -3,13 +3,32 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { User } from '@/app/types/next-auth';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
 
-  if (status === 'loading') {
-    return <p>Loading your session…</p>;
-  }
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        const res = await fetch('/api/accounts');
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'unkown error');
+        }
+        setUsers(data.users);
+      } catch (error) {
+        //
+      } finally {
+        //
+      }
+    }
+    fetchAccounts();
+  }, []);
+
   if (!session) {
     return (
       <p style={{ textAlign: 'center', marginTop: '4rem' }}>
@@ -28,6 +47,13 @@ export default function DashboardPage() {
       >
         Logout
       </button>
+
+      {users.map((user) => (
+        <li key={user.id}>
+          {user.id}
+          {user.name}
+        </li>
+      ))}
     </div>
   );
 }
