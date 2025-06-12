@@ -1,9 +1,9 @@
-import Hero from './components/public/Hero';
-import NavBar from './components/public/NavBar';
-import Footer from './components/public/Footer';
-import Trusted from './components/public/Trusted';
-import HowItWorks from './components/public/HowItWorks';
-import FAQ from './components/public/FAQ';
+import Hero from './components/dashboard/components/public/Hero';
+import NavBar from './components/dashboard/components/public/NavBar';
+import Footer from './components/dashboard/components/public/Footer';
+import Trusted from './components/dashboard/components/public/Trusted';
+import HowItWorks from './components/dashboard/components/public/HowItWorks';
+import FAQ from './components/dashboard/components/public/FAQ';
 export default function Home() {
   return (
     <div className="main-app">

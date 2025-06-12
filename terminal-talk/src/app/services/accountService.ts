@@ -20,7 +20,6 @@ export async function createAccount({
   });
   return newAccount;
 }
-
 export async function getAccountById({ id }: { id: string }) {
   const account = await prisma.user.findUnique({
     where: {
@@ -32,7 +31,6 @@ export async function getAccountById({ id }: { id: string }) {
   }
   return account;
 }
-
 export async function deleteAccountById({ id }: { id: string }) {
   const account = await prisma.user.delete({
     where: {
@@ -41,7 +39,6 @@ export async function deleteAccountById({ id }: { id: string }) {
   });
   return account;
 }
-// Get All Users // Get THe Lectures set it to True. without yyah you wont get it.
 export async function getAllAccounts() {
   const accounts = await prisma.user.findMany({
     include: { lectures: true },

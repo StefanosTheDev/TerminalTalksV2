@@ -1,10 +1,10 @@
 // src/app/dashboard/page.tsx
 'use client';
 
+import { User } from 'next-auth';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { User } from '@/app/types/next-auth';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -47,13 +47,6 @@ export default function DashboardPage() {
       >
         Logout
       </button>
-
-      {users.map((user) => (
-        <li key={user.id}>
-          {user.id}
-          {user.name}
-        </li>
-      ))}
     </div>
   );
 }

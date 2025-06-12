@@ -27,3 +27,23 @@ THis is on the createAccount(parsedObj) line in my Route
 
 and the role: z.string().default('user'),
 This comes down to a Database issue. and having the optional is the right usecase. I tneeds to match the database.
+
+---
+
+Auth Process Email Password + Google Auth....
+Google Sign in -> Next-Auth + Google Provider --> Automatically creates / updates users
+
+Email Password Auth --> next-auth + Cred Provider -> manually check passwords...
+
+Prisma `User ` model support:
+
+- password: String? - Null for Google Users
+- Email: String @unique - shared across both flows
+
+Program Process Step By Step For Auth
+
+- Add Credentials Providre (In Our Next Auth)
+- Hash Passwords When Creating Users (email / password)
+- Prevent Dupes Across Providers.
+
+Credentialss Provider Next Auth
