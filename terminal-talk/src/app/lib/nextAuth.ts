@@ -38,4 +38,9 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  /* 🔽  tell NextAuth which page to use */
+  pages: {
+    signIn: '/login', // your AuthLayout-based login page
+    error: '/login', // optional: show ?error=… on the same page
+  },
 };

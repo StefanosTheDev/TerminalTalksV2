@@ -172,3 +172,11 @@ Very raree to use Props interfface out of the file.
 
 What is React Node. Do
 What does the OnSubmit passing do of how i finessed that.
+
+Re-Usable Layouts vs Components Rendering A Web Page being that. This would be a great thing to research. Remember elijah noted that:
+
+- I've only had one layout.tsx in the past, inside the app/ directory. This layout would hold all of my Providers, including my Auth wrapper (to guard all of the private pages)
+
+Research Google Auth Callback Features. ETc.
+
+SO much to learn here.
