@@ -2,11 +2,8 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signIn } from 'next-auth/react';
-import AuthLayout from '@/app/auth/layout';
-import { Button } from '@/app/components/Button';
-import styles from '@/app/auth/layout.module.css';
-import { FcGoogle } from 'react-icons/fc';
+import { useSession } from 'next-auth/react';
+import AuthLayout from '@/app/components/layouts/authLayout';
 
 export default function LoginPage() {
   const { status } = useSession();
@@ -37,11 +34,8 @@ export default function LoginPage() {
       onSubmit={handleLogin}
       footerText="Already Have An Account?"
       footerLinkHref="Sign In"
-    >
-      <Button onClick={() => signIn('google')} className={styles.googleBtn}>
-        <FcGoogle size={20} />
-        <span>Continue With Google</span>
-      </Button>
-    </AuthLayout>
+      googleBtnText="Create Account With Google"
+      submitBtnText="Register Account"
+    ></AuthLayout>
   );
 }

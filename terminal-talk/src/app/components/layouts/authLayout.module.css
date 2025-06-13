@@ -498,3 +498,17 @@
     --color-text-secondary: #d1d1d1;
   }
 }
+.authbackground {
+  background: linear-gradient(135deg, #1e1e1e, #121212);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1e1e1e, #121212);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}

@@ -161,3 +161,14 @@ Another thing i need to define is how im going to do my CSS to HTMl conversion p
 
 Something I am weak at is understanding Props / Types in Typescript and when to use them in this.
 I think a Godo refersher on Typescript my be necessary for how I will use it in React .
+
+THis form process with the handle submit with the template is pretty interesting. Passing the OBJ as props .
+
+The process of how I am doing this Re-usable compoent
+
+In what cases is it appropatie for the Types folder.
+
+Very raree to use Props interfface out of the file.
+
+What is React Node. Do
+What does the OnSubmit passing do of how i finessed that.

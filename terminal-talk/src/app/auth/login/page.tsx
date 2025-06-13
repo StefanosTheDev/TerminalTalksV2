@@ -2,11 +2,8 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signIn } from 'next-auth/react';
-import AuthLayout from '@/app/auth/layout';
-import { Button } from '@/app/components/Button';
-import styles from '@/app/auth/layout.module.css';
-import { FcGoogle } from 'react-icons/fc';
+import { useSession } from 'next-auth/react';
+import AuthLayout from '@/app/components/layouts/authLayout';
 
 export default function LoginPage() {
   const { status } = useSession();
@@ -26,21 +23,19 @@ export default function LoginPage() {
     password: string;
   }) => {
     console.log('Submit to DB or Auth:', email, password);
+    console.log('Clicked');
     // Example: await signInWithCredentials(email, password)
   };
 
   return (
     <AuthLayout
-      title="Sign In "
-      description="Access your TerminalTalks account"
+      title="Login To Your Account"
+      description="Access Your TerminalTalks Account"
       onSubmit={handleLogin}
-      footerText="Don't Have an account?"
-      footerLinkHref="Sign Up"
-    >
-      <Button onClick={() => signIn('google')} className={styles.googleBtn}>
-        <FcGoogle size={20} />
-        <span>Sign in with Google</span>
-      </Button>
-    </AuthLayout>
+      footerText="Don't Have An Account?"
+      footerLinkHref="Create Account"
+      googleBtnText="Sign In With Google"
+      submitBtnText="Login"
+    ></AuthLayout>
   );
 }
