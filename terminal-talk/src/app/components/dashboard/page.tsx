@@ -39,6 +39,8 @@ export default function DashboardPage() {
 
   return (
     <div style={{ padding: '2rem' }}>
+      <h1> Hello World !</h1>
+      <h1> Hello World !</h1>
       <h1>Welcome, {session.user?.name}!</h1>
       <p>Your email: {session.user?.email}</p>
       <button
@@ -47,6 +49,7 @@ export default function DashboardPage() {
       >
         Logout
       </button>
+      <h1> Hello World !</h1>
     </div>
   );
 }

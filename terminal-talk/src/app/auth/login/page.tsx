@@ -4,9 +4,12 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import AuthLayout from '@/app/components/layouts/authLayout';
+import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
+  console.log(useSession());
   const { status } = useSession();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -22,9 +25,18 @@ export default function LoginPage() {
     email: string;
     password: string;
   }) => {
-    console.log('Submit to DB or Auth:', email, password);
-    console.log('Clicked');
-    // Example: await signInWithCredentials(email, password)
+    const result = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+    if (result?.error) {
+      console.log('login failed');
+      // OPtionally show an error message
+    } else {
+      // Let useEffect handle the redirect to dashboard
+      console.log('login successful');
+    }
   };
 
   return (

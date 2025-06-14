@@ -7,6 +7,7 @@ import prisma from '@/app/prisma/prismaClient';
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    // This is the google button login built in. So when you call in SignIn('gogole" this gets triggered and Next Auth ahnldes the redirect to google tooken enchance and give the the info back)
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -26,9 +27,9 @@ export const authOptions: NextAuthOptions = {
 
         if (!user || !user.password) return null;
 
-        const isValid = await compare(credentials.password, user.password);
+        // const isValid = await compare(credentials.password, user.password);
 
-        if (!isValid) return null;
+        // if (!isValid) return null;
 
         return {
           id: user.id,

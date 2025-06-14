@@ -11,6 +11,7 @@ declare module 'next-auth' {
     };
   }
 
+  // So Why do i do this.
   interface User extends DefaultUser {
     id: string;
   }
