@@ -1,0 +1,1 @@
+- How am i going to do design good proper Server Component / Client Side API Components Architectures .

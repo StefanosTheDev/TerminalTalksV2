@@ -102,3 +102,5 @@ For The Google Auth.
   These go through the handler.
   Step 7: Make a Login Page in our thing.
   Now keep in mind we are going
+
+## Design Architecutre Compoents
