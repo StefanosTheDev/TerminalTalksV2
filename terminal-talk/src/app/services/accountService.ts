@@ -20,6 +20,7 @@ export async function createAccount({
   });
   return newAccount;
 }
+
 export async function getAccountById({ id }: { id: string }) {
   const account = await prisma.user.findUnique({
     where: {
