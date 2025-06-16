@@ -1,15 +1,42 @@
-- How am i going to do design good proper Server Component / Client Side API Components Architectures .
--
 
-TO DO:
-As A User I Should Be Able To Land On my Dashboard.
 
-The Dashboard will have a NavBar With The Following Options:
+Documentation NextJS
+layout.tsx must contain html and body tags. 
 
-- Overview (Default)
-- On This Page I Will See A Profile Module In The Bottom Left Of My Account. If I click It I Can Update My Account Settings.
--
+App -> App Routes. 
+Pages - Page Router. 
+Public - Static Assets to be served
 
-TODO Today:
+Core Routing Files
+layout, page, loading, not-found, error, global-error, route, template default.
 
-- Create The (API For Audio)
+Nested Routes
+folder / route segement
+folder/folder Nested Route segment.
+
+
+Define Catch All Route Segement s Optional Cal All.
+[...slug] like saying: “You must give me at least one piece of information after /blog.”
+
+[[...slug]] like saying: “Give me as much or as little info as you want after /blog — even nothing is okay.”
+
+
+
+Privvate Folders vs Group Rpoutes. This si soemthing that i ll have to look into and implement inot my application. 
+Which components will be routes which will be _components etc. 
+Use (folder-name) (route groups) when you want to organize routes or apply layouts without changing the URL — great for grouping things like (auth) or (dashboard).
+
+Use _folder-name (private folders) when you have code like components, services, or utils that should not become routes — it's just for keeping things clean and organized.
+
+
+
+Implement Route Groups.
+
+
+
+
+
+
+My Project Design Pattern
+// Organize Routes without affecting the URL Path
+/ Think Youtube Pre-Rendering WHen that tempalte is loaded. 

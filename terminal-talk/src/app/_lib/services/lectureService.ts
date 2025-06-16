@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
 import { ElevenLabsClient, play } from '@elevenlabs/elevenlabs-js';
-// import 'dotenv/config';
 
 export async function createLecture({
   title,
@@ -18,13 +17,11 @@ export async function createLecture({
   //   const lectureText = generateLectureText(title, topic, text, language, level);
   //   const lectureAudio = text;
 }
-
-// User Says Hey This my Title, Topic Of Desired, & Supported Text Providing Context,
-// Step 1: Pass The Content Into Generate Lecture Text.
-// Step 2: Return The Value To Generate AudioFile
-// Step 3: Return an OBJ: {lectureText: '', audioFileUrl: ''}
-
 async function generateLectureText({
+  // User Says Hey This my Title, Topic Of Desired, & Supported Text Providing Context,
+  // Step 1: Pass The Content Into Generate Lecture Text.
+  // Step 2: Return The Value To Generate AudioFile
+  // Step 3: Return an OBJ: {lectureText: '', audioFileUrl: ''}
   title,
   topic,
   text,
@@ -47,7 +44,6 @@ async function generateLectureText({
   });
   completion.then((result) => console.log(result.choices[0].message));
 }
-
 async function generateAudioFile() {
   const elevenlabs = new ElevenLabsClient();
   const audio = await elevenlabs.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {

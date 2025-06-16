@@ -1,5 +1,5 @@
 // Create User
-import prisma from '@/app/prisma/prismaClient';
+import prisma from '@/app/_lib/prisma/prismaClient';
 import bcrypt from 'bcryptjs';
 export async function createAccount({
   username,

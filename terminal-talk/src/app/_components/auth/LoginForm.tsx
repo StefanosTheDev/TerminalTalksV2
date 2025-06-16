@@ -3,16 +3,17 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import AuthLayout from '@/app/components/layouts/authLayout';
 import { signIn } from 'next-auth/react';
+import AuthForm from '@/app/_components/auth/AuthForm';
 
 export default function LoginPage() {
   const { status } = useSession();
   const router = useRouter();
 
+  // why do we have thi s
   useEffect(() => {
     if (status === 'authenticated') {
-      router.replace('/dashboard');
+      router.replace('/dashboard/overview');
     }
   }, [status, router]);
 
@@ -38,7 +39,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout
+    <AuthForm
       title="Login To Your Account"
       description="Access Your TerminalTalks Account"
       onSubmit={handleLogin}
@@ -46,6 +47,6 @@ export default function LoginPage() {
       footerLinkHref="Create Account"
       googleBtnText="Sign In With Google"
       submitBtnText="Login"
-    ></AuthLayout>
+    ></AuthForm>
   );
 }

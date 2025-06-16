@@ -1,28 +1,10 @@
-import { getServerSession } from 'next-auth';
-import { AuthOptions } from 'next-auth';
-import { authOptions } from '../lib/nextAuth';
-import { Session } from 'inspector/promises';
-
-import OverView from './overiew';
+import { checkAuthenticated } from '@/app/_lib/util/util';
 export default async function Dashboard() {
-  // Step 1: Get the SErver Session
-  const session = await getServerSession(authOptions);
-
-  // Verify Server Session is Exists.
-  if (!session) {
-    return <p> You must be llogged in etc </p>;
-  }
-  if (!session.user) {
-    return <p> eehh</p>;
-  }
-  const { name } = session.user;
-  // Returning The Data
+  const { name, email, image, id } = await checkAuthenticated();
   return (
-    <>
-      <OverView name={name}></OverView>
-      {/* Conditional If CreateLecture Nav was clicked */}
-      {/* RENDER CREATE COMPONENT */}
-    </>
+    <div className="dashboard-main">
+      <h1> Welcome Back {name}</h1>
+      <p> Here's what's happening with your lectures </p>
+    </div>
   );
 }
-// SErver COmponents ==>

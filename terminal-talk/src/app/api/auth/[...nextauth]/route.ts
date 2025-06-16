@@ -1,6 +1,6 @@
 // src/app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
-import { authOptions } from '@/app/lib/nextAuth';
+import { authOptions } from '@/app/_lib/auth/nextAuth';
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
