@@ -48,11 +48,6 @@ async function generateLectureText({
   completion.then((result) => console.log(result.choices[0].message));
 }
 
-
-
-
-
-
 async function generateAudioFile() {
   const elevenlabs = new ElevenLabsClient();
   const audio = await elevenlabs.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {
@@ -63,7 +58,3 @@ async function generateAudioFile() {
 
   await play(audio);
 }
-const openai = new OpenAI({
-  apiKey:
-    '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',
-});
