@@ -2,8 +2,15 @@ import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/app/_lib/prisma/prismaClient';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { getServerSession } from 'next-auth/next';
+import { redirect } from 'next/navigation';
 
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: 'jwt', // JWT in cookie; no DB sessions table
+  },
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -31,18 +38,51 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   callbacks: {
+    // Only upsert on Google sign-in
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        await prisma.user.upsert({
+          where: { id: user.id },
+          update: {
+            email: user.email!,
+            username: user.name!,
+          },
+          create: {
+            id: user.id,
+            email: user.email!,
+            username: user.name!,
+          },
+        });
+      }
+      return true;
+    },
+
+    // Persist user.id into the JWT
     async jwt({ token, user }) {
       if (user?.id) token.id = user.id;
       return token;
     },
+
+    // Expose token.id as session.user.id
     async session({ session, token }) {
       if (token.id) session.user.id = token.id as string;
       return session;
     },
   },
+
   pages: {
     signIn: '/login',
     error: '/login',
   },
 };
+export const getAuthSession = () => getServerSession(authOptions);
+
+export async function requireAuthUser() {
+  const session = await getAuthSession();
+  if (!session) {
+    redirect('/auth/login');
+  }
+  return session.user; // typed { id, name, email, image }
+}

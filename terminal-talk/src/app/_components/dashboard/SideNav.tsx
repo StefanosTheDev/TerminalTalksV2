@@ -4,7 +4,7 @@ import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import styles from '@/app/_styles/dashboard.module.css';
 import React, { useState } from 'react';
-
+import LogoutButton from '../util/LogoutButton';
 export function SideNav() {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -41,12 +41,7 @@ export function SideNav() {
         </li>
       </ul>
 
-      <div className={styles.sideNavFooter}>
-        <button onClick={() => signOut()} className={styles.logoutBtn}>
-          <span className={styles.navIcon}></span>
-          <span className={styles.navText}>Logout</span>
-        </button>
-      </div>
+      <LogoutButton />
     </nav>
   );
 }

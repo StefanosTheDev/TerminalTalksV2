@@ -1,19 +1,17 @@
 import { SideNav } from '@/app/_components/dashboard/SideNav';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../_lib/auth/nextAuth';
-import { redirect } from 'next/navigation';
-
+import { requireAuthUser } from '@/app/_lib/auth/nextAuth';
 import React from 'react';
+import LogoutButton from '../_components/util/LogoutButton';
+requireAuthUser;
 
 export default async function DashBoardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect('/auth/login');
-  }
+  // 1 Protect the entrie Dashboard
+  await requireAuthUser();
+
   return (
     <div className="flex min-h-screen">
       <aside className="w-[240px] bg-black text-white">
@@ -21,7 +19,7 @@ export default async function DashBoardLayout({
       </aside>
       {/* This is a seperation technique so we have the SIDE NAV THEN MAIN OVERVIEW PAGE SEPERATE STANDARD FLOW */}
       <main className="flex-1 bg-white p-6 overflow-y-auto">
-        {children}{' '}
+        {children}
         {/* This is the white space area where page content renders */}
       </main>
     </div>

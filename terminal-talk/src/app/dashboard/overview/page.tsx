@@ -2,17 +2,25 @@ import styles from '@/app/_styles/dashboard.module.css'; // adjust path if neede
 import LectureCard from '@/app/_components/dashboard/LectureCard';
 import QuickAction from '@/app/_components/dashboard/QuickActions';
 import RecentLectures from '@/app/_components/dashboard/RecentLectures';
-import { checkAuthenticated } from '@/app/_lib/util/util';
 import AccountStats from '@/app/_components/dashboard/AccountStats';
 import Link from 'next/link';
+import { requireAuthUser } from '@/app/_lib/auth/nextAuth';
+import { fetchAccountLectures } from '@/app/_lib/services/accountService';
 export default async function OverView() {
-  const { name } = await checkAuthenticated();
+  // 2. RE-use same helper to grab the user object
+  const { id, name } = await requireAuthUser();
 
+  // 3. Fetch only data you need in parallel.
+  const lectureInfo = await fetchAccountLectures(id);
+  lectureInfo.map((val, index) => {
+    console.log('PRINT ');
+    console.log(val, index);
+  });
   return (
     <div className="test">
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}> Dashboard</h1>
+          <h1 className={styles.title}> Welcome {name}</h1>
           <p className={styles.overDescription}>
             Here's what's happening with your lectures
           </p>

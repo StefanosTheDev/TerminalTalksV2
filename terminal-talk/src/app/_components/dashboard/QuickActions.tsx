@@ -13,7 +13,7 @@ export default function QuickAction() {
   ];
   return (
     <div>
-      <h1>Account Stats</h1>
+      <h1>Quick Actions</h1>
 
       <div className={styles.container}>
         {stats.map((s, i) => (

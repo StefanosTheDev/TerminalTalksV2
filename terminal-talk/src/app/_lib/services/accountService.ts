@@ -20,7 +20,6 @@ export async function createAccount({
   });
   return newAccount;
 }
-
 export async function getAccountById({ id }: { id: string }) {
   const account = await prisma.user.findUnique({
     where: {
@@ -45,4 +44,21 @@ export async function getAllAccounts() {
     include: { lectures: true },
   });
   return accounts;
+}
+
+export async function fetchAccountLectures(userId: string) {
+  return prisma.lecture.findMany({
+    where: {
+      userId, // ← filter by the FK back to your User
+    },
+    orderBy: {
+      createdAt: 'desc', // newest first
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      lecture: true,
+      // include other fields you need, e.g. `description: true`
+    },
+  });
 }
