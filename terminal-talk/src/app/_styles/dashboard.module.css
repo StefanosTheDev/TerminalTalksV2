@@ -4,7 +4,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  background-color: #0a0a0a;
+  background-color: var(--sidebar-bg);
   color: #ffffff;
   transition: width 0.3s ease;
   display: flex;
@@ -257,41 +257,6 @@
   justify-content: center;
 }
 
-/* Active state for navigation items */
-.navLink.active {
-  background-color: #1a1a1a;
-  color: #ffffff;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .sideNavOpen {
-    width: 100%;
-  }
-
-  .sideNavClosed {
-    width: 0;
-    overflow: hidden;
-  }
-}
-
-/* Scrollbar styling for the navigation */
-.sideNav::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sideNav::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-
-.sideNav::-webkit-scrollbar-thumb {
-  background: #333333;
-  border-radius: 3px;
-}
-
-.sideNav::-webkit-scrollbar-thumb:hover {
-  background: #444444;
-}
 /* overview.module.css */
 .redBox {
   border: 2px solid red;
@@ -312,4 +277,102 @@
   padding: 1rem;
   margin-bottom: 1.5rem;
   border-radius: 8px;
+}
+
+/***************/
+/* page container: centers your content & adds padding */
+/* AccountStats.module.css */
+
+/* container holds 3 cards in a row */
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* each individual stat card */
+.card {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* icon wrapper (if you want an icon) */
+.icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #4f4f4f;
+}
+
+/* the big number/text */
+.value {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #ffffff;
+}
+
+/* label under the number */
+.label {
+  font-size: 0.875rem;
+  color: #bbbbbb;
+  margin-bottom: 0.5rem;
+}
+
+/* small “extra” text, e.g. “+3 this week” */
+.extra {
+  font-size: 0.75rem;
+  color: #4caf50; /* green for “up” */
+}
+
+/*************************************/
+/** TITLE OF OVERVIEW */
+.title {
+  font-size: 2rem; /* nice, large heading */
+  font-weight: 600; /* semi‐bold */
+  color: black;
+  margin-bottom: 0.5rem; /* space below */
+}
+
+.overDescription {
+  font-size: 1rem; /* regular body size */
+  font-weight: 400; /* normal weight */
+  color: black; /* light gray */
+  margin-bottom: 1.5rem; /* space before next section */
+  line-height: 1.4; /* better readability */
+}
+
+/****************************************** */
+/* Create Lecture Link */
+
+/* in dashboard.module.css */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btnSecondary {
+  background-color: transparent;
+  color: black;
+  border: 1px solid black;
+}
+.btnSecondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes left vs. right */
+  margin-bottom: 1.5rem;
 }

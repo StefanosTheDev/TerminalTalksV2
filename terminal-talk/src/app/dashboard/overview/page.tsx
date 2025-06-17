@@ -9,20 +9,29 @@ export default async function OverView() {
   const { name } = await checkAuthenticated();
 
   return (
-    <div className="dashboard-main">
-      <h1>Welcome Back {name}</h1>
-      <p>Here's what's happening with your lectures</p>
-      <Link href="/dashboard/create">Create Lecture </Link>
+    <div className="test">
+      <header className={styles.header}>
+        <div>
+          <h1 className={styles.title}> Dashboard</h1>
+          <p className={styles.overDescription}>
+            Here's what's happening with your lectures
+          </p>
+        </div>
+        <Link
+          href="/dashboard/create"
+          className={`${styles.btn} ${styles.btnSecondary}`}
+        >
+          Create Lecture
+        </Link>{' '}
+      </header>
       {/* RED Box: Account Stats */}
       <div className={styles.redBox}>
         <AccountStats />
       </div>
-
       {/* GREEN Box: Quick Actions */}
       <div className={styles.greenBox}>
         <QuickAction />
       </div>
-
       {/* BLUE Box: Recent Lectures */}
       <div className={styles.blueBox}>
         <RecentLectures>

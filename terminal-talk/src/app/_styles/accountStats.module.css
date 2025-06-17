@@ -1,0 +1,28 @@
+/* app/_components/dashboard/AccountStats.module.css */
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem; /* some space under the heading */
+}
+
+.box {
+  border: 2px solid yellow;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+  background-color: #1a1a1a; /* keep dark card look */
+  color: #fff;
+}
+
+.boxTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.boxValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
