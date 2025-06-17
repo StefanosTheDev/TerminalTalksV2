@@ -26,4 +26,3 @@ export default function QuickAction() {
     </div>
   );
 }
-// app/_components/dashboard/AccountStats.tsx

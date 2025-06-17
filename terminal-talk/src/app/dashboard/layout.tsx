@@ -1,9 +1,9 @@
-import { SideNav } from '@/app/_components/dashboard/SideNav';
+// import { SideNav } from '@/app/_components/dashboard/SideNav';
 import { requireAuthUser } from '@/app/_lib/auth/nextAuth';
 import React from 'react';
 import LogoutButton from '../_components/util/LogoutButton';
-requireAuthUser;
 
+import { SideNavBar } from '@/app/_components/dashboard/NavBar/SideNavBar';
 export default async function DashBoardLayout({
   children,
 }: {
@@ -15,7 +15,7 @@ export default async function DashBoardLayout({
   return (
     <div className="flex min-h-screen">
       <aside className="w-[240px] bg-black text-white">
-        <SideNav />
+        <SideNavBar />
       </aside>
       {/* This is a seperation technique so we have the SIDE NAV THEN MAIN OVERVIEW PAGE SEPERATE STANDARD FLOW */}
       <main className="flex-1 bg-white p-6 overflow-y-auto">

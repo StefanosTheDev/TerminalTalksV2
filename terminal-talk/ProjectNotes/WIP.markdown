@@ -32,3 +32,5 @@ My Project Design Pattern
 ---
 
 Why did teh layout part work wher i could seperate the side Nav from the main page.
+https://claude.ai/public/artifacts/37517b53-dd78-4cdc-9115-58ed163a2006 Reg / Login
+https://claude.ai/public/artifacts/e49a34e8-d964-4bb9-a239-7ddf5dbf64d6 Landing Page.

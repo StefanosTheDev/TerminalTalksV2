@@ -1,0 +1,508 @@
+/* Footer Container */
+.footer {
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4rem 2rem 1rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+  color: #ffffff;
+  width: 100%;
+}
+
+/* Background Effects */
+.footerBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+/* Multi-layer Grid System - Same as other components */
+.footerBackground::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+  z-index: 1;
+}
+
+/* Secondary grid layer for depth */
+.footerBackground::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.01) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: gridMove 30s linear infinite reverse;
+  z-index: 2;
+}
+
+.gridPattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 35% 65%,
+      rgba(255, 255, 255, 0.015) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 65% 35%,
+      rgba(255, 255, 255, 0.015) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 80%,
+      rgba(255, 255, 255, 0.01) 0%,
+      transparent 50%
+    );
+  animation: heroGlow 8s ease-in-out infinite alternate;
+  z-index: 3;
+}
+
+/* Floating Particles */
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  animation: float 20s linear infinite;
+}
+
+.particle1 {
+  top: 20%;
+  left: 10%;
+  animation-delay: 2s;
+  animation-duration: 25s;
+}
+
+.particle2 {
+  top: 40%;
+  left: 90%;
+  animation-delay: 7s;
+  animation-duration: 30s;
+}
+
+.particle3 {
+  top: 70%;
+  left: 20%;
+  animation-delay: 12s;
+  animation-duration: 28s;
+}
+
+.particle4 {
+  top: 90%;
+  left: 80%;
+  animation-delay: 17s;
+  animation-duration: 23s;
+}
+
+.particle5 {
+  top: 60%;
+  left: 60%;
+  animation-delay: 5s;
+  animation-duration: 27s;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* Footer Content */
+.footerContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+/* Company Section */
+.companySection {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #ffffff, #cccccc);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.logo:hover .logoIcon {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.companyDescription {
+  color: #cccccc;
+  line-height: 1.6;
+  max-width: 300px;
+  font-size: 0.95rem;
+}
+
+/* Footer Sections */
+.footerSection {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.footerSection h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  position: relative;
+}
+
+.footerSection h4::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 2rem;
+  height: 2px;
+  background: linear-gradient(90deg, #ffffff, #cccccc);
+  border-radius: 1px;
+}
+
+.footerSection ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footerSection ul li {
+  margin-bottom: 0.75rem;
+}
+
+.footerSection ul li a {
+  color: #cccccc;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.footerSection ul li a::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.footerSection ul li a:hover {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.footerSection ul li a:hover::before {
+  width: 100%;
+}
+
+/* Footer Bottom */
+.footerBottom {
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.6s ease 0.3s forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.bottomContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.bottomContent p {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.bottomLinks {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.bottomLinks a {
+  color: #888;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.bottomLinks a:hover {
+  color: #ffffff;
+}
+
+/* Animations */
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+@keyframes heroGlow {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(80px, -80px) scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .footerContent {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .footerContent {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .companySection {
+    grid-column: 1 / -1;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 1rem 1rem;
+  }
+
+  .footerContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .companySection {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .companyDescription {
+    max-width: none;
+  }
+
+  .footerSection {
+    text-align: center;
+  }
+
+  .footerSection h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .bottomContent {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .bottomLinks {
+    justify-content: center;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 2rem 1rem 1rem;
+  }
+
+  .footerContent {
+    gap: 1.5rem;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+    justify-content: center;
+  }
+
+  .logoIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .footerSection h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .bottomLinks {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .bottomContent p {
+    font-size: 0.85rem;
+  }
+
+  .bottomLinks a {
+    font-size: 0.85rem;
+  }
+}
+
+/* Focus States for Accessibility */
+.logo:focus,
+.footerSection ul li a:focus,
+.bottomLinks a:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .footerBackground::before,
+  .footerBackground::after,
+  .gridPattern,
+  .particle,
+  .companySection,
+  .footerSection,
+  .footerBottom {
+    animation: none;
+  }
+
+  .companySection,
+  .footerSection,
+  .footerBottom {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .logo:hover,
+  .logo:hover .logoIcon,
+  .footerSection ul li a:hover {
+    transform: none;
+  }
+}
+
+/* Enhanced hover effects for larger screens */
+@media (min-width: 1200px) {
+  .footerSection ul li a:hover {
+    transform: translateX(6px);
+  }
+}
+
+/* Print styles */
+@media print {
+  .footer {
+    background: white !important;
+    color: black !important;
+  }
+
+  .footerBackground,
+  .particles {
+    display: none;
+  }
+
+  .logo,
+  .footerSection h4,
+  .footerSection ul li a,
+  .bottomContent p,
+  .bottomLinks a {
+    color: black !important;
+  }
+}
