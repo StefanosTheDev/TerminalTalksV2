@@ -12,7 +12,7 @@ export default function Hero() {
         </span>
       </div>
       <h2 className="text-5xl font-bold mb-6 leading-tight">
-        Master React & Next.js Through
+        Master Technical Concepts Through
         <br />
         <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
           Intelligent Audio Lectures

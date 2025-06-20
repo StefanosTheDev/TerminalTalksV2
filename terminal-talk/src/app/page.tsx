@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import StatsGrid from './_components/landingpage/StatsGrid';
 
 import Footer from './_components/landingpage/Footer';
+import Pricing from './_components/landingpage/Pricing';
 
 const episodes = [
   {
