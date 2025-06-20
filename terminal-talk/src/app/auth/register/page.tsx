@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import AuthLayout from '@/app/_components/auth/AuthForm';
+import AuthLayout from '../../_components/auth/AuthForm';
 
 export default function LoginPage() {
   const { status } = useSession();

@@ -1,11 +1,11 @@
 import styles from '@/app/_styles/dashboard.module.css'; // adjust path if needed
-import LectureCard from '@/app/_components/dashboard/LectureCard';
-import QuickAction from '@/app/_components/dashboard/QuickActions';
-import RecentLectures from '@/app/_components/dashboard/RecentLectures';
-import AccountStats from '@/app/_components/dashboard/AccountStats';
+import LectureCard from '../../_components/dashboard/LectureCard';
+import QuickAction from '../../_components/dashboard/QuickActions';
+import RecentLectures from '../../_components/dashboard/RecentLectures';
+import AccountStats from '../../_components/dashboard/AccountStats';
 import Link from 'next/link';
-import { requireAuthUser } from '@/app/_lib/auth/nextAuth';
-import { fetchAccountLectures } from '@/app/_lib/services/accountService';
+import { requireAuthUser } from '../../_lib/auth/nextAuth';
+import { fetchAccountLectures } from '../../_lib/services/accountService';
 export default async function OverView() {
   // 2. RE-use same helper to grab the user object
   const { id, name } = await requireAuthUser();

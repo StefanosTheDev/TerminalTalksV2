@@ -2,7 +2,7 @@
 'use client';
 import React, { ReactNode, useState } from 'react';
 import styles from '@/app/_styles/authForm.module.css';
-import { Button } from '@/app/_components/util/Button';
+import { Button } from '../util/Button';
 import { FcGoogle } from 'react-icons/fc';
 import { signIn } from 'next-auth/react';
 

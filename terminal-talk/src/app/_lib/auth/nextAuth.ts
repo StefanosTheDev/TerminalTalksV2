@@ -1,8 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import prisma from '@/app/_lib/prisma/prismaClient';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import prisma from '../prisma/prismaClient';
 import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 

@@ -1,6 +1,6 @@
 // Server Component
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/_lib/auth/nextAuth';
+import { authOptions } from '../../_lib/auth/nextAuth';
 
 export default async function createLecture() {
   // Step 1: Get the SErver Session

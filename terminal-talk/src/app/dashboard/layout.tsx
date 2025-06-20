@@ -1,9 +1,9 @@
 // import { SideNav } from '@/app/_components/dashboard/SideNav';
-import { requireAuthUser } from '@/app/_lib/auth/nextAuth';
+import { requireAuthUser } from '../_lib/auth/nextAuth';
 import React from 'react';
 import LogoutButton from '../_components/util/LogoutButton';
 
-import { SideNavBar } from '@/app/_components/dashboard/NavBar/SideNavBar';
+import { SideNavBar } from '../_components/dashboard/NavBar/SideNavBar';
 export default async function DashBoardLayout({
   children,
 }: {

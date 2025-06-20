@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { signIn } from 'next-auth/react';
-import AuthForm from '@/app/_components/auth/AuthForm';
+import AuthForm from './AuthForm';
 
 export default function LoginPage() {
   const { status } = useSession();

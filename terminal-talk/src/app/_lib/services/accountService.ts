@@ -1,6 +1,7 @@
 // Create User
-import prisma from '@/app/_lib/prisma/prismaClient';
+import prisma from '../prisma/prismaClient';
 import bcrypt from 'bcryptjs';
+
 export async function createAccount({
   username,
   email,
@@ -61,4 +62,8 @@ export async function fetchAccountLectures(userId: string) {
       // include other fields you need, e.g. `description: true`
     },
   });
+}
+
+export async function createLecture(userId: string) {
+  // Step 1:
 }

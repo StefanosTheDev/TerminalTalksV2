@@ -1,9 +1,9 @@
-import Hero from '@/app/_components/public/Hero';
-import NavBar from '@/app/_components/public/NavBar';
+import Hero from './_components/public/Hero';
+import NavBar from './_components/public/NavBar';
 // import Footer from '@/app/_components/public/Foooter';
-import Trusted from '@/app/_components/public/Trusted';
-import HowItWorks from '@/app/_components/public/HowItWorks';
-import FAQ from '@/app/_components/public/FAQ';
+import Trusted from './_components/public/Trusted';
+import HowItWorks from './_components/public/HowItWorks';
+import FAQ from './_components/public/FAQ';
 import Header from './_components/public/NavBar/NavBar2';
 import Hero2 from './_components/public/Hero/Hero2';
 import ExperienceLectures from './_components/public/ExperienceLectures/ExperienceLectures';
