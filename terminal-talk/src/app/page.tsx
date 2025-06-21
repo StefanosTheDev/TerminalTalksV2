@@ -52,20 +52,6 @@ export default function TerminalTalks() {
       <main className="relative z-10 px-6 py-20 max-w-7xl mx-auto">
         <Hero />
         <StatsGrid />
-        {/* <AudioVisualizer
-          isPlaying={''}
-          audioWave={''}
-          showTranscript={''}
-          onToggleTranscript={''}
-        />
-        <EpisodeList
-          episodes={episodes}
-          selectedEpisode={''}
-          isPlaying={''}
-          showTranscript={''}
-          onSelect={''}
-          onPlayPause={''}
-        /> */}
       </main>
       <Footer />
     </div>
