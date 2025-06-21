@@ -9,6 +9,7 @@ import {
   SkipBack,
   SkipForward,
 } from 'lucide-react';
+import { useAuth, useClerk, useSignIn } from '@clerk/nextjs';
 
 const LectureDetailPlaceholder = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,6 +19,16 @@ const LectureDetailPlaceholder = () => {
   const transcript = `Welcome to this lecture on Next.js Installation & Setup. 
 In this guide, we'll walk you through setting up your first Next.js app, installing dependencies, and understanding the basic folder structure. 
 Let’s get started!`;
+  const { isSignedIn } = useAuth();
+  const { openSignIn } = useClerk(); // programmatically open the sign-in modal
+
+  const handleClick = () => {
+    if (!isSignedIn) {
+      openSignIn(); // opens Clerk modal
+      return;
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-20 pt-24 pb-10">
@@ -32,7 +43,7 @@ Let’s get started!`;
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={handleClick}
               className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
             >
               {isPlaying ? (
