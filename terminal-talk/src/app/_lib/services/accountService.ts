@@ -63,7 +63,3 @@ export async function fetchAccountLectures(userId: string) {
     },
   });
 }
-
-export async function createLecture(userId: string) {
-  // Step 1:
-}
