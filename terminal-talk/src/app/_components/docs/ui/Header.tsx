@@ -6,6 +6,7 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  SignOutButton,
 } from '@clerk/nextjs';
 
 export default function Header() {
@@ -42,7 +43,7 @@ export default function Header() {
               </SignInButton>
 
               <SignUpButton
-                mode="modal"
+                mode="redirect"
                 forceRedirectUrl="/docs"
                 fallbackRedirectUrl="/docs"
               >
@@ -53,7 +54,7 @@ export default function Header() {
             </SignedOut>
 
             <SignedIn>
-              <UserButton afterSignOutUrl="/docs" />
+              <UserButton />
             </SignedIn>
           </div>
         </div>

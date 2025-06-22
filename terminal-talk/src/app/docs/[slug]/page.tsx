@@ -1,5 +1,5 @@
-import LectureDetailPlaceholder from '@/app/_components/docs/LectureDetailPlaceHolder';
-import SideTitle from '@/app/_components/docs/SideTitle';
+import LectureDetailPlaceholder from '@/app/_components/docs/content/LectureDetailPlaceHolder';
+import SideTitle from '@/app/_components/docs/ui/SideTitle';
 import { notFound } from 'next/navigation';
 
 export const lectures = [

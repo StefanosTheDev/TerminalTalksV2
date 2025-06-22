@@ -1,6 +1,6 @@
-import FrameworkSidebar from '@/app/_components/docs/FrameworkSidebar';
+import FrameworkSidebar from '@/app/_components/docs/ui/FrameworkSidebar';
 import React from 'react';
-import Header from '../_components/docs/Header';
+import Header from '../_components/docs/ui/Header';
 export default function DocsLayout({
   children,
 }: {

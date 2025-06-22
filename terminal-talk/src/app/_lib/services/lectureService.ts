@@ -66,45 +66,45 @@ export async function streamToBuffer(stream: Readable): Promise<Buffer> {
   return Buffer.concat(chunks);
 }
 
-// Generate audio and save as MP3 file in public/audio
-export async function generateAudioFile({ text }: { text: string }) {
-  // ✅ 1. Verify API key exists
-  if (!process.env.ELEVENLABS_API_KEY) {
-    throw new Error('ELEVENLABS_API_KEY is missing');
-  }
+// // Generate audio and save as MP3 file in public/audio
+// export async function generateAudioFile({ text }: { text: string }) {
+//   // ✅ 1. Verify API key exists
+//   if (!process.env.ELEVENLABS_API_KEY) {
+//     throw new Error('ELEVENLABS_API_KEY is missing');
+//   }
 
-  // // ✅ 2. Clean text to prevent 401 errors
-  // const cleanedText = cleanText(text);
-  // console.log('🧹 Text cleaned for ElevenLabs');
+//   // // ✅ 2. Clean text to prevent 401 errors
+//   // const cleanedText = cleanText(text);
+//   // console.log('🧹 Text cleaned for ElevenLabs');
 
-  const elevenlabs = new ElevenLabsClient({
-    apiKey: process.env.ELEVENLABS_API_KEY!,
-  });
+//   const elevenlabs = new ElevenLabsClient({
+//     apiKey: process.env.ELEVENLABS_API_KEY!,
+//   });
 
-  // ✅ 3. Use cleaned text in the stream
-  const stream = await elevenlabs.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {
-    text, // ✅ Use cleaned text instead of raw text
-    modelId: 'eleven_flash_v2_5',
-    outputFormat: 'mp3_44100_128',
-  });
+//   // ✅ 3. Use cleaned text in the stream
+//   const stream = await elevenlabs.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {
+//     text, // ✅ Use cleaned text instead of raw text
+//     modelId: 'eleven_flash_v2_5',
+//     outputFormat: 'mp3_44100_128',
+//   });
 
-  const audioBuffer = await streamToBuffer(stream);
+//   // const audioBuffer = await streamToBuffer(stream: Read);
 
-  // Ensure public/audio directory exists
-  const audioDir = path.join(process.cwd(), 'public/audio');
-  if (!fs.existsSync(audioDir)) {
-    fs.mkdirSync(audioDir, { recursive: true });
-  }
+//   // Ensure public/audio directory exists
+//   const audioDir = path.join(process.cwd(), 'public/audio');
+//   if (!fs.existsSync(audioDir)) {
+//     fs.mkdirSync(audioDir, { recursive: true });
+//   }
 
-  // Save file
-  const filePath = path.join(audioDir, 'lecture.mp3');
-  fs.writeFileSync(filePath, audioBuffer);
+//   // Save file
+//   const filePath = path.join(audioDir, 'lecture.mp3');
+//   fs.writeFileSync(filePath, audioBuffer);
 
-  return {
-    success: true,
-    path: '/audio/lecture.mp3',
-  };
-}
+//   return {
+//     success: true,
+//     path: '/audio/lecture.mp3',
+//   };
+// }
 
 export async function createLecture({
   title,
@@ -128,7 +128,7 @@ export async function createLecture({
   });
 
   // Generate and save audio, but don't return it
-  await generateAudioFile({ text: audioScript }); // ✅ Fixed - passing audioScript as 'text'
+  // await generateAudioFile({ text: audioScript }); // ✅ Fixed - passing audioScript as 'text'
 
   // Just return the script (safe to serialize)
   return {
