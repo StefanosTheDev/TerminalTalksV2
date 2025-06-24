@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Search, Brain } from 'lucide-react';
 import { Button } from '../util/Button';
 
+// Re-Usable Header.
 export function Header() {
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
@@ -16,6 +17,7 @@ export function Header() {
         </span>
       </Link>
 
+      {/* Search Feature */}
       <div className="flex-1 max-w-md mx-8">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -35,22 +37,14 @@ export function Header() {
           href="#"
           className="text-gray-300 hover:text-white transition-colors"
         >
-          Documentation
-        </Link>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white transition-colors"
-        >
           Blog
         </Link>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white transition-colors"
-        >
-          Support
-        </Link>
+
         <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg">
-          Dashboard
+          Create An Account
+        </Button>
+        <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg">
+          Sign In
         </Button>
       </nav>
     </header>

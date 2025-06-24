@@ -19,10 +19,11 @@ model User {
 
 model Lecture {
   id          Int        @id @default(autoincrement())
+  slug        String?     @unique     // "aws-intro"
   title       String
   topic       String
-  transcript  String?
-  audioUrl    String?
+  transcript  String     
+  audioUrl    String     
   createdAt   DateTime   @default(now())
   bookmarks   Bookmark[]
 }

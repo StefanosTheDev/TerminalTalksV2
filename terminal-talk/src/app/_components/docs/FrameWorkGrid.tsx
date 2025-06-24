@@ -1,58 +1,9 @@
 import Link from 'next/link';
 import { Code, FileText } from 'lucide-react';
-
-const frameworks = [
-  {
-    label: 'Next.js App Router',
-    desc: "The Next.js App Router introduces a new model for building applications using React's latest features.",
-    icon: <span className="text-white font-bold text-sm">N</span>,
-    color: 'bg-black',
-    hover: 'hover:border-blue-500/50',
-    linkColor: 'text-blue-400 hover:text-blue-300',
-  },
-  {
-    label: 'React',
-    desc: 'The web framework for content-driven websites with React components and hooks.',
-    icon: <Code className="h-5 w-5 text-white" />,
-    color: 'bg-blue-500',
-    hover: 'hover:border-blue-500/50',
-    linkColor: 'text-blue-400 hover:text-blue-300',
-  },
-  {
-    label: 'Vue.js',
-    desc: 'Web development, streamlined with the progressive Vue.js framework.',
-    icon: <span className="text-white font-bold text-sm">V</span>,
-    color: 'bg-green-500',
-    hover: 'hover:border-green-500/50',
-    linkColor: 'text-green-400 hover:text-green-300',
-  },
-  {
-    label: 'Python SDK',
-    desc: 'Server-side JavaScript framework for building scalable applications.',
-    icon: <span className="text-black font-bold text-sm">Py</span>,
-    color: 'bg-yellow-500',
-    hover: 'hover:border-yellow-500/50',
-    linkColor: 'text-yellow-400 hover:text-yellow-300',
-  },
-  {
-    label: 'Node.js',
-    desc: 'The intuitive Node.js framework for server-side applications.',
-    icon: <span className="text-white font-bold text-sm">N</span>,
-    color: 'bg-green-600',
-    hover: 'hover:border-green-500/50',
-    linkColor: 'text-green-400 hover:text-green-300',
-  },
-  {
-    label: 'REST API',
-    desc: 'Direct API integration for custom implementations and advanced use cases.',
-    icon: <FileText className="h-5 w-5 text-white" />,
-    color: 'bg-purple-500',
-    hover: 'hover:border-purple-500/50',
-    linkColor: 'text-purple-400 hover:text-purple-300',
-  },
-];
+import { getFrameworks } from '@/app/_lib/data/topics';
 
 export function FrameworkGrid() {
+  const frameworks = getFrameworks();
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-bold text-white mb-6">Frameworks</h2>

@@ -21,3 +21,12 @@ https://console.prisma.io/cm5u9f39r00g86hupqk4t9okw/cmc6ygsls003eym0wovuhln66/cm
 4. Send queries from your app
 To access your database from a JavaScript/TypeScript app, you need to use Prisma ORM. Go here for step-by-step instructions: https://pris.ly/ppg-init
   
+
+
+
+
+
+  Step 1: Load Data Of A Lecture From Server Component.
+  Step 2: IMport Mock Data As A Get Request From 
+  Step 2: Pass That Into Client Compopnent
+  Step 3: Be Able To Play That Component.
