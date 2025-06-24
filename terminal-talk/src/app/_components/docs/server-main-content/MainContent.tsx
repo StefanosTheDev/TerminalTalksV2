@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuth, useClerk, useSignIn } from '@clerk/nextjs';
 
-const LectureDetailPlaceholder = () => {
+export const LectureDetailPlaceholder = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
   const [bookmarked, setBookmarked] = useState(false);
@@ -31,11 +31,11 @@ Let’s get started!`;
   };
 
   return (
+    // TEST
     <div className="max-w-4xl mx-auto px-20 pt-24 pb-10">
       <h1 id="nextjs-installation" className="text-3xl font-bold mb-4">
         Next.js Installation & Setup
       </h1>
-
       <p className="text-gray-600 mb-6">TLDR: About this Lecture</p>
 
       {/* Audio Player */}

@@ -43,7 +43,7 @@ export default function Header() {
               </SignInButton>
 
               <SignUpButton
-                mode="redirect"
+                mode="modal"
                 forceRedirectUrl="/docs"
                 fallbackRedirectUrl="/docs"
               >

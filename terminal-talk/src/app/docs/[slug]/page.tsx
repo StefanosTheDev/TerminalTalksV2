@@ -1,38 +1,28 @@
-import LectureDetailPlaceholder from '@/app/_components/docs/content/LectureDetailPlaceHolder';
-import SideTitle from '@/app/_components/docs/ui/SideTitle';
 import { notFound } from 'next/navigation';
-
-export const lectures = [
-  {
-    slug: 'nextjs-intro',
-    framework: 'Next.js',
-    title: 'Intro to Next.js',
-    content: 'Next.js is a React framework for building full-stack apps...',
-  },
-  {
-    slug: 'aws-intro',
-    framework: 'AWS',
-    title: 'Deploying on AWS',
-    content: 'To deploy an app on AWS, start with S3 or Amplify...',
-  },
-];
-
-export default async function LecturePage({
-  params,
+import { getLectureBySlug } from '@/app/_lib/services/lectureService';
+import LectureContent from '@/app/_components/docs/server-main-content/MainContentV2';
+export default async function docPage({
+  params, // 👈 "aws-intro"
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const lecture = lectures.find((l) => l.slug === params.slug);
+  const { slug } = await params;
+
+  console.log(slug);
+  const lecture = await getLectureBySlug(slug); // Server Side DB Call
 
   if (!lecture) return notFound();
-
+  const { id, title, topic, transcript, audioUrl } = lecture;
   return (
     <div className="flex flex-col lg:flex-row gap-8 pt-40">
       <div className="flex-1">
-        <LectureDetailPlaceholder />
-      </div>
-      <div className="hidden lg:block w-64 shrink-0">
-        <SideTitle />
+        <LectureContent
+          id={id}
+          title={title}
+          topic={topic}
+          transcript={transcript}
+          audioUrl={audioUrl}
+        />
       </div>
     </div>
   );
