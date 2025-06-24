@@ -1,4 +1,4 @@
-import { Button } from '@/app/_components/landingpage/button';
+'use client';
 import {
   Play,
   Volume2,
@@ -9,8 +9,10 @@ import {
   Zap,
 } from 'lucide-react';
 import Link from 'next/link';
-
-export default function Component() {
+import { Button } from './_components/util/Button';
+import { useRouter } from 'next/navigation';
+export default function Page() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden">
       {/* Header */}
@@ -23,14 +25,7 @@ export default function Component() {
             Terminal Talks
           </span>
         </Link>
-        <nav className="ml-auto">
-          <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            Sign In
-          </Button>
-          <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            Register Account
-          </Button>
-        </nav>
+        <nav className="ml-auto"></nav>
       </header>
 
       {/* Hero Section */}
@@ -67,6 +62,7 @@ export default function Component() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
+                onClick={() => router.push('/docs')}
                 size="lg"
                 className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
@@ -75,6 +71,7 @@ export default function Component() {
               </Button>
 
               <Button
+                onClick={() => router.push('/docs')}
                 variant="outline"
                 size="lg"
                 className="bg-white/5 text-white border-gray-600 hover:bg-white/10 px-8 py-4 text-lg backdrop-blur-sm transition-all duration-300"
@@ -274,10 +271,18 @@ export default function Component() {
 
           <div className="space-y-6">
             <Button
+              onClick={() =>
+                window.open(
+                  'https://discord.gg/3js8XxZV8E',
+                  '_blank',
+                  'noopener,noreferrer'
+                )
+              }
+              variant="outline"
               size="lg"
-              className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-12 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group"
+              className="bg-white/5 text-white border-gray-600 hover:bg-white/10 px-8 py-4 text-lg backdrop-blur-sm transition-all duration-300"
             >
-              Join the Community
+              Join The Community
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-8 text-sm text-gray-400">

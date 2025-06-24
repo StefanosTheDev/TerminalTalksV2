@@ -1,18 +1,22 @@
-import { notFound } from 'next/navigation';
 import { getLectureBySlug } from '@/app/_lib/services/lectureService';
-import LectureContent from '@/app/_components/docs/server-main-content/MainContentV2';
+import LectureContent from '@/app/_components/docsV2/MainContentV2';
+import { notFound } from 'next/navigation';
+import { AudioPlayerSection } from '@/app/_components/docs/AudioPlayer';
+
 export default async function docPage({
-  params, // 👈 "aws-intro"
+  params, // 👈 e.g., { slug: 'aws-intro' }
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
 
   console.log(slug);
-  const lecture = await getLectureBySlug(slug); // Server Side DB Call
+  const lecture = await getLectureBySlug(slug); // Server-side DB call
 
   if (!lecture) return notFound();
+
   const { id, title, topic, transcript, audioUrl } = lecture;
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 pt-40">
       <div className="flex-1">
@@ -24,6 +28,7 @@ export default async function docPage({
           audioUrl={audioUrl}
         />
       </div>
+      {/* <AudioPlayerSection /> */}
     </div>
   );
 }
