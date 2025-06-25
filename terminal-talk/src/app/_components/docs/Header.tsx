@@ -1,10 +1,16 @@
 'use client';
-import Link from 'next/link';
 
+import Link from 'next/link';
 import { Search, Brain } from 'lucide-react';
 import { Button } from '../util/Button';
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  SignedIn,
+  SignedOut,
+} from '@clerk/nextjs';
 
-// Re-Usable Header.
 export function Header() {
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
@@ -32,6 +38,7 @@ export function Header() {
         </div>
       </div>
 
+      {/* Auth Buttons */}
       <nav className="flex items-center space-x-6">
         <Link
           href="#"
@@ -40,12 +47,23 @@ export function Header() {
           Blog
         </Link>
 
-        <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg">
-          Create An Account
-        </Button>
-        <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg">
-          Sign In
-        </Button>
+        <SignedOut>
+          <SignUpButton mode="modal">
+            <button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg px-4 py-2 rounded-lg">
+              Create An Account
+            </button>
+          </SignUpButton>
+
+          <SignInButton mode="modal">
+            <button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg px-4 py-2 rounded-lg">
+              Sign In
+            </button>
+          </SignInButton>
+        </SignedOut>
+
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
       </nav>
     </header>
   );

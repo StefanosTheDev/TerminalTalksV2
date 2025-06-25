@@ -57,3 +57,5 @@ In development, when you tweak \_lib/data/topics.ts, HMR will re-execute your fa
 
 NOTES: Take notes on the approach for the improvement in cacheing and why that worked. That was a critical example of great opportunity to leverage this. Especially with the error situation.
 //With dynamicParams = false, any slug not returned from generateStaticParams() immediately 404s—no server-side code runs, no DB hit. It turns a multi-second dead-end lookup into an instant “not found.”
+
+There is an interesting thing with caching and its effectivenses. Something decent to review is the who what why when.

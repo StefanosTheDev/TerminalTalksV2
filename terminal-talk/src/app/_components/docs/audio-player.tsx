@@ -22,42 +22,46 @@ export default function AudioPlayer({
   transcript: string;
   audioUrl: string;
 }) {
-  console.log(transcript);
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState(0);
-  const [len, setLen] = useState(0);
   const [vol, setVol] = useState(1);
   const [muted, setMuted] = useState(false);
+  const [duration, setDuration] = useState(0);
   const [showTranscript, setShowTranscript] = useState(false);
 
-  // Sync audio element state
   useEffect(() => {
     const el = audio.current;
     if (!el) return;
 
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
-    const onTime = () => setPos(el.currentTime);
-    const onMeta = () => setLen(el.duration || 0);
+    const updateTime = () => setPos(el.currentTime);
+    const updatePlayState = () => setPlaying(!el.paused);
+    const updateDuration = () => {
+      if (!isNaN(el.duration)) setDuration(el.duration);
+    };
 
-    el.addEventListener('play', onPlay);
-    el.addEventListener('pause', onPause);
-    el.addEventListener('timeupdate', onTime);
-    el.addEventListener('loadedmetadata', onMeta);
+    // If already loaded (cached), set duration right away
+    if (el.readyState >= 1 && !isNaN(el.duration)) {
+      setDuration(el.duration);
+    }
+
+    el.addEventListener('timeupdate', updateTime);
+    el.addEventListener('play', updatePlayState);
+    el.addEventListener('pause', updatePlayState);
+    el.addEventListener('loadedmetadata', updateDuration);
 
     return () => {
-      el.removeEventListener('play', onPlay);
-      el.removeEventListener('pause', onPause);
-      el.removeEventListener('timeupdate', onTime);
-      el.removeEventListener('loadedmetadata', onMeta);
+      el.removeEventListener('timeupdate', updateTime);
+      el.removeEventListener('play', updatePlayState);
+      el.removeEventListener('pause', updatePlayState);
+      el.removeEventListener('loadedmetadata', updateDuration);
     };
   }, [audioUrl]);
 
-  // Volume/mute handlers
   useEffect(() => {
     if (audio.current) audio.current.volume = vol;
   }, [vol]);
+
   useEffect(() => {
     if (audio.current) audio.current.muted = muted;
   }, [muted]);
@@ -66,11 +70,13 @@ export default function AudioPlayer({
     `${Math.floor(t / 60)}:${Math.floor(t % 60)
       .toString()
       .padStart(2, '0')}`;
-  const toggle = async () =>
-    playing ? audio.current!.pause() : await audio.current!.play();
+
+  const toggle = () =>
+    playing ? audio.current?.pause() : audio.current?.play();
+
   const seek = (s: number) => {
     const el = audio.current!;
-    el.currentTime = Math.max(0, Math.min(el.currentTime + s, len));
+    el.currentTime = Math.max(0, Math.min(el.currentTime + s, duration));
   };
 
   return (
@@ -85,24 +91,24 @@ export default function AudioPlayer({
 
       <h3 className="text-xl font-semibold text-white mb-2">{topic}</h3>
 
-      {/* Progress */}
+      {/* Progress Bar */}
       <div className="flex items-center gap-4 mb-6">
         <span className="w-10 text-xs text-gray-400">{fmt(pos)}</span>
         <input
           type="range"
           min={0}
-          max={len || 0}
+          max={duration}
           value={pos}
           onChange={(e) => (audio.current!.currentTime = +e.target.value)}
           className="flex-1 h-2 rounded-lg appearance-none cursor-pointer accent-cyan-400 bg-gray-700/60"
           style={{
             background: `linear-gradient(to right,#3b82f6 0%,#06b6d4 ${
-              len ? (pos / len) * 100 : 0
-            }%,#374151 ${len ? (pos / len) * 100 : 0}%,#374151 100%)`,
+              duration ? (pos / duration) * 100 : 0
+            }%,#374151 ${duration ? (pos / duration) * 100 : 0}%,#374151 100%)`,
           }}
         />
         <span className="w-10 text-xs text-gray-400">
-          {len ? fmt(len) : '--:--'}
+          {duration ? fmt(duration) : '--:--'}
         </span>
       </div>
 
@@ -157,7 +163,7 @@ export default function AudioPlayer({
         {showTranscript ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
 
-      {/* Transcript Section */}
+      {/* Transcript Content */}
       {showTranscript && (
         <div className="mt-4 max-h-64 overflow-y-auto border-t border-gray-700/40 pt-4">
           <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-600/30 text-sm text-gray-300 leading-relaxed whitespace-pre-line custom-scrollbar">
@@ -166,7 +172,7 @@ export default function AudioPlayer({
         </div>
       )}
 
-      {/* Custom Slider Style */}
+      {/* Thumb Styling */}
       <style jsx>{`
         input[type='range']::-webkit-slider-thumb {
           -webkit-appearance: none;
