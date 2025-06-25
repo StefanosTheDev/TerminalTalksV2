@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Search, Brain } from 'lucide-react';
-import { Button } from '../util/Button';
 import {
   SignInButton,
   SignUpButton,
