@@ -7,6 +7,7 @@ export async function getAllAccounts() {
   return accounts;
 }
 
+// export async function delet
 // export async function getAccountById({ id }: { id: string }) {
 //   const account = await prisma.user.findUnique({
 //     where: {

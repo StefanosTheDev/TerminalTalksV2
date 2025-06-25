@@ -19,6 +19,7 @@ export async function POST(req: Request) {
   }) as WebhookEvent;
 
   if (event.type === 'user.created') {
+    // Create User
     const { id, email_addresses, first_name, last_name } = event.data;
     await prisma.user.upsert({
       where: { clerkId: id },
@@ -29,6 +30,24 @@ export async function POST(req: Request) {
         name: `${first_name} ${last_name}`,
       },
     });
+  }
+
+  if (event.type === 'user.deleted') {
+    const { id } = event.data;
+
+    // Optional: Remove related records (e.g., bookmarks)
+    await prisma.bookmark.deleteMany({
+      where: { user: { clerkId: id } },
+    });
+
+    // Then delete the user itself
+    await prisma.user.delete({
+      where: { clerkId: id },
+    });
+
+    console.log(`🗑️ Deleted user and related data for Clerk ID: ${id}`);
+  }
+  if (event.type === 'user.updated') {
   }
 
   return new Response('OK');
