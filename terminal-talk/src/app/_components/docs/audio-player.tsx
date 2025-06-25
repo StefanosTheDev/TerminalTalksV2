@@ -1,4 +1,3 @@
-/* src/app/_components/AudioPlayer.tsx */
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
@@ -9,6 +8,9 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
+  ChevronDown,
+  ChevronUp,
+  FileText,
 } from 'lucide-react';
 
 export default function AudioPlayer({
@@ -20,15 +22,16 @@ export default function AudioPlayer({
   transcript: string;
   audioUrl: string;
 }) {
-  //
+  console.log(transcript);
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState(0);
   const [len, setLen] = useState(0);
   const [vol, setVol] = useState(1);
   const [muted, setMuted] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
 
-  /* element → state */
+  // Sync audio element state
   useEffect(() => {
     const el = audio.current;
     if (!el) return;
@@ -51,6 +54,7 @@ export default function AudioPlayer({
     };
   }, [audioUrl]);
 
+  // Volume/mute handlers
   useEffect(() => {
     if (audio.current) audio.current.volume = vol;
   }, [vol]);
@@ -70,18 +74,18 @@ export default function AudioPlayer({
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-8 border border-gray-700/40 backdrop-blur-md shadow-2xl w-full max-w-sm mx-auto">
+    <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-8 border border-gray-700/40 backdrop-blur-md shadow-2xl w-full max-w-2xl mx-auto">
       <audio
         key={audioUrl}
         ref={audio}
         src={audioUrl}
         preload="metadata"
         crossOrigin="anonymous"
-        muted={muted}
       />
 
-      {/* timeline */}
-      <h1> Node JS Express Router</h1>
+      <h3 className="text-xl font-semibold text-white mb-2">{topic}</h3>
+
+      {/* Progress */}
       <div className="flex items-center gap-4 mb-6">
         <span className="w-10 text-xs text-gray-400">{fmt(pos)}</span>
         <input
@@ -102,7 +106,7 @@ export default function AudioPlayer({
         </span>
       </div>
 
-      {/* controls */}
+      {/* Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <IconBtn onClick={() => seek(-10)}>
@@ -124,12 +128,7 @@ export default function AudioPlayer({
         </div>
 
         <div className="flex items-center gap-2">
-          <IconBtn
-            onClick={() => {
-              audio.current!.muted = !audio.current!.muted;
-              setMuted(audio.current!.muted);
-            }}
-          >
+          <IconBtn onClick={() => setMuted((prev) => !prev)}>
             {muted || vol === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </IconBtn>
           <input
@@ -148,7 +147,26 @@ export default function AudioPlayer({
         </div>
       </div>
 
-      {/* slider thumb styling */}
+      {/* Transcript Toggle */}
+      <button
+        onClick={() => setShowTranscript(!showTranscript)}
+        className="flex items-center gap-2 mt-6 text-sm text-blue-300 hover:text-white transition"
+      >
+        <FileText size={16} />
+        Transcript
+        {showTranscript ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+      </button>
+
+      {/* Transcript Section */}
+      {showTranscript && (
+        <div className="mt-4 max-h-64 overflow-y-auto border-t border-gray-700/40 pt-4">
+          <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-600/30 text-sm text-gray-300 leading-relaxed whitespace-pre-line custom-scrollbar">
+            {transcript}
+          </div>
+        </div>
+      )}
+
+      {/* Custom Slider Style */}
       <style jsx>{`
         input[type='range']::-webkit-slider-thumb {
           -webkit-appearance: none;

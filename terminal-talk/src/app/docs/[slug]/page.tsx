@@ -1,22 +1,27 @@
-import { getLectureBySlug } from '@/app/_lib/services/lectureService';
+import {
+  getLectureCached,
+  getAllLectureSlugs,
+} from '@/app/_lib/services/lectureService';
 import { notFound } from 'next/navigation';
-// import { AudioPlayer } from '@/app/_components/docs/audio-player';
-import { ChevronRight, Zap } from 'lucide-react';
-import ContentFooter from '@/app/_components/docs/ContentFooter';
 import AudioPlayer from '@/app/_components/docs/audio-player';
+import ContentFooter from '@/app/_components/docs/ContentFooter';
 
-export default async function docPage({
-  params, // 👈 e.g., { slug: 'aws-intro' }
+export const dynamicParams = false; // 🚫 block unknown slugs
+
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  return getAllLectureSlugs();
+}
+export default async function Page({
+  params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params; // fix “params should be awaited” warning
 
-  const lecture = await getLectureBySlug(slug); // Server-side DB call
+  const lecture = await getLectureCached(slug); // cached DB read
+  if (!lecture) return notFound(); // should never happen, but safe
 
-  if (!lecture) return notFound();
-
-  const { id, title, topic, description, transcript, audioUrl } = lecture;
+  const { topic, audioUrl, transcript, title, description } = lecture;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 py-12 px-6">
@@ -31,12 +36,12 @@ export default async function docPage({
           <p className="text-xl text-gray-300 leading-relaxed mb-8 max-w-3xl">
             {description}
           </p>
+
           <AudioPlayer
             topic={topic}
             transcript={transcript}
             audioUrl={audioUrl}
           />
-          {/* Content Footer It Will Look At The Current Slug and Gie you a URL to click the Next One Or Prev*/}
           <ContentFooter />
         </section>
       </div>

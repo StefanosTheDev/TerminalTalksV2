@@ -1,5 +1,5 @@
 // src/data/topics.ts
-import { Code, FileText } from 'lucide-react';
+import { Code } from 'lucide-react';
 
 export const topics = () => [
   {

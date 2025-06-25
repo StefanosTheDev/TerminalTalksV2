@@ -19,7 +19,8 @@ model User {
 
 model Lecture {
   id          Int        @id @default(autoincrement())
-  slug        String?     @unique     // "aws-intro"
+  slug        String     @unique     // "aws-intro"
+  @@index([slug])
   title       String
   topic       String
   description String
