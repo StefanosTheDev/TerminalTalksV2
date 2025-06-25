@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Code, FileText } from 'lucide-react';
 import { getFrameworks } from '@/app/_lib/data/topics';
 
 export function FrameworkGrid() {

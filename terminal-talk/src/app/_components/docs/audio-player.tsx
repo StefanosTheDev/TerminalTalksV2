@@ -1,4 +1,3 @@
-/* src/app/_components/AudioPlayer.tsx */
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
@@ -9,6 +8,9 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
+  ChevronDown,
+  ChevronUp,
+  FileText,
 } from 'lucide-react';
 
 export default function AudioPlayer({
@@ -20,40 +22,46 @@ export default function AudioPlayer({
   transcript: string;
   audioUrl: string;
 }) {
-  //
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState(0);
-  const [len, setLen] = useState(0);
   const [vol, setVol] = useState(1);
   const [muted, setMuted] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [showTranscript, setShowTranscript] = useState(false);
 
-  /* element → state */
   useEffect(() => {
     const el = audio.current;
     if (!el) return;
 
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
-    const onTime = () => setPos(el.currentTime);
-    const onMeta = () => setLen(el.duration || 0);
+    const updateTime = () => setPos(el.currentTime);
+    const updatePlayState = () => setPlaying(!el.paused);
+    const updateDuration = () => {
+      if (!isNaN(el.duration)) setDuration(el.duration);
+    };
 
-    el.addEventListener('play', onPlay);
-    el.addEventListener('pause', onPause);
-    el.addEventListener('timeupdate', onTime);
-    el.addEventListener('loadedmetadata', onMeta);
+    // If already loaded (cached), set duration right away
+    if (el.readyState >= 1 && !isNaN(el.duration)) {
+      setDuration(el.duration);
+    }
+
+    el.addEventListener('timeupdate', updateTime);
+    el.addEventListener('play', updatePlayState);
+    el.addEventListener('pause', updatePlayState);
+    el.addEventListener('loadedmetadata', updateDuration);
 
     return () => {
-      el.removeEventListener('play', onPlay);
-      el.removeEventListener('pause', onPause);
-      el.removeEventListener('timeupdate', onTime);
-      el.removeEventListener('loadedmetadata', onMeta);
+      el.removeEventListener('timeupdate', updateTime);
+      el.removeEventListener('play', updatePlayState);
+      el.removeEventListener('pause', updatePlayState);
+      el.removeEventListener('loadedmetadata', updateDuration);
     };
   }, [audioUrl]);
 
   useEffect(() => {
     if (audio.current) audio.current.volume = vol;
   }, [vol]);
+
   useEffect(() => {
     if (audio.current) audio.current.muted = muted;
   }, [muted]);
@@ -62,47 +70,49 @@ export default function AudioPlayer({
     `${Math.floor(t / 60)}:${Math.floor(t % 60)
       .toString()
       .padStart(2, '0')}`;
-  const toggle = async () =>
-    playing ? audio.current!.pause() : await audio.current!.play();
+
+  const toggle = () =>
+    playing ? audio.current?.pause() : audio.current?.play();
+
   const seek = (s: number) => {
     const el = audio.current!;
-    el.currentTime = Math.max(0, Math.min(el.currentTime + s, len));
+    el.currentTime = Math.max(0, Math.min(el.currentTime + s, duration));
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-8 border border-gray-700/40 backdrop-blur-md shadow-2xl w-full max-w-sm mx-auto">
+    <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-8 border border-gray-700/40 backdrop-blur-md shadow-2xl w-full max-w-2xl mx-auto">
       <audio
         key={audioUrl}
         ref={audio}
         src={audioUrl}
         preload="metadata"
         crossOrigin="anonymous"
-        muted={muted}
       />
 
-      {/* timeline */}
-      <h1> Node JS Express Router</h1>
+      <h3 className="text-xl font-semibold text-white mb-2">{topic}</h3>
+
+      {/* Progress Bar */}
       <div className="flex items-center gap-4 mb-6">
         <span className="w-10 text-xs text-gray-400">{fmt(pos)}</span>
         <input
           type="range"
           min={0}
-          max={len || 0}
+          max={duration}
           value={pos}
           onChange={(e) => (audio.current!.currentTime = +e.target.value)}
           className="flex-1 h-2 rounded-lg appearance-none cursor-pointer accent-cyan-400 bg-gray-700/60"
           style={{
             background: `linear-gradient(to right,#3b82f6 0%,#06b6d4 ${
-              len ? (pos / len) * 100 : 0
-            }%,#374151 ${len ? (pos / len) * 100 : 0}%,#374151 100%)`,
+              duration ? (pos / duration) * 100 : 0
+            }%,#374151 ${duration ? (pos / duration) * 100 : 0}%,#374151 100%)`,
           }}
         />
         <span className="w-10 text-xs text-gray-400">
-          {len ? fmt(len) : '--:--'}
+          {duration ? fmt(duration) : '--:--'}
         </span>
       </div>
 
-      {/* controls */}
+      {/* Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <IconBtn onClick={() => seek(-10)}>
@@ -124,12 +134,7 @@ export default function AudioPlayer({
         </div>
 
         <div className="flex items-center gap-2">
-          <IconBtn
-            onClick={() => {
-              audio.current!.muted = !audio.current!.muted;
-              setMuted(audio.current!.muted);
-            }}
-          >
+          <IconBtn onClick={() => setMuted((prev) => !prev)}>
             {muted || vol === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </IconBtn>
           <input
@@ -148,7 +153,26 @@ export default function AudioPlayer({
         </div>
       </div>
 
-      {/* slider thumb styling */}
+      {/* Transcript Toggle */}
+      <button
+        onClick={() => setShowTranscript(!showTranscript)}
+        className="flex items-center gap-2 mt-6 text-sm text-blue-300 hover:text-white transition"
+      >
+        <FileText size={16} />
+        Transcript
+        {showTranscript ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+      </button>
+
+      {/* Transcript Content */}
+      {showTranscript && (
+        <div className="mt-4 max-h-64 overflow-y-auto border-t border-gray-700/40 pt-4">
+          <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-600/30 text-sm text-gray-300 leading-relaxed whitespace-pre-line custom-scrollbar">
+            {transcript}
+          </div>
+        </div>
+      )}
+
+      {/* Thumb Styling */}
       <style jsx>{`
         input[type='range']::-webkit-slider-thumb {
           -webkit-appearance: none;
