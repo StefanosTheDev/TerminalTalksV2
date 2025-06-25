@@ -1,0 +1,41 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  clerkId   String     @unique
+  email     String     @unique
+  name      String?
+  bookmarks Bookmark[]
+}
+
+model Lecture {
+  id          Int        @id @default(autoincrement())
+  slug        String?     @unique     // "aws-intro"
+  title       String
+  topic       String
+  description String
+  transcript  String     
+  audioUrl    String     
+  createdAt   DateTime   @default(now())
+  bookmarks   Bookmark[]
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lectureId Int
+  user      User     @relation(fields: [userId], references: [id])
+  lecture   Lecture  @relation(fields: [lectureId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, lectureId])
+}

@@ -1,38 +1,44 @@
-import LectureDetailPlaceholder from '@/app/_components/docs/LectureDetailPlaceHolder';
-import SideTitle from '@/app/_components/docs/SideTitle';
+import { getLectureBySlug } from '@/app/_lib/services/lectureService';
 import { notFound } from 'next/navigation';
+// import { AudioPlayer } from '@/app/_components/docs/audio-player';
+import { ChevronRight, Zap } from 'lucide-react';
+import ContentFooter from '@/app/_components/docs/ContentFooter';
+import AudioPlayer from '@/app/_components/docs/audio-player';
 
-export const lectures = [
-  {
-    slug: 'nextjs-intro',
-    framework: 'Next.js',
-    title: 'Intro to Next.js',
-    content: 'Next.js is a React framework for building full-stack apps...',
-  },
-  {
-    slug: 'aws-intro',
-    framework: 'AWS',
-    title: 'Deploying on AWS',
-    content: 'To deploy an app on AWS, start with S3 or Amplify...',
-  },
-];
-
-export default async function LecturePage({
-  params,
+export default async function docPage({
+  params, // 👈 e.g., { slug: 'aws-intro' }
 }: {
   params: { slug: string };
 }) {
-  const lecture = lectures.find((l) => l.slug === params.slug);
+  const { slug } = params;
+
+  const lecture = await getLectureBySlug(slug); // Server-side DB call
 
   if (!lecture) return notFound();
 
+  const { id, title, topic, description, transcript, audioUrl } = lecture;
+
   return (
-    <div className="flex flex-col lg:flex-row gap-8 pt-40">
+    <div className="flex flex-col lg:flex-row gap-8 py-12 px-6">
       <div className="flex-1">
-        <LectureDetailPlaceholder />
-      </div>
-      <div className="hidden lg:block w-64 shrink-0">
-        <SideTitle />
+        <section className="mb-12">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+              {title}
+            </span>
+          </h1>
+
+          <p className="text-xl text-gray-300 leading-relaxed mb-8 max-w-3xl">
+            {description}
+          </p>
+          <AudioPlayer
+            topic={topic}
+            transcript={transcript}
+            audioUrl={audioUrl}
+          />
+          {/* Content Footer It Will Look At The Current Slug and Gie you a URL to click the Next One Or Prev*/}
+          <ContentFooter />
+        </section>
       </div>
     </div>
   );

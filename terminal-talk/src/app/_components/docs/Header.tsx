@@ -1,63 +1,52 @@
 'use client';
-import { Terminal } from 'lucide-react';
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs';
+import Link from 'next/link';
 
-export default function Header() {
+import { Search, Brain } from 'lucide-react';
+import { Button } from '../util/Button';
+
+// Re-Usable Header.
+export function Header() {
   return (
-    <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 h-16">
-      <div className="px-4 h-full">
-        <div className="flex items-center justify-between h-full">
-          {/* Left side */}
-          <div className="flex items-center space-x-8">
-            <div className="flex items-center space-x-2">
-              <Terminal className="h-6 w-6 text-gray-900" />
-              <span className="text-xl font-bold text-gray-900">
-                Terminal Talks
-              </span>
-            </div>
+    <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
+      <Link href="/docs" className="flex items-center space-x-2">
+        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg">
+          <Brain className="h-5 w-5 text-white" />
+        </div>
+        <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          Terminal Talks
+        </span>
+      </Link>
 
-            <nav className="hidden md:flex items-center space-x-6">
-              <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors">
-                <h2 className="text-sm font-medium">Documentation</h2>
-              </button>
-              <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors">
-                <h2 className="text-sm font-medium">Blog</h2>
-              </button>
-            </nav>
-          </div>
-
-          {/* Right side - Auth Buttons */}
-          <div className="flex items-center space-x-4">
-            <SignedOut>
-              <SignInButton mode="modal" forceRedirectUrl="/docs">
-                <button className="px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-white hover:bg-gray-800 border border-gray-300 rounded-md transition">
-                  Sign In
-                </button>
-              </SignInButton>
-
-              <SignUpButton
-                mode="modal"
-                forceRedirectUrl="/docs"
-                fallbackRedirectUrl="/docs"
-              >
-                <button className="px-4 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition">
-                  Register
-                </button>
-              </SignUpButton>
-            </SignedOut>
-
-            <SignedIn>
-              <UserButton afterSignOutUrl="/docs" />
-            </SignedIn>
-          </div>
+      {/* Search Feature */}
+      <div className="flex-1 max-w-md mx-8">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <input
+            type="text"
+            placeholder="Find something..."
+            className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm"
+          />
+          <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-gray-400 bg-gray-700/50 rounded border border-gray-600/50">
+            Ctrl K
+          </kbd>
         </div>
       </div>
+
+      <nav className="flex items-center space-x-6">
+        <Link
+          href="#"
+          className="text-gray-300 hover:text-white transition-colors"
+        >
+          Blog
+        </Link>
+
+        <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg">
+          Create An Account
+        </Button>
+        <Button className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white border-0 shadow-lg">
+          Sign In
+        </Button>
+      </nav>
     </header>
   );
 }
