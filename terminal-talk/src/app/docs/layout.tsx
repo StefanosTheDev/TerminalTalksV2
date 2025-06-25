@@ -1,5 +1,6 @@
 import { Header } from '@/app/_components/docs/Header';
 import { Sidebar } from '../_components/docs/SideBar';
+import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
 
 export default function MainLayout({
   children,

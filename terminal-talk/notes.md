@@ -17,3 +17,5 @@ Basic UseState Toggle (Most Common & Simple)
 -
 
 // Approach 2 That I like is the mutliple dropdwon navigation
+
+A Great Conversation To Hhave is When your Havin gYour page compoennt server and your renderin gstuff fhow much should stuff be loaded.

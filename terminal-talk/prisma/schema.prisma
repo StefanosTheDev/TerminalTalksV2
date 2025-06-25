@@ -22,6 +22,7 @@ model Lecture {
   slug        String?     @unique     // "aws-intro"
   title       String
   topic       String
+  description String
   transcript  String     
   audioUrl    String     
   createdAt   DateTime   @default(now())

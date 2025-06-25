@@ -5,12 +5,14 @@ export async function createLecture({
   title,
   slug,
   topic,
+  description,
   transcript,
   audioUrl,
 }: {
   title: string;
   slug: string;
   topic: string;
+  description: string;
   transcript: string;
   audioUrl: string;
 }) {
@@ -21,6 +23,7 @@ export async function createLecture({
       title,
       slug,
       topic,
+      description,
       transcript,
       audioUrl,
       // createdAt is auto-filled by Prisma’s @default(now()) in your schema

@@ -1,4 +1,3 @@
-import LecturePlayer from '../_components/audio-player/Audio';
 import { FrameworkGrid } from '../_components/docs/FrameWorkGrid';
 import { Hero } from '../_components/docs/Hero';
 import Link from 'next/link';

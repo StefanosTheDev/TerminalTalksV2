@@ -8,7 +8,7 @@ import { Button } from '../util/Button';
 export function Header() {
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
-      <Link href="/" className="flex items-center space-x-2">
+      <Link href="/docs" className="flex items-center space-x-2">
         <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg">
           <Brain className="h-5 w-5 text-white" />
         </div>
