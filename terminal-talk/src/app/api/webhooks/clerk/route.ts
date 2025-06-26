@@ -5,8 +5,8 @@ import prisma from '@/app/_lib/prisma';
 
 export async function POST(req: Request) {
   console.log('WebHook Endpoint Hit');
-  // const secret = process.env.SIGNING_SECRET;
-  const secret = 'https://terminaltalks.vercel.app/api/webhooks/clerk';
+  const secret = process.env.SIGNING_SECRET;
+
   if (!secret) return new Response('Missing secret', { status: 500 });
 
   const wh = new Webhook(secret);
