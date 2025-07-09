@@ -23,14 +23,14 @@ export default function NotFound() {
 
       {/* Call-to-action */}
       <Link
-        href="/docs"
+        href="/dashboard"
         className="group inline-flex items-center gap-2 mt-8 rounded-lg
                    border border-gray-700 bg-white/5 px-6 py-3 text-lg font-medium
                    backdrop-blur-sm transition hover:bg-white/10
                    focus:outline-none focus:ring-2 focus:ring-cyan-500"
       >
         <ArrowLeftCircle className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-        Back to Docs
+        Back to Dashboard
       </Link>
     </div>
   );

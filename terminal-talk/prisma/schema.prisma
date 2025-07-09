@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,33 +8,76 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  clerkId   String     @unique
-  email     String     @unique
-  name      String?
-  bookmarks Bookmark[]
+  id             Int              @id @default(autoincrement())
+  clerkId        String           @unique
+  email          String           @unique
+  username       String           @unique
+  userCourses    UserCourse[]
+  certificates   Certificate[]
+  lectureProgress LectureProgress[]
+}
+
+model Course {
+  id           Int           @id @default(autoincrement())
+  title        String
+  slug         String        @unique
+  description  String
+  category     String
+  lectures     Lecture[]
+  userCourses  UserCourse[]
+  certificates Certificate[]
+  
 }
 
 model Lecture {
-  id          Int        @id @default(autoincrement())
-  slug        String     @unique     // "aws-intro"
-  @@index([slug])
+  id          Int      @id @default(autoincrement())
   title       String
   topic       String
   description String
-  transcript  String     
-  audioUrl    String     
-  createdAt   DateTime   @default(now())
-  bookmarks   Bookmark[]
+  transcript  String
+  audioUrl    String
+  createdAt   DateTime @default(now())
+  totalTime   String
+  courseId Int
+  course   Course @relation(fields: [courseId], references: [id])
+
+  progress LectureProgress[]
 }
 
-model Bookmark {
+model UserCourse {
   id        Int      @id @default(autoincrement())
   userId    Int
-  lectureId Int
-  user      User     @relation(fields: [userId], references: [id])
-  lecture   Lecture  @relation(fields: [lectureId], references: [id])
-  createdAt DateTime @default(now())
+  courseId  Int
+  progress  Int      @default(0) // percent (0–100)
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
 
-  @@unique([userId, lectureId])
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model Certificate {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  courseId Int
+  issuedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model LectureProgress {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  lectureId  Int
+  completedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  lecture Lecture @relation(fields: [lectureId], references: [id])
+
+  @@unique([userId, lectureId]) // Prevent duplicate progress tracking
 }

@@ -7,6 +7,8 @@ import {
   Sparkles,
   Brain,
   Zap,
+  TerminalIcon,
+  ArrowUp,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './_components/util/Button';
@@ -16,16 +18,23 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden">
       {/* Header */}
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
+      <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
         <Link href="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg">
-            <Volume2 className="h-5 w-5 text-white" />
+            <TerminalIcon className="h-5 w-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Terminal Talks
           </span>
         </Link>
-        <nav className="ml-auto"></nav>
+
+        <Button
+          onClick={() => router.push('/auth/login')}
+          size="lg"
+          className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
+          Login
+        </Button>
       </header>
 
       {/* Hero Section */}
@@ -46,37 +55,28 @@ export default function Page() {
               </div>
               <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
                 <span className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-                  Better Audio Lectures
+                  Master Development
                 </span>
                 <br />
                 <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  For Developers
+                  Through Audio Learning
                 </span>
               </h1>
               <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">
-                Developers deserve audio lectures based off documentation to
-                help learn and expand their knowledge on difficult concepts. If
-                you're on the go or prefer to listen to info, we build audio
-                lectures to expand on real world topics off documentation.
+                Developers deserve audio lectures based off core documentation
+                to help learn and expand their knowledge on difficult concepts.
+                If you're on the go or prefer to listen to info this might be
+                the learning solution you need!
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
-                onClick={() => router.push('/docs')}
+                onClick={() => router.push('/auth/signup')}
                 size="lg"
                 className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 Get Started For Free
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-
-              <Button
-                onClick={() => router.push('/docs')}
-                variant="outline"
-                size="lg"
-                className="bg-white/5 text-white border-gray-600 hover:bg-white/10 px-8 py-4 text-lg backdrop-blur-sm transition-all duration-300"
-              >
-                Documentation <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -179,8 +179,7 @@ export default function Page() {
                 pace.
               </p>
               <div className="flex items-center text-blue-500 font-medium group-hover:text-blue-600 transition-colors">
-                <span>Smart Learning</span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                {/* <Link href="/dashboard">{/* <span>Get Started</span> </Link> */}
               </div>
             </div>
 
@@ -202,16 +201,16 @@ export default function Page() {
                 </svg>
               </div>
               <h3 className="text-2xl font-bold text-black mb-4 group-hover:text-green-600 transition-colors">
-                Every Framework
+                Supporting All Frameworks
               </h3>
               <p className="text-gray-600 leading-relaxed mb-6">
-                From React to Rust, Python to Kubernetes - we cover all major
-                technologies and frameworks that modern developers need to
-                master.
+                Our goal is to support all major technologies and framweworks
+                that developers need to master.
               </p>
               <div className="flex items-center text-green-500 font-medium group-hover:text-green-600 transition-colors">
-                <span>Universal Coverage</span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                {/* <Link href="/dashboard">
+                  <span>Universal Coverage</span>
+                </Link>{' '} */}
               </div>
             </div>
 
@@ -228,8 +227,9 @@ export default function Page() {
                 knowledge. Turn dead time into productive learning sessions.
               </p>
               <div className="flex items-center text-purple-500 font-medium group-hover:text-purple-600 transition-colors">
-                <span>Mobile First</span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                {/* <Link href="/dashboard">
+                  <span>Mobile First</span>
+                </Link> */}
               </div>
             </div>
           </div>

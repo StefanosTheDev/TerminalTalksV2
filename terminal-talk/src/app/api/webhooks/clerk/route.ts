@@ -20,26 +20,25 @@ export async function POST(req: Request) {
   }) as WebhookEvent;
 
   if (event.type === 'user.created') {
-    // Create User
-    const { id, email_addresses, first_name, last_name } = event.data;
+    // Create User // Review this
+    const { id, email_addresses, username } = event.data;
+    if (!username) {
+      console.error('❌ Username is required but missing');
+      return new Response('Missing username', { status: 400 });
+    }
     await prisma.user.upsert({
       where: { clerkId: id },
       update: {},
       create: {
         clerkId: id,
         email: email_addresses[0].email_address,
-        name: `${first_name} ${last_name}`,
+        username: username,
       },
     });
   }
 
   if (event.type === 'user.deleted') {
     const { id } = event.data;
-
-    // Optional: Remove related records (e.g., bookmarks)
-    await prisma.bookmark.deleteMany({
-      where: { user: { clerkId: id } },
-    });
 
     // Then delete the user itself
     await prisma.user.delete({
