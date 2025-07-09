@@ -31,13 +31,22 @@ export default async function FreeLibrary() {
   return (
     <section className="p-8">
       {/* header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">
+          Welcome {user.username} 👋
+        </h1>
+        <p className="text-gray-300">
+          Continue your learning journey with our free audio courses
+        </p>
+      </div>
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center text-2xl font-bold text-white">
           <BookOpen className="mr-2 h-6 w-6 text-blue-400" />
           Free Library
         </h2>
+
         <span className="text-gray-400">
-          {courses.length} courses available
+          {courses.length} courses available{' '}
         </span>
       </div>
 
@@ -111,7 +120,7 @@ export default async function FreeLibrary() {
 
                 {/* CTA */}
                 <Link
-                  href={`/dashboard/library/${c.slug}`}
+                  href={`/learn/${c.slug}`}
                   className="block rounded-lg bg-blue-500 py-2 text-center font-medium text-white shadow-lg transition hover:bg-blue-600 hover:shadow-xl"
                 >
                   {completed

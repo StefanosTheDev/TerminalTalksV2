@@ -13,8 +13,20 @@ import {
 import Link from 'next/link';
 import { Button } from './_components/util/Button';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
+
 export default function Page() {
   const router = useRouter();
+
+  // Ask clerk where the visitor is signed in
+  const { isSignedIn, isLoaded } = useAuth();
+  // (optional) wait for Clerk to finish loading
+  if (!isLoaded) return null;
+  // 2) Decide label + destination // What a great strategy this is.
+  const label = isSignedIn ? 'View Dashboard' : 'Login';
+  const target = isSignedIn ? '/dashboard' : '/auth/login';
+
+  //
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden">
       {/* Header */}
@@ -28,13 +40,12 @@ export default function Page() {
           </span>
         </Link>
 
-        <Button
-          onClick={() => router.push('/auth/login')}
-          size="lg"
-          className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+        <button
+          onClick={() => router.push(target)}
+          className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-3 rounded-lg text-sm font-medium shadow-lg transition"
         >
-          Login
-        </Button>
+          {label}
+        </button>
       </header>
 
       {/* Hero Section */}

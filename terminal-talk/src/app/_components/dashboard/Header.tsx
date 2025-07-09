@@ -21,7 +21,19 @@ export function Header() {
           Terminal Talks
         </span>
       </Link>
-
+      <div className="flex-1 max-w-md mx-8">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <input
+            type="text"
+            placeholder="Search Courses..."
+            className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm"
+          />
+          {/* <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-gray-400 bg-gray-700/50 rounded border border-gray-600/50">
+            Search
+          </kbd> */}
+        </div>
+      </div>
       <div className="ml-auto flex items-center space-x-4">
         <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-2 rounded-lg">
           <nav className="flex items-center space-x-6">
@@ -50,19 +62,3 @@ export function Header() {
     </header>
   );
 }
-// }
-// {/*    {/* Search Feature */
-// <div className="flex-1 max-w-md mx-8">
-// <div className="relative">
-//   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-//   <input
-//     type="text"
-//     placeholder="Find something..."
-//     className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm"
-//   />
-//   <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-gray-400 bg-gray-700/50 rounded border border-gray-600/50">
-//     Ctrl K
-//   </kbd>
-// </div>
-// </div>
-// */}

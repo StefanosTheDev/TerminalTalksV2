@@ -4,12 +4,16 @@ import StatsCard from '@/app/_components/dashboard/StatsCard';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import prisma from '@/app/_lib/prisma';
+import { headers } from 'next/headers'; // 👈 lets you read the path
 
 export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // 1 Detect Current pathname
+  //  // next/headers exposes "next-url" (Next ≥ 14) or "x-invoke-path" (older dev server)
+
   // 1) Authenticate
   const user = await currentUser();
   if (!user) redirect('/auth/login');
@@ -39,11 +43,11 @@ export default async function MainLayout({
         <Sidebar />
 
         <main className="flex-1 p-8 space-y-8">
-          <StatsCard
+          {/* <StatsCard
             completedCourses={completedCourses}
             inProgress={inProgress}
             certificates={certificates}
-          />
+          /> */}
           {children}
         </main>
       </div>

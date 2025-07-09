@@ -16,14 +16,13 @@ export default async function DocsHome() {
         <div className="max-w-6xl">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome back, {user.username} 👋
+              Welcome, {user.username} 👋
             </h1>
             <p className="text-gray-300">
-              Continue your learning journey with our audio courses
+              Check Out Some Of Your Audio Learning Stats!
             </p>
           </div>
-
-          <FreeLibrary />
+          <StatsCard />
         </div>
       </main>
     </>

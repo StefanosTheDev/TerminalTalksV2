@@ -14,6 +14,8 @@ export default function SideBar() {
   const pathname = usePathname();
 
   const learningItems = [
+    { id: '', label: 'Dashboard', icon: TrendingUp },
+
     { id: 'library', label: 'Free Library', icon: BookOpen },
     { id: 'premium', label: 'Premium Courses', icon: Crown },
   ];
