@@ -38,6 +38,7 @@ model Lecture {
   audioUrl    String
   createdAt   DateTime @default(now())
   totalTime   String
+  totalSeconds Int?
   courseId Int
   course   Course @relation(fields: [courseId], references: [id])
 

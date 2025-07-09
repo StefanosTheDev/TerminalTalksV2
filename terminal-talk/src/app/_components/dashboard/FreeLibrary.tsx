@@ -4,6 +4,13 @@ import prisma from '@/app/_lib/prisma';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 
+/* helper to turn seconds → “h m” or “m” */
+function secondsToLabel(sec: number) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.round((sec % 3600) / 60);
+  return h ? `${h} h ${m} min` : `${m} min`;
+}
+
 export default async function FreeLibrary() {
   /* 1. authenticate */
   const user = await currentUser();
@@ -14,7 +21,7 @@ export default async function FreeLibrary() {
     include: {
       lectures: true,
       userCourses: {
-        where: { user: { clerkId: user.id } }, // ← only this user
+        where: { user: { clerkId: user.id } },
         select: { progress: true, completed: true },
       },
     },
@@ -37,9 +44,16 @@ export default async function FreeLibrary() {
       {/* grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((c) => {
-          const uc = c.userCourses[0]; // undefined if not started
-          const progress = uc?.progress ?? 0; // 0-100
+          const uc = c.userCourses[0]; // may be undefined
+          const progress = uc?.progress ?? 0;
           const completed = uc?.completed ?? false;
+
+          /* ── NEW: sum lecture durations ── */
+          const totalSeconds = c.lectures.reduce(
+            (sum, l) => sum + (l.totalSeconds ?? 0),
+            0
+          );
+          const timeLabel = secondsToLabel(totalSeconds);
 
           return (
             <div
@@ -69,11 +83,11 @@ export default async function FreeLibrary() {
                 <div className="mb-4 flex items-center space-x-4 text-xs text-gray-400">
                   <div className="flex items-center space-x-1">
                     <Clock className="h-3 w-3" />
-                    <span>{c.lectures.length * 5} min</span>
+                    <span>{timeLabel}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Play className="h-3 w-3" />
-                    <span>{c.lectures.length} Lectures</span>
+                    <span>{c.lectures.length} lectures</span>
                   </div>
                 </div>
 

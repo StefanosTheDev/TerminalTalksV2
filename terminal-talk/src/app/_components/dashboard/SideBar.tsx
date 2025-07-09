@@ -16,7 +16,6 @@ export default function SideBar() {
   const learningItems = [
     { id: 'library', label: 'Free Library', icon: BookOpen },
     { id: 'premium', label: 'Premium Courses', icon: Crown },
-    { id: 'progress', label: 'My Progress', icon: TrendingUp },
   ];
   const certificate = [
     { id: 'certificates', label: 'Certificates', icon: Award },
