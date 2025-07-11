@@ -1,14 +1,14 @@
-// Header.tsx
+// app/_components/learn/Header.tsx
 'use client';
 
 import Link from 'next/link';
-import { useLectureIndex } from '@/app/context/_lectureContext';
-import { Lecture } from '@/app/types';
+import { useCourse } from '@/app/context/courseContext';
 import { ChevronLeft } from 'lucide-react';
 import { SignedIn, UserButton } from '@clerk/nextjs';
-export default function Header({ lectures }: { lectures: Lecture[] }) {
-  const { index } = useLectureIndex();
-  const lecture = lectures[index];
+
+export default function Header() {
+  const { course, index } = useCourse();
+  const lecture = course.lectures[index];
 
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-800/50 backdrop-blur-sm bg-black/20 sticky top-0 z-50">
@@ -21,20 +21,21 @@ export default function Header({ lectures }: { lectures: Lecture[] }) {
           <span className="text-gray-400">Back to Dashboard</span>
         </Link>
       </div>
+
       <div className="flex-1 text-center">
         <h1 className="text-lg font-semibold text-white truncate">
           {lecture.title}
         </h1>
         <p className="text-sm text-gray-400">
-          Lesson {index + 1} of {lectures.length}
+          Lesson {index + 1} of {course.lectures.length}
         </p>
       </div>
-      {/* TOp Right Place Holder */}
+
       <div className="flex items-center space-x-2">
         <SignedIn>
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
-      </div>{' '}
+      </div>
     </header>
   );
 }

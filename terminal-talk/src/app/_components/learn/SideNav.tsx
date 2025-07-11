@@ -2,32 +2,18 @@
 'use client';
 
 import { Lecture } from '@/app/types';
-import {
-  Brain,
-  List,
-  PenTool,
-  Clock,
-  CheckCircle,
-  Circle,
-  Play,
-} from 'lucide-react';
+import { Brain, List, PenTool, CheckCircle, Circle, Play } from 'lucide-react';
 import { useState } from 'react';
-import { useLectureIndex } from '@/app/context/_lectureContext';
+import { useCourse } from '@/app/context/courseContext';
 
-export default function SideNav({
-  courseTitle,
-  lectures,
-}: {
-  courseTitle: string;
-  lectures: Lecture[];
-}) {
+export default function SideNav() {
   const [showChapters, setShowChapters] = useState(true);
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState('');
-  const { index, setIndex } = useLectureIndex();
+  const { course, index, setIndex } = useCourse();
 
   // Mock progress - you can calculate this based on your data
-  const progress = Math.round(((index + 1) / lectures.length) * 100);
+  const progress = Math.round(((index + 1) / course.lectures.length) * 100);
 
   return (
     <aside className="w-80 h-full bg-gradient-to-b from-gray-900/95 to-black/95 border-r border-gray-800/50 backdrop-blur-sm">
@@ -39,7 +25,7 @@ export default function SideNav({
               <Brain className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">{courseTitle}</h3>
+              <h3 className="font-semibold text-white">{course.title}</h3>
               <p className="text-sm text-gray-400">by Terminal Talks</p>
             </div>
           </div>
@@ -94,7 +80,7 @@ export default function SideNav({
         <div className="flex-1 overflow-hidden">
           {showChapters && (
             <div className="h-full overflow-y-auto p-4 space-y-2">
-              {lectures.map((lecture, idx) => (
+              {course.lectures.map((lecture, idx) => (
                 <div
                   key={idx}
                   onClick={() => setIndex(idx)}

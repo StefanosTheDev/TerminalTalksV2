@@ -32,6 +32,7 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     '/dashboard(.*)', // your dashboard
+    '/learn(.*)',
     '/app(.*)', // any other “app” routes
     '/trpc/(.*)', // tRPC, if used
   ],

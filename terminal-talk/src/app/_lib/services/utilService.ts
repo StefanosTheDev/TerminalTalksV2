@@ -23,11 +23,15 @@ export const fetchCoursesWithProgressStatus = async (
 };
 
 //Need Review a: “Give me the one Course whose slug field equals this slug”
-export const fetchCourse = async (slug: string) => {
+export const fetchCourse = async (clerkId: string, slug: string) => {
   return await prisma.course.findUnique({
     where: { slug },
     include: {
       lectures: true,
+      userCourses: {
+        where: { user: { clerkId } },
+        select: { progress: true, completed: true },
+      },
     },
   });
 };

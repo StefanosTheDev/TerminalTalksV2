@@ -30,7 +30,7 @@ export default async function DocsHome() {
             inProgress={inProgressCount}
             certificates={certificates}
           />
-          <FreeLibrary />;
+          <FreeLibrary />
         </div>
       </main>
     </>

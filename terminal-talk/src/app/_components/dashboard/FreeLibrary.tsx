@@ -1,6 +1,5 @@
 import { Clock, Play, BookOpen } from 'lucide-react';
 import Link from 'next/link';
-import prisma from '@/app/_lib/prisma';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import {
@@ -18,14 +17,11 @@ export default async function FreeLibrary() {
   const courses = await fetchCoursesWithProgressStatus(user.id);
   return (
     <section className="p-8">
-      {/* header */}
-
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center text-2xl font-bold text-white">
           <BookOpen className="mr-2 h-6 w-6 text-blue-400" />
           Free Library
         </h2>
-
         <span className="text-gray-400">
           {courses.length} courses available{' '}
         </span>
@@ -34,10 +30,7 @@ export default async function FreeLibrary() {
       {/* grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((c) => {
-          const uc = c.userCourses[0]; // may be undefined // Okay Step 1: Check TO See If userCourse Exists.
-          console.log(`UC Progress: ${uc?.progress ?? 0}`);
-
-          // if UC Exists  ?. // Try to read the thing on the right . If everything on the left exists. If falsy, stop there and give me undefined.
+          const uc = c.userCourses[0];
           const progress = uc?.progress ?? 0;
           const completed = uc?.completed ?? false;
           /* ── NEW: sum lecture durations ── */
@@ -46,7 +39,6 @@ export default async function FreeLibrary() {
             0
           );
           const timeLabel = secondsToLabel(totalSeconds);
-
           return (
             <div
               key={c.id}
@@ -61,7 +53,6 @@ export default async function FreeLibrary() {
                   FREE
                 </span>
               </div>
-
               {/* body */}
               <div className="px-6 pb-6">
                 <h3 className="mb-2 text-lg font-semibold text-white">
@@ -70,7 +61,6 @@ export default async function FreeLibrary() {
                 <p className="mb-4 text-sm text-gray-400 line-clamp-3">
                   {c.description}
                 </p>
-
                 {/* stats */}
                 <div className="mb-4 flex items-center space-x-4 text-xs text-gray-400">
                   <div className="flex items-center space-x-1">
