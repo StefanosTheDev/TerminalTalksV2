@@ -1,5 +1,6 @@
 import { CourseWithProgress } from '@/app/types'; // wherever you put it
 import { UC } from '@/app/types';
+import prisma from '@/app/_lib/prisma';
 export const secondsToLabel = (sec: number) => {
   const h = Math.floor(sec / 3600);
   const m = Math.round((sec % 3600) / 60);
@@ -59,3 +60,16 @@ export const fetchStatsCardInfo = async (clerkId: string) => {
     completedCount,
   };
 };
+
+// Look at the Progress Value. Compare that to the Length
+// So if Im 0 and my length is 10 my percent is 0/10 (Not Started)
+// So if Im 1 Out of 5 Which means i completed 1 lecture. I am 20 %
+export const calculateProgress = (
+  progressVal: number,
+  total: number
+): number => {
+  // index + 1 because if index === 0, you're 1/total done
+  return Math.round((progressVal / total) * 100);
+};
+
+export const bumpProgress = () => {};

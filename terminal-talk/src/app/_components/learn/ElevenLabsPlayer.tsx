@@ -1,3 +1,4 @@
+// app/_components/learn/ElevenLabsPlayer.tsx
 'use client';
 
 import { useCourse } from '@/app/context/courseContext';
@@ -5,9 +6,26 @@ import { useEffect } from 'react';
 import { Clock, BookOpen, Users } from 'lucide-react';
 
 export default function ElevenLabsPlayer() {
-  const { course, index } = useCourse();
-  const lecture = course.lectures[index];
+  const { course, index, setIndex } = useCourse();
+  const lectures = course.lectures;
 
+  // ─── 1) Clamp index into a valid range ────────────────────────────────────────
+  const maxIdx = Math.max(0, lectures.length - 1);
+  const safeIndex = Math.min(Math.max(index, 0), maxIdx);
+
+  // ─── 2) Pick the lecture via safeIndex ──────────────────────────────────────
+  const lecture = lectures[safeIndex];
+
+  // ─── 3) Guard: if lecture is somehow missing, show a placeholder ────────────
+  if (!lecture) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-gray-400">Loading lesson…</p>
+      </div>
+    );
+  }
+
+  // ─── 4) Load the ElevenLabs script on mount ─────────────────────────────────
   useEffect(() => {
     const scriptId = 'elevenlabs-audionative-script';
     if (!document.getElementById(scriptId)) {
@@ -28,12 +46,17 @@ export default function ElevenLabsPlayer() {
           <div className="max-w-4xl">
             <div className="flex items-center space-x-2 mb-4">
               <span className="text-sm text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
-                Lesson {index + 1}
+                Lesson {safeIndex + 1}
               </span>
               <span className="text-sm text-gray-400">•</span>
-              <span className="text-sm text-gray-400">{'15:00'}</span>
+              <span className="text-sm text-gray-400">
+                {lecture.totalSeconds
+                  ? `${Math.ceil(lecture.totalSeconds / 60)} minutes`
+                  : '—'}
+              </span>
             </div>
 
+            {/* ─── Use lecture.title safely ─────────────────────────────────────── */}
             <h1 className="text-3xl font-bold text-white mb-4">
               {lecture.title}
             </h1>
@@ -46,7 +69,11 @@ export default function ElevenLabsPlayer() {
             <div className="flex items-center space-x-6 mt-6 text-sm text-gray-400">
               <div className="flex items-center space-x-2">
                 <Clock className="h-4 w-4" />
-                <span>{'15 minutes'}</span>
+                <span>
+                  {lecture.totalSeconds
+                    ? `${Math.ceil(lecture.totalSeconds / 60)} minutes`
+                    : '—'}
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-4 w-4" />
@@ -99,21 +126,6 @@ export default function ElevenLabsPlayer() {
           </div>
         </div>
       </div>
-
-      {/* Main Content Area (for transcript, resources, etc.)
-      <div className="flex-1 overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
-        <div className="h-full p-6">
-          <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/30 rounded-xl h-full backdrop-blur-sm border border-gray-600/30 p-6">
-            <h4 className="text-lg font-semibold text-white mb-4">
-              Lesson Content
-            </h4>
-            <p className="text-gray-400">
-              Additional content like transcripts, resources, or exercises will
-              appear here.
-            </p>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
