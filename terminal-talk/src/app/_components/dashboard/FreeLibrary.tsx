@@ -3,42 +3,23 @@ import Link from 'next/link';
 import prisma from '@/app/_lib/prisma';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import {
+  fetchCoursesWithProgressStatus,
+  secondsToLabel,
+} from '@/app/_lib/services/utilService';
 
 /* helper to turn seconds → “h m” or “m” */
-function secondsToLabel(sec: number) {
-  const h = Math.floor(sec / 3600);
-  const m = Math.round((sec % 3600) / 60);
-  return h ? `${h} h ${m} min` : `${m} min`;
-}
 
 export default async function FreeLibrary() {
   /* 1. authenticate */
   const user = await currentUser();
   if (!user) redirect('/auth/login');
 
-  /* 2. fetch every course + THIS user’s progress row (if any) */
-  const courses = await prisma.course.findMany({
-    include: {
-      lectures: true,
-      userCourses: {
-        where: { user: { clerkId: user.id } },
-        select: { progress: true, completed: true },
-      },
-    },
-    orderBy: { title: 'asc' },
-  });
-
+  const courses = await fetchCoursesWithProgressStatus(user.id);
   return (
     <section className="p-8">
       {/* header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">
-          Welcome {user.username} 👋
-        </h1>
-        <p className="text-gray-300">
-          Continue your learning journey with our free audio courses
-        </p>
-      </div>
+
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center text-2xl font-bold text-white">
           <BookOpen className="mr-2 h-6 w-6 text-blue-400" />
@@ -53,10 +34,12 @@ export default async function FreeLibrary() {
       {/* grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((c) => {
-          const uc = c.userCourses[0]; // may be undefined
+          const uc = c.userCourses[0]; // may be undefined // Okay Step 1: Check TO See If userCourse Exists.
+          console.log(`UC Progress: ${uc?.progress ?? 0}`);
+
+          // if UC Exists  ?. // Try to read the thing on the right . If everything on the left exists. If falsy, stop there and give me undefined.
           const progress = uc?.progress ?? 0;
           const completed = uc?.completed ?? false;
-
           /* ── NEW: sum lecture durations ── */
           const totalSeconds = c.lectures.reduce(
             (sum, l) => sum + (l.totalSeconds ?? 0),
@@ -118,7 +101,7 @@ export default async function FreeLibrary() {
                   </div>
                 </div>
 
-                {/* CTA */}
+                {/* CTA  Something to go back and review but u can stack these / multiple if else*/}
                 <Link
                   href={`/learn/${c.slug}`}
                   className="block rounded-lg bg-blue-500 py-2 text-center font-medium text-white shadow-lg transition hover:bg-blue-600 hover:shadow-xl"

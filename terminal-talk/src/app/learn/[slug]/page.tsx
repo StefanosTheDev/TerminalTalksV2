@@ -1,23 +1,31 @@
-export default function ViewCourse({ params }: { params: { slug: string } }) {
-  // Get The Title Of The Course.
-  const { slug } = params;
+import ElevenLabsPlayer from '@/app/_components/learn/ElevenLabsPlayer';
+import Footer from '@/app/_components/learn/Footer';
+import Header from '@/app/_components/learn/Header';
+import SideNav from '@/app/_components/learn/SideNav';
+import { fetchCourse } from '@/app/_lib/services/utilService';
+import { notFound } from 'next/navigation';
 
-  // Okay So Now I have The Course I want.
+export default async function ViewCourse({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = await params;
 
-  // Step 1: Query The Course Information From The Slug.
-  // Now I need
-  // So I am going to now Query The Course To Render & Show The First One
-  // If The User Clicks The Next Button. I will then allow them to traverse to the next Lecture on the list
-
+  const course = await fetchCourse(slug);
+  if (!course) {
+    return notFound();
+  }
   return (
-    <>
-      <div className="view-course">
-        {slug}
-        <h1> Course TITLE</h1>
-        <p> COURSE DESCRIPTION</p>
-        <p> Course Time Length</p>
-        <p> Course Level </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+      <Header lectures={course.lectures} />
+
+      <div className="flex h-[calc(100vh-8rem)]">
+        <SideNav courseTitle={course.title} lectures={course.lectures} />
+        <ElevenLabsPlayer lectures={course.lectures} />
       </div>
-    </>
+
+      <Footer lectures={course.lectures} />
+    </div>
   );
 }

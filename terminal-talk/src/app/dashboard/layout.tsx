@@ -1,20 +1,14 @@
 import { Header } from '@/app/_components/dashboard/Header';
 import Sidebar from '@/app/_components/dashboard/SideBar';
-import StatsCard from '@/app/_components/dashboard/StatsCard';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import prisma from '@/app/_lib/prisma';
-import { headers } from 'next/headers'; // 👈 lets you read the path
 
 export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // 1 Detect Current pathname
-  //  // next/headers exposes "next-url" (Next ≥ 14) or "x-invoke-path" (older dev server)
-
-  // 1) Authenticate
   const user = await currentUser();
   if (!user) redirect('/auth/login');
 
@@ -27,13 +21,6 @@ export default async function MainLayout({
     },
   });
   if (!dbUser) redirect('/auth/login');
-
-  // 3) Derive metrics
-  const completedCourses = dbUser.userCourses.filter(
-    (uc) => uc.completed
-  ).length;
-  const inProgress = dbUser.userCourses.filter((uc) => !uc.completed).length;
-  const certificates = dbUser.certificates.length;
 
   // 4) Render
   return (

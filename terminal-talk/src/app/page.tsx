@@ -40,12 +40,14 @@ export default function Page() {
           </span>
         </Link>
 
-        <button
+        <Button
           onClick={() => router.push(target)}
-          className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-3 rounded-lg text-sm font-medium shadow-lg transition"
+          size="lg"
+          className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
         >
           {label}
-        </button>
+          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+        </Button>
       </header>
 
       {/* Hero Section */}

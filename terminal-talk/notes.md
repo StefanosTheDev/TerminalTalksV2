@@ -113,3 +113,12 @@ progress + completed derived for each card Shows 0 % if not started, updates liv
 Link uses /dashboard/library/${slug} Navigates to the course page
 
 Everything else (stats in MainLayout) stays as-is. This gives you a uniform list where each card reflects that user’s personal progress.
+
+How it plays out in real life
+Student joins a course → new UserCourse row (progress = 0).
+
+They watch lessons → every finished lesson adds a LectureProgress row.
+
+You update progress in UserCourse (e.g., 50 %).
+
+When progress hits 100 % → create a Certificate row.

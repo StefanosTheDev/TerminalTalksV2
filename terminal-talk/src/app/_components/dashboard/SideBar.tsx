@@ -1,27 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  BookOpen,
-  Crown,
-  TrendingUp,
-  Award,
-  Search,
-  Download,
-} from 'lucide-react';
+import { BookOpen, Crown, TrendingUp, Award } from 'lucide-react';
 
 export default function SideBar() {
   const pathname = usePathname();
 
-  const learningItems = [
-    { id: '', label: 'Dashboard', icon: TrendingUp },
-
-    { id: 'library', label: 'Free Library', icon: BookOpen },
-    { id: 'premium', label: 'Premium Courses', icon: Crown },
-  ];
-  const certificate = [
-    { id: 'certificates', label: 'Certificates', icon: Award },
-  ];
   const getButtonStyles = (isActive: boolean) =>
     `w-full flex items-center text-left px-3 py-2 rounded-lg transition-all ${
       isActive
@@ -38,29 +22,44 @@ export default function SideBar() {
             Learning
           </h3>
           <ul className="space-y-2">
-            {learningItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname?.includes(item.id); // match current route
-
-              return (
-                <li key={item.id}>
-                  <Link
-                    href={`/dashboard/${item.id}`}
-                    className={getButtonStyles(isActive)}
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
+            <li>
+              <Link
+                href="/dashboard"
+                className={getButtonStyles(pathname === '/dashboard')}
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                <span>Free Library</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard/premium"
+                className={getButtonStyles(
+                  pathname?.includes('/dashboard/premium')
+                )}
+              >
+                <Crown className="h-4 w-4 mr-2" />
+                <span>Premium Courses</span>
+              </Link>
+            </li>
           </ul>
         </div>
-        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Certificates
-        </h3>
 
-        <Link href={`/dashboard/${certificate[0].id}`}></Link>
+        {/* Certificates Navigation */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            Certificates
+          </h3>
+          <Link
+            href="/dashboard/certificates"
+            className={getButtonStyles(
+              pathname?.includes('/dashboard/certificates')
+            )}
+          >
+            <Award className="h-4 w-4 mr-2" />
+            <span>Certificates</span>
+          </Link>
+        </div>
       </div>
     </aside>
   );
