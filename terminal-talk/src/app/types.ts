@@ -1,25 +1,40 @@
 // at the top of your file (or in a shared types.ts)
 import { Prisma } from '@prisma/client';
 
-export type CourseWithProgress = Prisma.CourseGetPayload<{
-  include: {
-    lectures: true;
-    userCourses: {
-      select: { progress: true; completed: true };
-    };
-  };
-}>;
-
-export interface Lecture {
+// app/types.ts
+export interface CourseWithProgress {
   id: number;
+  slug: string;
   title: string;
-  audioURL: string;
   description: string;
-}
+  category: string;
 
-// Certificates ->
-export interface UC {
+  // reshaped/computed
+  lecturesCount: number;
+  totalSeconds: number;
+  timeLabel: string;
   progress: number;
   completed: boolean;
 }
-// This uses Prisma’s helper to derive exactly the shape of what findMany({ include: { … } }) returns.
+
+// Extracted types for reusability (align with Prisma schema)
+export interface Lecture {
+  id: number;
+  title: string;
+  totalSeconds?: number | null;
+  audioUrl: string;
+  description: string;
+}
+
+export interface UserCourse {
+  progress: number; // Percent (0-100) from schema
+  completed: boolean;
+}
+
+export interface Course {
+  id: number;
+  slug: string;
+  title: string;
+  lectures: Lecture[];
+  userCourses: UserCourse[]; // Assuming populated via Prisma include
+}

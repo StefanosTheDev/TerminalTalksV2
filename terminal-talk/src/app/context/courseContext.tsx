@@ -5,29 +5,13 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
-  ReactNode,
   Dispatch,
   SetStateAction,
 } from 'react';
+import { Course } from '../types';
 
 interface CourseContextType {
-  course: {
-    id: number;
-    slug: string;
-    title: string;
-    lectures: Array<{
-      id: number;
-      title: string;
-      totalSeconds?: number | null;
-      audioUrl?: string;
-      description: string;
-    }>;
-    userCourses: Array<{
-      progress: number;
-      completed: boolean;
-    }>;
-  };
+  course: Course;
   index: number;
   setIndex: Dispatch<SetStateAction<number>>;
 }
@@ -38,25 +22,18 @@ export function CourseProvider({
   course,
   children,
 }: {
-  course: CourseContextType['course'];
-  children: ReactNode;
+  course: Course;
+  children: React.ReactNode;
 }) {
-  // 1) Pull the saved count
-  const savedProgress = course.userCourses[0]?.progress ?? 0;
-
-  // 2) Compute the max valid index
+  const savedPercent = course.userCourses[0]?.progress ?? 0;
   const maxIndex = Math.max(0, course.lectures.length - 1);
+  const initialIndex = Math.min(
+    Math.floor((savedPercent / 100) * maxIndex),
+    maxIndex
+  );
 
-  // 3) Clamp savedProgress so it never exceeds maxIndex
-  const initialIndex = Math.min(savedProgress, maxIndex);
-
-  // 4) Seed your UI index
+  // ❗ We do NOT reset this after mount
   const [index, setIndex] = useState(initialIndex);
-
-  // 5) Reset on course change or if savedProgress updates
-  useEffect(() => {
-    setIndex(Math.min(course.userCourses[0]?.progress ?? 0, maxIndex));
-  }, [course.slug, course.userCourses, maxIndex]);
 
   return (
     <CourseContext.Provider value={{ course, index, setIndex }}>

@@ -1,9 +1,8 @@
-// app/learn/[slug]/layout.tsx
-import React from 'react';
+// app/learn/[slug]/layout.tsx   ← adjust the path to match your pages
 import { redirect } from 'next/navigation';
 import { fetchCourse } from '@/app/_lib/services/utilService';
 import { currentUser } from '@clerk/nextjs/server';
-import { CourseProvider } from '@/app/context/courseContext';
+import { CourseProviderClient } from '@/app/context/courseProviderClient';
 
 export default async function CourseLayout({
   children,
@@ -16,22 +15,22 @@ export default async function CourseLayout({
   const user = await currentUser();
   if (!user) redirect('/auth/login');
 
-  // 2) Await the dynamic API before using it
-  const { slug } = await params;
-
-  // 3) Fetch the course + your progress
-  const courseData = await fetchCourse(user.id, slug);
+  // 2) Fetch the course + your progress
+  const courseData = await fetchCourse(user.id, params.slug);
   if (!courseData) redirect('/not-found');
 
-  // 4) Shape the minimal “course” object the context needs
+  // 3) Shape the minimal “course” object
   const course = {
     id: courseData.id,
     slug: courseData.slug,
     title: courseData.title,
     lectures: courseData.lectures,
     userCourses: courseData.userCourses,
+    clerkId: user.id, // Add for upsertProgress
   };
 
-  // 5) Wrap children in the provider
-  return <CourseProvider course={course}>{children}</CourseProvider>;
+  // 4) Wrap children in the provider
+  return (
+    <CourseProviderClient course={course}>{children}</CourseProviderClient>
+  );
 }

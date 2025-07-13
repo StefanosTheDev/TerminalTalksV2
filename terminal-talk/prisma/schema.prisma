@@ -8,13 +8,12 @@ datasource db {
 }
 
 model User {
-  id             Int              @id @default(autoincrement())
-  clerkId        String           @unique
-  email          String           @unique
-  username       String           @unique
-  userCourses    UserCourse[]
-  certificates   Certificate[]
-  lectureProgress LectureProgress[]
+  id              Int              @id @default(autoincrement())
+  clerkId         String           @unique
+  email           String           @unique
+  username        String           @unique
+  userCourses     UserCourse[]
+  certificates    Certificate[]
 }
 
 model Course {
@@ -26,24 +25,22 @@ model Course {
   lectures     Lecture[]
   userCourses  UserCourse[]
   certificates Certificate[]
-  
 }
 
 model Lecture {
-  id          Int      @id @default(autoincrement())
-  title       String
-  topic       String
-  description String
-  transcript  String
-  audioUrl    String
-  createdAt   DateTime @default(now())
-  totalTime   String
+  id           Int      @id @default(autoincrement())
+  title        String
+  topic        String
+  description  String
+  transcript   String
+  audioUrl     String
+  createdAt    DateTime @default(now())
+  totalTime    String
   totalSeconds Int?
-  courseId Int
-  course   Course @relation(fields: [courseId], references: [id])
-
-  progress LectureProgress[]
+  courseId     Int
+  course       Course    @relation(fields: [courseId], references: [id])
 }
+
 
 model UserCourse {
   id        Int      @id @default(autoincrement())
@@ -69,16 +66,4 @@ model Certificate {
   course Course @relation(fields: [courseId], references: [id])
 
   @@unique([userId, courseId])
-}
-
-model LectureProgress {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  lectureId  Int
-  completedAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  lecture Lecture @relation(fields: [lectureId], references: [id])
-
-  @@unique([userId, lectureId]) // Prevent duplicate progress tracking
 }
