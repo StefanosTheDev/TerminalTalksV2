@@ -1,13 +1,14 @@
-// app/_components/learn/SideNav.tsx
 'use client';
-import React from 'react';
-import { Brain } from 'lucide-react';
+import React, { useState } from 'react';
+import { Brain, List, StickyNote } from 'lucide-react';
 import { useCourse } from '@/app/context/courseContext';
 
 export default function SideNav() {
-  // State Variables.
-  const { course } = useCourse();
+  const { course, index, setIndex } = useCourse();
   const percent = course.userCourses[0]?.progress ?? 0;
+
+  const [showChapters, setShowChapters] = useState(true);
+
   return (
     <aside className="w-80 h-full bg-gradient-to-b from-gray-900/95 to-black/95 border-r border-gray-800/50 backdrop-blur-sm">
       <div className="h-full flex flex-col">
@@ -18,13 +19,12 @@ export default function SideNav() {
               <Brain className="h-6 w-6 text-white" />
             </div>
 
-            {/* GRAB TITLE & CURRENT PERCENT*/}
             <div>
               <h3 className="font-semibold text-white truncate">
                 {course.title}
               </h3>
               <p className="text-sm text-gray-400">
-                {percent === 100 ? '🎉 Course completed' : ' '}
+                {percent === 100 ? '🎉 Course completed' : ''}
               </p>
             </div>
           </div>
@@ -42,7 +42,50 @@ export default function SideNav() {
               />
             </div>
           </div>
+
+          {/* Tab Toggle */}
+          <div className="flex space-x-1 bg-gray-800/50 rounded-lg p-1">
+            <button
+              onClick={() => {
+                setShowChapters(true);
+              }}
+              className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-md text-sm transition-all ${
+                showChapters
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <List className="h-4 w-4" />
+              <span>Chapters</span>
+            </button>
+            <button
+              disabled
+              className="flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-md text-sm text-gray-500 cursor-not-allowed"
+            >
+              <StickyNote className="h-4 w-4" />
+              <span>Notes</span>
+            </button>
+          </div>
         </div>
+
+        {/* Chapters List */}
+        {showChapters && (
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            {course.lectures.map((lecture, i) => (
+              <button
+                key={lecture.id}
+                onClick={() => setIndex(i)}
+                className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  i === index
+                    ? 'bg-blue-500/20 text-blue-300'
+                    : 'text-gray-300 hover:bg-gray-800'
+                }`}
+              >
+                {i + 1}. {lecture.title}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </aside>
   );

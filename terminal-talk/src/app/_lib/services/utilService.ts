@@ -1,48 +1,30 @@
-import { CourseWithProgress } from '@/app/types'; // wherever you put it
 import prisma from '@/app/_lib/prisma';
-import { UserCourse } from '@/app/types';
 export const secondsToLabel = (sec: number) => {
   const h = Math.floor(sec / 3600);
   const m = Math.round((sec % 3600) / 60);
   return h ? `${h} h ${m} min` : `${m} min`;
 };
-
-export const fetchCoursesWithProgressStatus = async (
-  clerkId: string
-): Promise<CourseWithProgress[]> => {
-  const raw = await prisma.course.findMany({
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      description: true,
-      category: true,
-      lectures: {
-        select: { id: true, totalSeconds: true }, // ← add `id` at least
-      },
+export const fetchCoursesWithProgressStatus = async (clerkId: string) => {
+  const data = await prisma.course.findMany({
+    include: {
+      lectures: { select: { id: true, totalSeconds: true } },
       userCourses: {
         where: { user: { clerkId } },
         select: { progress: true, completed: true },
-        take: 1,
       },
     },
-    orderBy: { title: 'asc' },
   });
 
-  return raw.map((course) => {
-    // number of lectures
+  const totalSeconds = data
+    .flatMap((course) => course.lectures)
+    .reduce((sum, lec) => sum + (lec.totalSeconds ?? 0), 0);
+
+  const timeLabel = calculateCourseTime(totalSeconds);
+
+  return data.map((course) => {
     const lecturesCount = course.lectures.length;
-    const totalSeconds = course.lectures.reduce(
-      (sum, lec) => sum + (lec.totalSeconds ?? 0),
-      0
-    );
-
-    // build a human-readable label, e.g. "125m 30s" or however you like
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    const timeLabel = `${minutes}m ${seconds}s`;
-
-    // pull out the first (and only) userCourse, or default to 0 / false
+    //It's a one-liner that safely pulls progress and completed from userCourses[0],
+    // with default fallbacks if no data exists — super clean and safe.
     const { progress = 0, completed = false } = course.userCourses[0] || {};
 
     return {
@@ -51,7 +33,6 @@ export const fetchCoursesWithProgressStatus = async (
       title: course.title,
       description: course.description,
       category: course.category,
-
       lecturesCount,
       totalSeconds,
       timeLabel,
@@ -65,6 +46,12 @@ export const fetchCoursesWithProgressStatus = async (
     };
   });
 };
+
+export function calculateCourseTime(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${seconds}s`;
+}
 
 //Need Review a: “Give me the one Course whose slug field equals this slug”
 export const fetchCourse = async (clerkId: string, slug: string) => {
@@ -85,18 +72,20 @@ export const fetchStatsCardInfo = async (clerkId: string) => {
     where: { clerkId },
     include: {
       userCourses: { select: { progress: true, completed: true } },
-      certificates: true,
+      certificates: true, // Grab User Certificates.
     },
   });
 
   if (!data) throw new Error('User not found');
 
   const certificates = data.certificates.length;
+
   const inProgressCount = data.userCourses.filter(
-    (c: UserCourse) => c.progress > 0 && c.progress < 100
+    (userCourse) => userCourse.progress > 0 && userCourse.progress < 100
   ).length;
+
   const completedCount = data.userCourses.filter(
-    (c: UserCourse) => c.completed
+    (userCourse) => userCourse.completed
   ).length;
 
   return {

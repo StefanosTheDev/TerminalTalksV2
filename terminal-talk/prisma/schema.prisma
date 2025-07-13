@@ -14,6 +14,8 @@ model User {
   username        String           @unique
   userCourses     UserCourse[]
   certificates    Certificate[]
+
+  LectureProgress LectureProgress[]
 }
 
 model Course {
@@ -39,9 +41,21 @@ model Lecture {
   totalSeconds Int?
   courseId     Int
   course       Course    @relation(fields: [courseId], references: [id])
+
+  LectureProgress LectureProgress[]
 }
 
+model LectureProgress {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  lectureId  Int
+  completedAt DateTime @default(now())
 
+  user    User    @relation(fields: [userId], references: [id])
+  lecture Lecture @relation(fields: [lectureId], references: [id])
+
+  @@unique([userId, lectureId]) // Prevent duplicate tracking
+}
 model UserCourse {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -67,3 +81,4 @@ model Certificate {
 
   @@unique([userId, courseId])
 }
+
