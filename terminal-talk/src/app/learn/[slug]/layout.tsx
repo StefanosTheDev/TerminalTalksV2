@@ -1,4 +1,3 @@
-// app/learn/[slug]/layout.tsx   ← adjust the path to match your pages
 import { redirect } from 'next/navigation';
 import { fetchCourse } from '@/app/_lib/services/utilService';
 import { currentUser } from '@clerk/nextjs/server';
@@ -15,22 +14,25 @@ export default async function CourseLayout({
   const user = await currentUser();
   if (!user) redirect('/auth/login');
 
-  // 2) Fetch the course + your progress
+  // 2) Fetch the course + per-lecture progress
   const courseData = await fetchCourse(user.id, params.slug);
   if (!courseData) redirect('/not-found');
 
-  // 3) Shape the minimal “course” object
-  const course = {
-    id: courseData.id,
-    slug: courseData.slug,
-    title: courseData.title,
-    lectures: courseData.lectures,
-    userCourses: courseData.userCourses,
-    clerkId: user.id, // Add for upsertProgress
-  };
-
-  // 4) Wrap children in the provider
+  // 3) Wrap children in the client provider, passing the combined course object (including initialLectureProgress)
   return (
-    <CourseProviderClient course={course}>{children}</CourseProviderClient>
+    <CourseProviderClient
+      course={{
+        id: courseData.id,
+        slug: courseData.slug,
+        title: courseData.title,
+        description: courseData.description,
+        category: courseData.category,
+        lectures: courseData.lectures,
+        lecProgress: courseData.initialLectureProgress,
+        userCourses: courseData.userCourses,
+      }}
+    >
+      {children}
+    </CourseProviderClient>
   );
 }

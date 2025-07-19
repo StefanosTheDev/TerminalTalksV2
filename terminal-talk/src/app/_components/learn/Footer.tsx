@@ -2,71 +2,93 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCourse } from '@/app/context/courseContext';
+import { useAuth } from '@clerk/nextjs';
 import { updateProgress } from '../_actions/progress';
-import { useRouter } from 'next/navigation';
+import confetti from 'canvas-confetti';
+import { useState } from 'react';
+import CourseCompletionModal from './CourseCompletionModal';
 
 export default function Footer() {
-  const { course, index, setIndex } = useCourse();
-  const totalLectures = course?.lectures.length || 1;
-  const isFirst = index === 0;
-  const isLast = index === totalLectures - 1;
-  const router = useRouter();
+  const { course, index, setIndex, setCourse } = useCourse();
+  const [showModal, setShowModal] = useState(false);
 
-  const goToPrevious = () => {
-    if (!isFirst) setIndex(index - 1);
-  };
+  const total = course.lectures.length;
+  const { isLoaded, isSignedIn, userId } = useAuth();
+  const uc = course.userCourses?.[0];
+  const courseDone = uc?.completed;
+  const lectureId = course.lectures[index].id;
+  const lectureDone = course.lecProgress.includes(lectureId);
+
+  const goToPrevious = () => index > 0 && setIndex(index - 1);
 
   const goToNext = async () => {
-    if (!course) return;
+    if (!isLoaded || !isSignedIn || courseDone || lectureDone) return;
 
-    const newIndex = index + 1;
-    const newPercent = Math.round((newIndex / totalLectures) * 100);
-    const isCompleting = newPercent >= 100;
-
-    // 1. Update local state first so UI is instant
-    setIndex(Math.min(newIndex, totalLectures - 1));
-
-    // 2. Fire & forget to server (no waiting to move UI)
+    const current = course.lectures[index];
     try {
-      await updateProgress({
+      const { isCourseCompleted } = await updateProgress({
+        clerkId: userId,
         courseId: course.id,
-        newIndex,
-        totalLectures,
-        lectureId: course.lectures[index]?.id,
+        lectureId: current.id,
       });
 
-      if (isCompleting) {
-        router.push('/dashboard');
+      // update local state
+      const newLecProgress = [...course.lecProgress, current.id];
+      const newPercent = Math.round((newLecProgress.length / total) * 100);
+      setCourse((prev) => ({
+        ...prev,
+        lecProgress: newLecProgress,
+        userCourses: [
+          {
+            ...prev.userCourses[0],
+            progress: newPercent,
+            completed: isCourseCompleted,
+          },
+        ],
+      }));
+
+      if (isCourseCompleted) {
+        confetti();
+        setShowModal(true);
       }
-    } catch (err) {
-      console.error('Progress update failed:', err);
+    } catch (e) {
+      console.error(e);
     }
+
+    setIndex((i) => Math.min(i + 1, total - 1));
   };
 
   return (
-    <footer className="border-t border-gray-800/50 bg-gradient-to-r from-gray-900/50 to-black/50 backdrop-blur-sm">
-      <div className="p-4 flex items-center justify-between">
-        <button
-          onClick={goToPrevious}
-          disabled={isFirst}
-          className="flex items-center space-x-2 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-gray-300"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span>Previous Lesson</span>
-        </button>
+    <>
+      {showModal && (
+        <CourseCompletionModal onClose={() => setShowModal(false)} />
+      )}
 
-        <p className="text-sm text-gray-400">
-          Lesson {index + 1} of {totalLectures}
-        </p>
+      <footer className="border-t border-gray-800/50 bg-gradient-to-r from-gray-900/50 to-black/50 backdrop-blur-sm">
+        <div className="p-4 flex items-center justify-between">
+          <button
+            onClick={goToPrevious}
+            disabled={index === 0}
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-600 rounded-lg disabled:opacity-50 text-gray-300 hover:bg-gray-800/50"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span>Previous Lesson</span>
+          </button>
 
-        <button
-          onClick={goToNext}
-          className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-white rounded-lg transition-all shadow-lg hover:shadow-xl"
-        >
-          <span>{isLast ? 'Complete Course' : 'Next Lesson'}</span>
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </div>
-    </footer>
+          <p className="text-sm text-gray-400">
+            Lesson {index + 1} of {total}
+          </p>
+
+          <button
+            onClick={goToNext}
+            disabled={lectureDone || courseDone}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 to-cyan-400 text-white rounded-lg disabled:opacity-50 hover:from-blue-600 hover:to-cyan-500 transition"
+          >
+            <span>Mark As Complete</span>
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </footer>
+    </>
   );
 }

@@ -1,42 +1,22 @@
-// app/context/courseContext.tsx
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from 'react';
-import { Course } from '../types';
-
-interface CourseContextType {
-  course: Course;
-  index: number;
-  setIndex: Dispatch<SetStateAction<number>>;
-}
+import React, { createContext, useContext, useState } from 'react';
+import { Course, CourseContextType } from '@/app/types';
 
 const CourseContext = createContext<CourseContextType | null>(null);
 
 export function CourseProvider({
-  course,
+  course: initialCourse,
   children,
 }: {
   course: Course;
   children: React.ReactNode;
 }) {
-  const savedPercent = course.userCourses[0]?.progress ?? 0;
-  const maxIndex = Math.max(0, course.lectures.length - 1);
-  const initialIndex = Math.min(
-    Math.floor((savedPercent / 100) * maxIndex),
-    maxIndex
-  );
-
-  // ❗ We do NOT reset this after mount
-  const [index, setIndex] = useState(initialIndex);
+  const [course, setCourse] = useState(initialCourse);
+  const [index, setIndex] = useState(0);
 
   return (
-    <CourseContext.Provider value={{ course, index, setIndex }}>
+    <CourseContext.Provider value={{ course, setCourse, index, setIndex }}>
       {children}
     </CourseContext.Provider>
   );

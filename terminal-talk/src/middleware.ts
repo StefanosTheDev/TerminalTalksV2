@@ -35,5 +35,6 @@ export const config = {
     '/learn(.*)',
     '/app(.*)', // any other “app” routes
     '/trpc/(.*)', // tRPC, if used
+    '/((?!_next|favicon.ico|.*\\..*).*)', // exclude static files
   ],
 };

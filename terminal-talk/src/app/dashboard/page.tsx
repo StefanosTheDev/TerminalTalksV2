@@ -5,19 +5,15 @@ import {
   fetchStatsCardInfo,
   fetchCoursesWithProgressStatus,
 } from '../_lib/services/utilService';
-import FreeLibrary from '../_components/dashboard/FreeLibrary'; // remove `{}` – you're using default export
+import FreeLibrary from '../_components/dashboard/FreeLibrary';
 
-export default async function DocsHome() {
+export default async function DashboardPage() {
   const user = await currentUser();
 
   if (!user) {
     redirect('/auth/login');
   }
-
-  // Fetch stats and courses
-  const { certificates, inProgressCount, completedCount } =
-    await fetchStatsCardInfo(user.id);
-
+  const stats = await fetchStatsCardInfo(user.id);
   const courses = await fetchCoursesWithProgressStatus(user.id);
 
   return (
@@ -32,11 +28,11 @@ export default async function DocsHome() {
           </p>
         </div>
         <StatsCard
-          completedCourses={completedCount}
-          inProgress={inProgressCount}
-          certificates={certificates}
+          completedCourses={stats.certificates}
+          inProgress={stats.inProgressCount}
+          certificates={stats.certificates}
         />
-        <FreeLibrary courses={courses} /> {/* ✅ PASS courses prop */}
+        <FreeLibrary courses={courses} />
       </div>
     </main>
   );

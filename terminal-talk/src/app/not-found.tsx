@@ -5,14 +5,9 @@ export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white px-4">
       {/* Big numeric headline */}
-      <h1
-        className="text-6xl lg:text-7xl font-extrabold tracking-tight
-                     bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400
-                     bg-clip-text text-transparent"
-      >
+      <h1 className="text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
         404
       </h1>
-
       {/* Secondary copy */}
       <h2 className="mt-4 text-2xl lg:text-3xl font-semibold">
         Page not found

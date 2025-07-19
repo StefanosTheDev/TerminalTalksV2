@@ -1,9 +1,6 @@
 import prisma from '@/app/_lib/prisma';
-export const secondsToLabel = (sec: number) => {
-  const h = Math.floor(sec / 3600);
-  const m = Math.round((sec % 3600) / 60);
-  return h ? `${h} h ${m} min` : `${m} min`;
-};
+import { UserCourse } from '@/app/types';
+
 export const fetchCoursesWithProgressStatus = async (clerkId: string) => {
   const data = await prisma.course.findMany({
     include: {
@@ -26,53 +23,82 @@ export const fetchCoursesWithProgressStatus = async (clerkId: string) => {
     //It's a one-liner that safely pulls progress and completed from userCourses[0],
     // with default fallbacks if no data exists — super clean and safe.
     const { progress = 0, completed = false } = course.userCourses[0] || {};
-
+    // NEW: flag whether the user is enrolled in this course
+    const inUserCourse = course.userCourses.length > 0;
     return {
       id: course.id,
       slug: course.slug,
       title: course.title,
       description: course.description,
       category: course.category,
+
+      // Computed Variables
       lecturesCount,
       totalSeconds,
       timeLabel,
+      inUserCourse,
       progress,
       completed,
-      status: completed
-        ? 'completed'
-        : progress > 0
-        ? 'in-progress'
-        : 'not-started',
     };
   });
 };
-
 export function calculateCourseTime(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}m ${seconds}s`;
 }
-
-//Need Review a: “Give me the one Course whose slug field equals this slug”
 export const fetchCourse = async (clerkId: string, slug: string) => {
-  return await prisma.course.findUnique({
+  // 1. Grab the course, its lectures, and the user's course‐level progress
+  const course = await prisma.course.findUnique({
     where: { slug },
     include: {
-      lectures: true,
+      lectures: {
+        include: {
+          LectureProgress: {
+            where: { user: { clerkId } },
+            select: { lectureId: true },
+          },
+        },
+      },
       userCourses: {
         where: { user: { clerkId } },
         select: { progress: true, completed: true },
       },
     },
   });
+  if (!course) return null;
+
+  // 2. Collect just the IDs of lectures this user has any progress on:
+  //    - filter to only those lectures whose LectureProgress array isn’t empty
+  //    - map each remaining lecture to its .id
+  const initialLectureProgress = course.lectures
+    .filter((lec) => lec.LectureProgress.length > 0)
+    .map((lec) => lec.id);
+
+  console.log('🏁 initialLectureProgress:', initialLectureProgress);
+
+  // 3. Shape the final payload
+  return {
+    id: course.id,
+    slug: course.slug,
+    title: course.title,
+    description: course.description, // include the course description
+    category: course.category,
+    // strip out the nested LectureProgress objects before sending to the client
+    lectures: course.lectures.map(({ LectureProgress, ...lec }) => lec),
+    userCourses: course.userCourses,
+    initialLectureProgress,
+    clerkId,
+  };
 };
 
 export const fetchStatsCardInfo = async (clerkId: string) => {
+  console.log('⛔️ [prisma] DATABASE_URL=', process.env.DATABASE_URL);
   const data = await prisma.user.findUnique({
     where: { clerkId },
     include: {
       userCourses: { select: { progress: true, completed: true } },
-      certificates: true, // Grab User Certificates.
+      certificates: true,
     },
   });
 
@@ -80,12 +106,13 @@ export const fetchStatsCardInfo = async (clerkId: string) => {
 
   const certificates = data.certificates.length;
 
+  // ANY progress < 100 (including 0%) counts as "in progress"
   const inProgressCount = data.userCourses.filter(
-    (userCourse) => userCourse.progress > 0 && userCourse.progress < 100
+    (uc: UserCourse) => uc.progress < 100
   ).length;
 
   const completedCount = data.userCourses.filter(
-    (userCourse) => userCourse.completed
+    (uc: UserCourse) => uc.completed
   ).length;
 
   return {
@@ -94,102 +121,113 @@ export const fetchStatsCardInfo = async (clerkId: string) => {
     completedCount,
   };
 };
-
-// Look at the Progress Value. Compare that to the Length
-// So if Im 0 and my length is 10 my percent is 0/10 (Not Started)
-// So if Im 1 Out of 5 Which means i completed 1 lecture. I am 20 %
-export const calculateProgress = (
-  progressVal: number,
-  total: number
-): number => {
-  // index + 1 because if index === 0, you're 1/total done
-  return Math.round((progressVal / total) * 100);
-};
-
-/**
- * Fetch all certificates for a user by their Clerk ID.
- * Returns an array of Certificate records, each including the related Course.
- */
 export const fetchAccountCertificates = async (clerkId: string) => {
   return prisma.certificate.findMany({
     where: { user: { clerkId } },
     include: { course: true },
   });
-}; // ADD these functions to your existing utilService.ts file
-
-interface ProgressRecord {
-  progress: number;
-  completed: boolean;
-}
-export const getUserCourseProgress = async (
+};
+export const checkStartCourse = async (
   clerkId: string,
   courseId: number
-): Promise<ProgressRecord> => {
-  // 1) look up your internal user.id via clerkId
+): Promise<{
+  userId: number;
+  courseId: number;
+  progress: number;
+  completed: boolean;
+  updatedAt: Date;
+}> => {
+  // 1. Find the user by Clerk ID
   const user = await prisma.user.findUnique({
     where: { clerkId },
-    select: { id: true },
   });
-  if (!user) throw new Error('User not found');
+  if (!user) throw new Error(`User with clerkId "${clerkId}" not found`);
 
-  // 2) look up the one row and return just the two fields (with defaults)
-  const rec = await prisma.userCourse.findUnique({
-    where: { userId_courseId: { userId: user.id, courseId } },
-    select: { progress: true, completed: true },
+  // 2. (Optional) Verify the course exists
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
   });
+  if (!course) throw new Error(`Course with id "${courseId}" not found`);
 
-  return {
-    progress: rec?.progress ?? 0,
-    completed: rec?.completed ?? false,
-  };
-};
-
-/**
- * Update the progress (and optionally completed) for an existing userCourse row.
- * Throws if either the user or the userCourse row doesn’t exist.
- */
-
-export async function upsertProgress(
-  clerkId: string,
-  courseId: number,
-  progress: number,
-  completed: boolean
-): Promise<void> {
-  // — lookup internal user.id
-  const user = await prisma.user.findUnique({
-    where: { clerkId },
-    select: { id: true },
-  });
-  if (!user) throw new Error('User not found');
-
-  // — upsert the progress
-  await prisma.userCourse.upsert({
+  // 3. Upsert the UserCourse (create if missing, skip update otherwise)
+  const userCourse = await prisma.userCourse.upsert({
     where: {
-      userId_courseId: { userId: user.id, courseId },
-    },
-    create: {
-      userId: user.id,
-      courseId,
-      progress,
-      completed,
-    },
-    update: {
-      progress,
-      completed,
-    },
-  });
-
-  // — if they just hit 100%, issue (or ensure) a certificate
-  if (completed) {
-    await prisma.certificate.upsert({
-      where: {
-        userId_courseId: { userId: user.id, courseId },
-      },
-      create: {
+      userId_courseId: {
         userId: user.id,
         courseId,
       },
-      update: {}, // no fields to change if it already exists
+    },
+    update: {}, // no-op update
+    create: {
+      userId: user.id,
+      courseId,
+      progress: 0,
+      completed: false,
+      updatedAt: new Date(),
+    },
+  });
+
+  return userCourse;
+};
+
+/**
+ * Marks a lecture as completed, updates overall course progress,
+ * and issues a certificate if 100% complete.
+ */
+export async function updateProgressInDB({
+  clerkId,
+  courseId,
+  lectureId,
+}: {
+  clerkId: string;
+  courseId: number;
+  lectureId: number;
+}) {
+  const user = await prisma.user.findUnique({ where: { clerkId } });
+  if (!user) throw new Error('User not found');
+
+  const userId = user.id;
+  let isCourseCompleted = false;
+
+  // ✅ 1. Fetch the current completion state
+  const existingUserCourse = await prisma.userCourse.findUnique({
+    where: { userId_courseId: { userId, courseId } },
+  });
+
+  await prisma.$transaction(async (tx) => {
+    // ✅ 2. Upsert LectureProgress
+    await tx.lectureProgress.upsert({
+      where: { userId_lectureId: { userId, lectureId } },
+      update: {},
+      create: { userId, lectureId },
     });
-  }
+
+    // ✅ 3. Count progress
+    const completedCount = await tx.lectureProgress.count({
+      where: { userId, lecture: { courseId } },
+    });
+
+    const totalLectures = await tx.lecture.count({ where: { courseId } });
+    const progress = Math.round((completedCount / totalLectures) * 100);
+    const completed = progress === 100;
+
+    // ✅ 4. Update or create UserCourse
+    await tx.userCourse.upsert({
+      where: { userId_courseId: { userId, courseId } },
+      update: { progress, completed, updatedAt: new Date() },
+      create: { userId, courseId, progress, completed },
+    });
+
+    // ✅ 5. Only mark isCourseCompleted = true if it changed from false → true
+    if (completed && !existingUserCourse?.completed) {
+      await tx.certificate.upsert({
+        where: { userId_courseId: { userId, courseId } },
+        update: {},
+        create: { userId, courseId },
+      });
+      isCourseCompleted = true; // 🎉 Trigger one-time action
+    }
+  });
+
+  return { isCourseCompleted };
 }
