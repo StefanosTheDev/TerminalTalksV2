@@ -169,7 +169,6 @@ export const checkStartCourse = async (
 
   return userCourse;
 };
-
 /**
  * Marks a lecture as completed, updates overall course progress,
  * and issues a certificate if 100% complete.
