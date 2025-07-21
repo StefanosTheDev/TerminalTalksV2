@@ -85,7 +85,10 @@ export const fetchCourse = async (clerkId: string, slug: string) => {
     description: course.description, // include the course description
     category: course.category,
     // strip out the nested LectureProgress objects before sending to the client
-    lectures: course.lectures.map(({ LectureProgress, ...lec }) => lec),
+
+    lectures: course.lectures.map(
+      ({ LectureProgress: _LectureProgress, ...lec }) => lec
+    ),
     userCourses: course.userCourses,
     initialLectureProgress,
     clerkId,

@@ -2,7 +2,6 @@
 'use client';
 
 import { useCourse } from '@/app/context/courseContext';
-import { useEffect } from 'react';
 import { Clock, BookOpen, Users } from 'lucide-react';
 
 export default function ElevenLabsPlayer() {

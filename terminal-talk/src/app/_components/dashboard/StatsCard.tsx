@@ -1,11 +1,16 @@
 import { Award, TrendingUp, Star } from 'lucide-react';
 
-// fix this
+// Destructuring Issue with the StatsCard Props. WHy Did this work
+interface StatsCardProps {
+  completedCourses: number;
+  inProgress: number;
+  certificates: number;
+}
 export default function StatsCard({
   completedCourses,
   inProgress,
   certificates,
-}: any) {
+}: StatsCardProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
       {/* Completed Courses */}
