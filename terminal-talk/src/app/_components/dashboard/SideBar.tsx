@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Crown, TrendingUp, Award } from 'lucide-react';
+import { Crown, TrendingUp, Award } from 'lucide-react';
 
 export default function SideBar() {
   const pathname = usePathname();

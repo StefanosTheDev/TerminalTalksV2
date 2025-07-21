@@ -8,7 +8,6 @@ import {
   Brain,
   Zap,
   TerminalIcon,
-  ArrowUp,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './_components/util/Button';

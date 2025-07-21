@@ -23,16 +23,6 @@ export default function ElevenLabsPlayer() {
   }
 
   /* ── Inject ElevenLabs helper once ────────────────────────────── */
-  useEffect(() => {
-    const id = 'elevenlabs-audionative-script';
-    if (!document.getElementById(id)) {
-      const s = document.createElement('script');
-      s.id = id;
-      s.src = 'https://elevenlabs.io/player/audioNativeHelper.js';
-      s.async = true;
-      document.body.appendChild(s);
-    }
-  }, []);
 
   return (
     <div className="flex-1 flex flex-col min-w-0 rounded-2xl overflow-hidden">

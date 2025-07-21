@@ -11,24 +11,6 @@ interface CertificatesClientProps {
 export const CertificatesClient: React.FC<CertificatesClientProps> = ({
   certificates,
 }) => {
-  const handleDownload = async (certId: number, title: string) => {
-    try {
-      const res = await fetch(`/api/certificates/${certId}/download`);
-      if (!res.ok) throw new Error('Network response was not ok');
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${title}-certificate.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Download failed:', err);
-    }
-  };
-
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {certificates.map((cert) => (
@@ -55,14 +37,6 @@ export const CertificatesClient: React.FC<CertificatesClientProps> = ({
               {cert.course.title}
             </h3>
           </div>
-
-          {/* Download Button */}
-          {/* <div className="px-6 pb-6">
-            <button
-              onClick={() => handleDownload(cert.id, cert.course.title)}
-              className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-            ></button>
-          </div> */}
         </div>
       ))}
     </div>

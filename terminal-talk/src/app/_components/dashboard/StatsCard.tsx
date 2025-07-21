@@ -1,5 +1,6 @@
 import { Award, TrendingUp, Star } from 'lucide-react';
 
+// fix this
 export default function StatsCard({
   completedCourses,
   inProgress,

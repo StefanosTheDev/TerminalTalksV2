@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Clock, Play } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';

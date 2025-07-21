@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, Brain } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import {
   SignInButton,
   SignUpButton,
