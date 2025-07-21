@@ -86,9 +86,8 @@ export const fetchCourse = async (clerkId: string, slug: string) => {
     category: course.category,
     // strip out the nested LectureProgress objects before sending to the client
 
-    lectures: course.lectures.map(
-      ({ LectureProgress: _LectureProgress, ...lec }) => lec
-    ),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    lectures: course.lectures.map(({ LectureProgress, ...lec }) => lec),
     userCourses: course.userCourses,
     initialLectureProgress,
     clerkId,

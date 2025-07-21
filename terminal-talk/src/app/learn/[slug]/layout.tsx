@@ -1,3 +1,4 @@
+// src/app/learn/[slug]/layout.tsx
 import { redirect } from 'next/navigation';
 import { fetchCourse } from '@/app/_lib/services/utilService';
 import { currentUser } from '@clerk/nextjs/server';
@@ -8,17 +9,20 @@ export default async function CourseLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  // resolve the dynamic slug
+  const { slug } = await params;
+
   // 1) Ensure user is signed in
   const user = await currentUser();
   if (!user) redirect('/auth/login');
 
   // 2) Fetch the course + per-lecture progress
-  const courseData = await fetchCourse(user.id, params.slug);
+  const courseData = await fetchCourse(user.id, slug);
   if (!courseData) redirect('/not-found');
 
-  // 3) Wrap children in the client provider, passing the combined course object (including initialLectureProgress)
+  // 3) Render
   return (
     <CourseProviderClient
       course={{
