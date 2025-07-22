@@ -27,3 +27,8 @@ body {
 html {
   scroll-behavior: smooth;
 }
+#elevenlabs-audionative-widget iframe {
+  background-color: transparent !important;
+  /* if needed: */
+  allowtransparency: true;
+}

@@ -52,7 +52,7 @@ export default function FreeLibrary({
               <div className="mb-4 flex items-center space-x-4 text-xs text-gray-400">
                 <div className="flex items-center space-x-1">
                   <Clock className="h-3 w-3" />
-                  <span>{c.timeLabel}</span>
+                  <span>{c.totalSeconds}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Play className="h-3 w-3" />

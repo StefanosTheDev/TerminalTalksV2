@@ -2,6 +2,9 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+// Default project ID for local development (required by Lecture.model)
+const defaultProjectId = 'YOUR_LOCAL_DEV_PROJECT_ID';
+
 async function main() {
   const courses = [
     {
@@ -15,8 +18,7 @@ async function main() {
           topic: 'Getting Started',
           description: 'Why Next.js is powerful',
           transcript: 'Next.js is a React framework...',
-          audioUrl: 'https://audio.url/nextjs-intro.mp3',
-          totalTime: '5:30',
+          projectId: defaultProjectId,
           totalSeconds: 330,
         },
         {
@@ -24,8 +26,7 @@ async function main() {
           topic: 'Routing',
           description: 'File-based routing system',
           transcript: 'Routing in Next.js is based on files...',
-          audioUrl: 'https://audio.url/routing.mp3',
-          totalTime: '7:15',
+          projectId: defaultProjectId,
           totalSeconds: 435,
         },
       ],
@@ -41,8 +42,7 @@ async function main() {
           topic: 'Syntax',
           description: 'JSX syntax overview',
           transcript: 'JSX allows mixing HTML with JS...',
-          audioUrl: 'https://audio.url/jsx.mp3',
-          totalTime: '6:00',
+          projectId: defaultProjectId,
           totalSeconds: 360,
         },
         {
@@ -50,8 +50,7 @@ async function main() {
           topic: 'Core Concepts',
           description: 'Managing data in components',
           transcript: 'Props are read-only...',
-          audioUrl: 'https://audio.url/state-props.mp3',
-          totalTime: '8:00',
+          projectId: defaultProjectId,
           totalSeconds: 480,
         },
       ],
@@ -67,8 +66,7 @@ async function main() {
           topic: 'Querying',
           description: 'Basic SQL SELECT statements',
           transcript: 'SELECT * FROM table...',
-          audioUrl: 'https://audio.url/select.mp3',
-          totalTime: '4:30',
+          projectId: defaultProjectId,
           totalSeconds: 270,
         },
         {
@@ -76,8 +74,7 @@ async function main() {
           topic: 'Schema Design',
           description: 'One-to-many and many-to-many',
           transcript: 'Using foreign keys...',
-          audioUrl: 'https://audio.url/relationships.mp3',
-          totalTime: '6:30',
+          projectId: defaultProjectId,
           totalSeconds: 390,
         },
       ],
@@ -99,8 +96,13 @@ async function main() {
     for (const lec of courseData.lectures) {
       await prisma.lecture.create({
         data: {
-          ...lec,
+          title: lec.title,
+          topic: lec.topic,
+          description: lec.description,
+          transcript: lec.transcript,
+          totalSeconds: lec.totalSeconds,
           courseId: course.id,
+          projectId: lec.projectId,
         },
       });
     }

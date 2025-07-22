@@ -18,7 +18,7 @@ export interface Lecture {
   id: number;
   title: string;
   totalSeconds?: number | null;
-  audioUrl: string;
+  projectId: string;
   description: string;
 }
 export interface CourseContextType {
