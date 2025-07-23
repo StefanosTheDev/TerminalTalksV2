@@ -35,7 +35,7 @@ export default function ElevenLabsAudioNative() {
       existingScript.remove();
     }
 
-    // Add the script
+    // Add the script sf
     const script = document.createElement('script');
     script.id = scriptId;
     script.src = 'https://elevenlabs.io/player/audioNativeHelper.js';
