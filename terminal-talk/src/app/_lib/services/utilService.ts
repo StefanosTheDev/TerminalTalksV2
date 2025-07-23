@@ -94,8 +94,11 @@ export const fetchCourse = async (clerkId: string, slug: string) => {
   };
 };
 
+// src/app/_lib/services/utilService.ts
+
 export const fetchStatsCardInfo = async (clerkId: string) => {
   console.log('⛔️ [prisma] DATABASE_URL=', process.env.DATABASE_URL);
+
   const data = await prisma.user.findUnique({
     where: { clerkId },
     include: {
@@ -104,7 +107,13 @@ export const fetchStatsCardInfo = async (clerkId: string) => {
     },
   });
 
-  if (!data) throw new Error('User not found');
+  if (!data) {
+    return {
+      certificates: 0,
+      inProgressCount: 0,
+      completedCount: 0,
+    };
+  }
 
   const certificates = data.certificates.length;
 
@@ -123,6 +132,7 @@ export const fetchStatsCardInfo = async (clerkId: string) => {
     completedCount,
   };
 };
+
 export const fetchAccountCertificates = async (clerkId: string) => {
   return prisma.certificate.findMany({
     where: { user: { clerkId } },

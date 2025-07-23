@@ -1,119 +1,206 @@
 // prisma/seed.ts
 const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
+const path = require('path');
+
 const prisma = new PrismaClient();
 
-// Default project ID for local development (required by Lecture.model)
-const defaultProjectId = 'YOUR_LOCAL_DEV_PROJECT_ID';
+// Define proper types for CSV data
+interface CourseRow {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: string;
+}
+
+interface LectureRow {
+  id: string;
+  title: string;
+  topic: string;
+  description: string;
+  transcript: string;
+  projectId: string;
+  createdAt: string;
+  totalSeconds: string;
+  courseId: string;
+}
+
+// Simple CSV parser function with proper typing
+function parseCSV<T = Record<string, string>>(csvContent: string): T[] {
+  const lines = csvContent.trim().split('\n');
+  const headers = lines[0].split(',').map((h) => h.trim());
+
+  return lines
+    .slice(1)
+    .map((line) => {
+      // Handle CSV with quoted fields that contain commas
+      const values: string[] = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim()); // Don't forget the last value
+
+      const row: Record<string, string> = {};
+      headers.forEach((header, index) => {
+        row[header] = values[index] || '';
+      });
+      return row as T;
+    })
+    .filter((row) =>
+      Object.values(row as Record<string, string>).some((val) => val.length > 0)
+    ); // Skip empty rows
+}
 
 async function main() {
-  const courses = [
-    {
-      title: 'Next.js Bootcamp',
-      slug: 'nextjs-bootcamp',
-      description: 'Master Next.js with this fullstack course.',
-      category: 'Web Dev',
-      lectures: [
-        {
-          title: 'Intro to Next.js',
-          topic: 'Getting Started',
-          description: 'Why Next.js is powerful',
-          transcript: 'Next.js is a React framework...',
-          projectId: defaultProjectId,
-          totalSeconds: 330,
-        },
-        {
-          title: 'Pages & Routing',
-          topic: 'Routing',
-          description: 'File-based routing system',
-          transcript: 'Routing in Next.js is based on files...',
-          projectId: defaultProjectId,
-          totalSeconds: 435,
-        },
-      ],
-    },
-    {
-      title: 'React Fundamentals',
-      slug: 'react-fundamentals',
-      description: 'Learn React from scratch.',
-      category: 'Frontend',
-      lectures: [
-        {
-          title: 'JSX Explained',
-          topic: 'Syntax',
-          description: 'JSX syntax overview',
-          transcript: 'JSX allows mixing HTML with JS...',
-          projectId: defaultProjectId,
-          totalSeconds: 360,
-        },
-        {
-          title: 'State & Props',
-          topic: 'Core Concepts',
-          description: 'Managing data in components',
-          transcript: 'Props are read-only...',
-          projectId: defaultProjectId,
-          totalSeconds: 480,
-        },
-      ],
-    },
-    {
-      title: 'PostgreSQL Basics',
-      slug: 'postgresql-basics',
-      description: 'Intro to SQL with PostgreSQL.',
-      category: 'Database',
-      lectures: [
-        {
-          title: 'SELECT Queries',
-          topic: 'Querying',
-          description: 'Basic SQL SELECT statements',
-          transcript: 'SELECT * FROM table...',
-          projectId: defaultProjectId,
-          totalSeconds: 270,
-        },
-        {
-          title: 'Relationships',
-          topic: 'Schema Design',
-          description: 'One-to-many and many-to-many',
-          transcript: 'Using foreign keys...',
-          projectId: defaultProjectId,
-          totalSeconds: 390,
-        },
-      ],
-    },
-  ];
+  // Load and parse CSV files
+  const coursesCsvPath = path.resolve(__dirname, 'courses.csv');
+  const lecturesCsvPath = path.resolve(__dirname, 'lectures.csv');
 
-  for (const courseData of courses) {
+  const coursesCsv = fs.readFileSync(coursesCsvPath, 'utf8');
+  const lecturesCsv = fs.readFileSync(lecturesCsvPath, 'utf8');
+
+  const courses = parseCSV<CourseRow>(coursesCsv);
+  const lectures = parseCSV<LectureRow>(lecturesCsv);
+
+  console.log(
+    `Found ${courses.length} courses and ${lectures.length} lectures`
+  );
+
+  // Map to store original courseId to new courseId mapping
+  const courseIdMap: Record<string, number> = {};
+
+  // Upsert courses
+  for (const row of courses) {
+    const { id, title, slug, description, category } = row;
+
+    // Validate required fields
+    if (!title || !slug || !description || !category) {
+      console.warn(`Skipping course with missing data: ${JSON.stringify(row)}`);
+      continue;
+    }
+
+    console.log(`Processing course: ${title}`);
+
     const course = await prisma.course.upsert({
-      where: { slug: courseData.slug },
-      update: {},
-      create: {
-        title: courseData.title,
-        slug: courseData.slug,
-        description: courseData.description,
-        category: courseData.category,
-      },
+      where: { slug },
+      update: { title, description, category },
+      create: { title, slug, description, category },
     });
 
-    for (const lec of courseData.lectures) {
-      await prisma.lecture.create({
-        data: {
-          title: lec.title,
-          topic: lec.topic,
-          description: lec.description,
-          transcript: lec.transcript,
-          totalSeconds: lec.totalSeconds,
-          courseId: course.id,
-          projectId: lec.projectId,
+    // Map original CSV courseId to database courseId
+    courseIdMap[id] = course.id;
+    console.log(`✅ Course "${title}" - ID mapping: ${id} -> ${course.id}`);
+  }
+
+  // Insert lectures
+  for (const row of lectures) {
+    const {
+      id,
+      title,
+      topic,
+      description,
+      transcript,
+      projectId,
+      totalSeconds,
+      courseId,
+    } = row;
+
+    // Validate required fields
+    if (!title || !courseId || !totalSeconds || !projectId) {
+      console.warn(
+        `Skipping lecture with missing data: ${JSON.stringify(row)}`
+      );
+      continue;
+    }
+
+    // Get the mapped courseId
+    const mappedCourseId = courseIdMap[courseId];
+    if (!mappedCourseId) {
+      console.warn(
+        `Skipping lecture ${title}: courseId '${courseId}' not found in mapping.`
+      );
+      continue;
+    }
+
+    // Parse totalSeconds safely
+    const parsedTotalSeconds = parseInt(totalSeconds, 10);
+    if (isNaN(parsedTotalSeconds)) {
+      console.warn(
+        `Skipping lecture ${title}: invalid totalSeconds '${totalSeconds}'`
+      );
+      continue;
+    }
+
+    console.log(`Processing lecture: ${title} (Project ID: ${projectId})`);
+
+    try {
+      // Try to find existing lecture by title and courseId
+      const existingLecture = await prisma.lecture.findFirst({
+        where: {
+          title,
+          courseId: mappedCourseId,
         },
       });
+
+      if (existingLecture) {
+        // Update existing lecture
+        await prisma.lecture.update({
+          where: { id: existingLecture.id },
+          data: {
+            topic,
+            description,
+            transcript: transcript || '',
+            totalSeconds: parsedTotalSeconds,
+            projectId,
+          },
+        });
+        console.log(`✅ Updated lecture: ${title}`);
+      } else {
+        // Create new lecture
+        await prisma.lecture.create({
+          data: {
+            title,
+            topic,
+            description,
+            transcript: transcript || '',
+            totalSeconds: parsedTotalSeconds,
+            courseId: mappedCourseId,
+            projectId,
+          },
+        });
+        console.log(`✅ Created lecture: ${title}`);
+      }
+    } catch (error) {
+      console.error(`Error processing lecture ${title}:`, error);
     }
   }
 
-  console.log('✅ Seed complete (Courses + Lectures only)');
+  console.log('✅ Seed complete (Courses & Lectures from CSV)');
+
+  // Print summary
+  const courseCount = await prisma.course.count();
+  const lectureCount = await prisma.lecture.count();
+  console.log(
+    `📊 Database now contains: ${courseCount} courses, ${lectureCount} lectures`
+  );
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Error during seed:', e);
+  .catch((err) => {
+    console.error('❌ Seed failed:', err);
     process.exit(1);
   })
   .finally(async () => {
