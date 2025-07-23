@@ -15,11 +15,11 @@ export default function SideNav() {
         {/* Header */}
         <div className="p-6 border-b border-gray-800/50">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center flex-shrink-0">
               <Brain className="h-6 w-6 text-white" />
             </div>
-            <div>
-              <h3 className="font-semibold text-white truncate">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-white leading-tight">
                 {course.title}
               </h3>
               <p className="text-sm text-gray-400">
@@ -74,17 +74,17 @@ export default function SideNav() {
                 <button
                   key={lecture.id}
                   onClick={() => setIndex(i)}
-                  className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-between ${
+                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition flex items-start justify-between min-h-0 ${
                     i === index
                       ? 'bg-blue-500/20 text-blue-300'
                       : 'text-gray-300 hover:bg-gray-800'
                   }`}
                 >
-                  <span>
+                  <span className="break-words leading-tight pr-2 flex-1 min-w-0">
                     {i + 1}. {lecture.title}
                   </span>
                   {isComplete && (
-                    <CheckCircle className="h-5 w-5 text-green-400" />
+                    <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
                   )}
                 </button>
               );
