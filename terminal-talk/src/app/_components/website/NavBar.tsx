@@ -4,6 +4,7 @@
 import { JSX, useState } from 'react';
 import { SocialIcons } from './SocialIcons';
 
+import Link from 'next/link';
 export function Navbar() {
   const [resourcesOpen, setResourcesOpen] = useState(false);
 
@@ -43,12 +44,19 @@ export function Navbar() {
       {/* Right side actions */}
       <div className="flex items-center gap-3">
         <SocialIcons />
-        <button className="px-4 py-2 bg-[#2a2a2a]/80 backdrop-blur-xl border border-gray-700/50 text-gray-200 text-[13px] font-medium rounded-lg hover:bg-[#333333] hover:text-white hover:border-gray-600 transition-all">
+        <Link
+          href="/auth/login"
+          className="px-4 py-2 bg-[#2a2a2a]/80 backdrop-blur-xl border border-gray-700/50 text-gray-200 text-[13px] font-medium rounded-lg hover:bg-[#333333] hover:text-white hover:border-gray-600 transition-all"
+        >
           Log in
-        </button>
-        <button className="px-4 py-2 bg-white text-gray-900 text-[13px] font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+        </Link>
+
+        <Link
+          href="/auth/signup"
+          className="px-4 py-2 bg-white text-gray-900 text-[13px] font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+        >
           Get started
-        </button>
+        </Link>
       </div>
     </nav>
   );

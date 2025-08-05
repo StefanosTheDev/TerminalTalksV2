@@ -63,7 +63,7 @@ export function ChatInput() {
   }, []);
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="w-full max-w-2xl">
       <div className="relative bg-[#1a1a1a]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl p-2">
         <textarea
           placeholder={currentPlaceholder}
