@@ -17,6 +17,8 @@ model User {
   certificates    Certificate[]
 
   LectureProgress LectureProgress[]
+
+  Conversation Conversation[]
 }
 
 model Course {
@@ -82,3 +84,26 @@ model Certificate {
   @@unique([userId, courseId])
 }
 
+model Conversation {
+  id          String    @id @default(cuid())
+  title       String    
+  userId      Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id])
+  messages    Message[]
+  
+  @@index([userId])
+}
+model Message {
+  id             String       @id @default(cuid())
+  content        String       @db.Text
+  role           String       // 'user' or 'assistant'
+  conversationId String
+  createdAt      DateTime     @default(now())
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+}
