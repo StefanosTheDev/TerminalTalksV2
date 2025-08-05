@@ -13,9 +13,5 @@ export default async function ChatLayout({
     redirect('/auth/login');
   }
 
-  return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
-      {children}
-    </div>
-  );
+  return <> {children} </>;
 }

@@ -85,3 +85,7 @@ html {
   --background: #0a0a0a;
   --foreground: #ffffff;
 }
+.dark body {
+  background: #0a0a0a;
+  color: #ffffff;
+}
