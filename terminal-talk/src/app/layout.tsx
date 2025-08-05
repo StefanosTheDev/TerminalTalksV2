@@ -1,7 +1,8 @@
 // app/layout.tsx
 import { ReactNode } from 'react';
-import { ThemeProvider } from '@/app/_components/providers/ThemeProvider'; // next-themes wrapper
 import { ClerkProvider } from '@clerk/nextjs';
+import './globals.css'; // YOU NEED THIS!
+import { ThemeProvider } from './_components/providers/ThemeProvider';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
