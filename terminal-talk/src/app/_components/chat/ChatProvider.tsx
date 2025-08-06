@@ -6,14 +6,17 @@ import {
   useState,
   useCallback,
   ReactNode,
+  Dispatch,
+  SetStateAction,
 } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
   createdAt: Date;
+  audioUrl?: string;
 }
 
 interface Conversation {
@@ -34,6 +37,9 @@ interface ChatContextType {
   sendMessage: (content: string) => Promise<void>;
   refreshConversations: () => Promise<void>;
   clearCurrentConversation: () => void;
+
+  // Add setMessages to the interface
+  setMessages: Dispatch<SetStateAction<Message[]>>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -190,6 +196,7 @@ export function ChatProvider({
         sendMessage,
         refreshConversations,
         clearCurrentConversation,
+        setMessages, // Add setMessages to the provider value
       }}
     >
       {children}

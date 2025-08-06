@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useChat } from './ChatProvider';
-
+import Link from 'next/link';
 interface ChatSidebarProps {
   userName: string;
 }
@@ -58,12 +58,12 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto">
-        <button
-          onClick={() => router.push('/chat/classics')}
-          className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100"
         >
           <svg
-            className="w-5 h-5 flex-shrink-0"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -72,20 +72,18 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M12 2L2 7L12 12L22 7L12 2Z M2 17L12 22L22 17 M2 12L12 17L22 12"
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
             />
           </svg>
-          {!isCollapsed && (
-            <span className="text-sm text-gray-700">TT Classics</span>
-          )}
-        </button>
+          Terminal Classics
+        </Link>
 
-        <button
-          onClick={() => router.push('/chat/library')}
-          className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+        <Link
+          href="/library"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100"
         >
           <svg
-            className="w-5 h-5 flex-shrink-0"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -94,14 +92,11 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M4 19.5A2.5 2.5 0 016.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
             />
           </svg>
-          {!isCollapsed && (
-            <span className="text-sm text-gray-700">My Library</span>
-          )}
-        </button>
-
+          My Library
+        </Link>
         {/* Recents Dropdown */}
         {!isCollapsed && (
           <div className="mt-4">

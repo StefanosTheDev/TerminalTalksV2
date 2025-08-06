@@ -19,6 +19,8 @@ model User {
   LectureProgress LectureProgress[]
 
   Conversation Conversation[]
+
+  Podcast Podcast[]
 }
 
 model Course {
@@ -95,6 +97,7 @@ model Conversation {
   messages    Message[]
   
   @@index([userId])
+  Podcast Podcast[]
 }
 model Message {
   id             String       @id @default(cuid())
@@ -105,5 +108,28 @@ model Message {
   
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   
+  @@index([conversationId])
+}
+
+model Podcast {
+  id             String       @id @default(cuid())
+  title          String
+  description    String?      @db.Text
+  script         String       @db.Text
+  audioUrl       String       @db.Text
+  duration       Int          // in seconds
+  format         String       // interview, solo, narrative, panel
+  tone           String       // professional, casual, comedic, educational
+  audience       String       // target audience
+  
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
+  @@index([userId])
   @@index([conversationId])
 }

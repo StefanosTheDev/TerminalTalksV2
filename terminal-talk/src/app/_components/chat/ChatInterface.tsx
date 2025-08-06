@@ -15,6 +15,7 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
     isLoading,
     currentConversation,
     clearCurrentConversation,
+    setMessages,
   } = useChat();
   const [showWelcome, setShowWelcome] = useState(!conversationId);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -54,18 +55,6 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
     await sendMessage(message);
   };
 
-  const handleGeneratePodcast = async () => {
-    setIsGenerating(true);
-
-    const podcastDetails = extractPodcastDetails(messages);
-    console.log('🎙️ Generating Podcast with details:', podcastDetails);
-
-    setTimeout(() => {
-      setIsGenerating(false);
-      alert('Podcast generation would happen here!');
-    }, 2000);
-  };
-
   const extractPodcastDetails = (messages: any[]) => {
     const summaryMessage = messages
       .filter(
@@ -74,20 +63,132 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
       )
       .pop();
 
-    if (!summaryMessage) return null;
+    if (!summaryMessage) {
+      console.log('No message with [READY_TO_GENERATE] found');
+      return null;
+    }
 
     const content = summaryMessage.content;
+    console.log('Parsing content:', content);
+
+    // More flexible regex patterns
     const details = {
-      topic: content.match(/Topic:\*\*\s*(.+?)(?:\n|$)/)?.[1] || '',
-      format: content.match(/Format:\*\*\s*(.+?)(?:\n|$)/)?.[1] || '',
-      tone: content.match(/Tone.*?:\*\*\s*(.+?)(?:\n|$)/)?.[1] || '',
+      topic:
+        content.match(/\*\*Topic:\*\*\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        content.match(/Topic:\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        'Not specified',
+
+      format:
+        content.match(/\*\*Format:\*\*\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        content.match(/Format:\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        'Not specified',
+
+      tone:
+        content.match(/\*\*Tone:\*\*\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        content.match(/Tone:\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        'Not specified',
+
       audience:
-        content.match(/Target Audience:\*\*\s*(.+?)(?:\n|$)/)?.[1] || '',
-      length: content.match(/Episode Length:\*\*\s*(.+?)(?:\n|$)/)?.[1] || '',
+        content
+          .match(/\*\*Target Audience:\*\*\s*(.+?)(?:\n|$)/)?.[1]
+          ?.trim() ||
+        content.match(/Audience:\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        'Not specified',
+
+      length:
+        content.match(/\*\*Episode Length:\*\*\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        content.match(/Length:\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
+        'Not specified',
+
       rawSummary: content.replace('[READY_TO_GENERATE]', '').trim(),
     };
 
+    console.log('Extracted podcast details:', details);
     return details;
+  };
+
+  const handleGeneratePodcast = async () => {
+    if (!currentConversation) {
+      console.error('No current conversation');
+      alert('No active conversation found');
+      return;
+    }
+
+    setIsGenerating(true);
+
+    const podcastDetails = extractPodcastDetails(messages);
+    console.log('🎙️ Generating Podcast with details:', podcastDetails);
+
+    if (!podcastDetails) {
+      alert('Could not extract podcast details. Please try again.');
+      setIsGenerating(false);
+      return;
+    }
+
+    try {
+      // Call the podcast generation API
+      const response = await fetch('/api/podcast/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConversation.id,
+          podcastDetails,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || 'Failed to generate podcast');
+      }
+
+      const result = await response.json();
+      console.log('Podcast generated:', result);
+
+      // Add a system message with the generated podcast
+      const podcastMessage = {
+        id: `podcast-${result.podcastId}`,
+        role: 'system' as const,
+        content: `🎙️ **Your podcast is ready!**\n\n**Title:** ${
+          result.title
+        }\n\nYour podcast has been generated successfully. Click play below to listen to your episode!\n\n**Duration:** ${Math.ceil(
+          result.duration / 60
+        )} minutes`,
+        createdAt: new Date(),
+        audioUrl: result.audioUrl,
+      };
+
+      setMessages((prev) => [...prev, podcastMessage]);
+
+      // Scroll to the new message
+      setTimeout(() => {
+        const messagesContainer = document.querySelector('.overflow-y-auto');
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      }, 100);
+
+      // Optional: Save to localStorage or state for history
+      const podcastHistory = JSON.parse(
+        localStorage.getItem('podcastHistory') || '[]'
+      );
+      podcastHistory.push({
+        id: result.podcastId,
+        title: result.title,
+        audioUrl: result.audioUrl,
+        createdAt: new Date().toISOString(),
+        conversationId: currentConversation.id,
+      });
+      localStorage.setItem('podcastHistory', JSON.stringify(podcastHistory));
+    } catch (error) {
+      console.error('Error generating podcast:', error);
+      alert(
+        `Failed to generate podcast: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (!conversationId && showWelcome) {
@@ -126,16 +227,6 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                 }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-medium ${
-                    message.role === 'user'
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-gray-100 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  {message.role === 'user' ? 'U' : 'AI'}
-                </div>
-
-                <div
                   className={`max-w-[70%] ${
                     message.role === 'user' ? 'text-right' : ''
                   }`}
@@ -144,6 +235,8 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                     className={`inline-block px-4 py-3 rounded-xl ${
                       message.role === 'user'
                         ? 'bg-gray-900 text-white'
+                        : message.role === 'system'
+                        ? 'bg-blue-50 text-blue-900 border border-blue-200'
                         : 'bg-gray-100 text-gray-900'
                     }`}
                   >
@@ -157,6 +250,16 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                       />
                     ) : (
                       messageContent
+                    )}
+
+                    {/* Show audio player if message has audioUrl */}
+                    {message.audioUrl && (
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <audio controls className="w-full">
+                          <source src={message.audioUrl} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
                     )}
                   </div>
                 </div>
