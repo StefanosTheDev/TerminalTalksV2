@@ -16,6 +16,7 @@ export function ChatInput() {
     'debugging strategies for complex systems',
     'cloud architecture best practices',
   ];
+  console.log(isTyping);
 
   useEffect(() => {
     let charIndex = 0;

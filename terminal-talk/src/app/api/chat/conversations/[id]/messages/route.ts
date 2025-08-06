@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/app/_lib/prisma';
 import { openai, PODCAST_SYSTEM_PROMPT } from '@/app/_lib/services/openai';
+import { Prisma } from '@prisma/client';
 
 export async function POST(
   req: Request,
@@ -82,10 +83,10 @@ export async function POST(
         conversationId: id,
       },
     });
-
     // Update conversation timestamp and title if needed
-    const updates: any = { updatedAt: new Date() };
-
+    const updates: Prisma.ConversationUpdateInput = {
+      updatedAt: new Date(),
+    };
     // Update title based on first user message if it's still the default
     if (conversation.messages.length === 1) {
       // Only welcome message before
