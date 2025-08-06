@@ -1,3 +1,4 @@
+// app/_components/chat/ChatInterface.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -45,7 +46,7 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
     const message = input;
     setInput('');
     setShowWelcome(false);
-    setTypingMessageId(null); // Reset typing for new messages
+    setTypingMessageId(null);
     await sendMessage(message);
   };
 
@@ -71,7 +72,6 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
     const content = summaryMessage.content;
     console.log('Parsing content:', content);
 
-    // More flexible regex patterns
     const details = {
       topic:
         content.match(/\*\*Topic:\*\*\s*(.+?)(?:\n|$)/)?.[1]?.trim() ||
@@ -126,7 +126,6 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
     }
 
     try {
-      // Call the podcast generation API
       const response = await fetch('/api/podcast/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -144,7 +143,6 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
       const result = await response.json();
       console.log('Podcast generated:', result);
 
-      // Add a system message with the generated podcast
       const podcastMessage = {
         id: `podcast-${result.podcastId}`,
         role: 'system' as const,
@@ -159,26 +157,12 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
 
       setMessages((prev) => [...prev, podcastMessage]);
 
-      // Scroll to the new message
       setTimeout(() => {
         const messagesContainer = document.querySelector('.overflow-y-auto');
         if (messagesContainer) {
           messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
       }, 100);
-
-      // Optional: Save to localStorage or state for history
-      const podcastHistory = JSON.parse(
-        localStorage.getItem('podcastHistory') || '[]'
-      );
-      podcastHistory.push({
-        id: result.podcastId,
-        title: result.title,
-        audioUrl: result.audioUrl,
-        createdAt: new Date().toISOString(),
-        conversationId: currentConversation.id,
-      });
-      localStorage.setItem('podcastHistory', JSON.stringify(podcastHistory));
     } catch (error) {
       console.error('Error generating podcast:', error);
       alert(
@@ -193,9 +177,9 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
 
   if (!conversationId && showWelcome) {
     return (
-      <div className="flex flex-col h-screen bg-white">
-        <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-200">
-          <h1 className="text-base font-medium">TT 1.0</h1>
+      <div className="flex flex-col h-screen bg-[#0a0a0a]">
+        <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-800">
+          <h1 className="text-base font-medium text-white">TT 1.0</h1>
         </div>
         <div className="flex-1">
           <ChatWelcome onSendMessage={handleWelcomeMessage} />
@@ -205,9 +189,9 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white">
-      <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-200">
-        <h1 className="text-base font-medium">TT 1.0</h1>
+    <div className="flex flex-col h-screen bg-[#0a0a0a]">
+      <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-800">
+        <h1 className="text-base font-medium text-white">TT 1.0</h1>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6">
@@ -227,6 +211,22 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                 }`}
               >
                 <div
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-medium ${
+                    message.role === 'user'
+                      ? 'bg-white text-[#0a0a0a]'
+                      : message.role === 'system'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-[#2a2a2a] text-gray-300 border border-gray-700'
+                  }`}
+                >
+                  {message.role === 'user'
+                    ? 'U'
+                    : message.role === 'system'
+                    ? 'S'
+                    : 'AI'}
+                </div>
+
+                <div
                   className={`max-w-[70%] ${
                     message.role === 'user' ? 'text-right' : ''
                   }`}
@@ -234,19 +234,17 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                   <div
                     className={`inline-block px-4 py-3 rounded-xl ${
                       message.role === 'user'
-                        ? 'bg-gray-900 text-white'
+                        ? 'bg-white text-[#0a0a0a]'
                         : message.role === 'system'
-                        ? 'bg-blue-50 text-blue-900 border border-blue-200'
-                        : 'bg-gray-100 text-gray-900'
+                        ? 'bg-blue-600/10 text-blue-400 border border-blue-600/20'
+                        : 'bg-[#1a1a1a] text-gray-300 border border-gray-800'
                     }`}
                   >
                     {shouldType ? (
                       <TypingMessage
                         content={messageContent}
                         speed={15}
-                        onComplete={() => {
-                          // Optional: do something when typing completes
-                        }}
+                        onComplete={() => {}}
                       />
                     ) : (
                       messageContent
@@ -254,7 +252,7 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
 
                     {/* Show audio player if message has audioUrl */}
                     {message.audioUrl && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="mt-3 pt-3 border-t border-gray-700">
                         <audio controls className="w-full">
                           <source src={message.audioUrl} type="audio/mpeg" />
                           Your browser does not support the audio element.
@@ -282,18 +280,18 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
 
         {isLoading && (
           <div className="flex gap-4 mb-6">
-            <div className="w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-700">AI</span>
+            <div className="w-9 h-9 rounded-lg bg-[#2a2a2a] border border-gray-700 flex items-center justify-center">
+              <span className="text-sm font-medium text-gray-400">AI</span>
             </div>
-            <div className="bg-gray-100 rounded-xl px-4 py-3">
+            <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" />
                 <div
-                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"
                   style={{ animationDelay: '0.1s' }}
                 />
                 <div
-                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"
                   style={{ animationDelay: '0.2s' }}
                 />
               </div>
@@ -302,7 +300,7 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
         )}
       </div>
 
-      <div className="border-t border-gray-200 p-5">
+      <div className="border-t border-gray-800 p-5 bg-[#0a0a0a]">
         <div className="max-w-3xl mx-auto flex gap-3">
           <input
             type="text"
@@ -311,12 +309,12 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
             onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Type your message..."
             disabled={isLoading || isGenerating}
-            className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
+            className="flex-1 px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 disabled:opacity-50"
           />
           <button
             onClick={handleSend}
             disabled={isLoading || !input.trim() || isGenerating}
-            className="px-5 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-3 bg-white text-[#0a0a0a] rounded-lg hover:bg-gray-100 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>

@@ -1,3 +1,4 @@
+// app/chat/layout.tsx
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getUserConversations } from '@/app/_lib/services/chatService';
@@ -18,7 +19,7 @@ export default async function ChatLayout({
 
   return (
     <ChatProvider initialConversations={conversations}>
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-[#0a0a0a]">
         <ChatSidebar userName={user.username} />
         <div className="flex-1">{children}</div>
       </div>
