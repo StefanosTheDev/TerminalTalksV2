@@ -11,16 +11,20 @@ import FreeLibrary from '../_components/dashboard/FreeLibrary';
 import { ChatInterface } from '../_components/chat/ChatInterface';
 import { LibraryView } from '../_components/chat/LibraryView';
 
-// ✅ Fix: Use Next.js 15+ App Router page props with Promise
-type Props = {
+// For Next.js 15.4.2 - searchParams must be a Promise
+type PageProps = {
   params: Promise<{ [key: string]: string | undefined }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default async function ChatPage({ searchParams }: Props) {
+export default async function ChatPage({ searchParams }: PageProps) {
   // Await the searchParams promise
-  const params = await searchParams;
-  const view = typeof params?.view === 'string' ? params.view : 'chat';
+  const resolvedSearchParams = await searchParams;
+  const view =
+    typeof resolvedSearchParams?.view === 'string'
+      ? resolvedSearchParams.view
+      : 'chat';
+
   const user = await currentUser();
 
   if (!user) {
