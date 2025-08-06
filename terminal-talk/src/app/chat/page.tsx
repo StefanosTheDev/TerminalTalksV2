@@ -1,4 +1,4 @@
-// app/chat/page.tsx - With blue gradient accents
+// app/chat/page.tsx
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
 import {
@@ -32,25 +32,19 @@ export default async function ChatPage({
       const courses = await fetchCoursesWithProgressStatus(user.id);
 
       return (
-        <div className="h-full overflow-y-auto relative">
-          {/* Subtle gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-purple-600/5 pointer-events-none" />
-
-          {/* Header with gradient accent */}
-          <div className="relative bg-[#0a0a0a] border-b border-gray-800 px-8 py-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-transparent" />
-            <div className="relative">
-              <h1 className="text-2xl font-bold text-white">
-                Terminal Talks Classics
-              </h1>
-              <p className="text-gray-400 mt-1">
-                Professional e-learning courses designed for engineers
-              </p>
-            </div>
+        <div className="h-full overflow-y-auto bg-gray-50">
+          {/* Header */}
+          <div className="bg-white border-b border-gray-200 px-8 py-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Terminal Talks Classics
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Professional e-learning courses designed for engineers
+            </p>
           </div>
 
           {/* Stats Cards */}
-          <div className="relative px-8 py-6 bg-[#0a0a0a]">
+          <div className="px-8 py-6">
             <StatsCard
               completedCourses={stats.certificates}
               inProgress={stats.inProgressCount}
@@ -59,8 +53,8 @@ export default async function ChatPage({
           </div>
 
           {/* Course Grid */}
-          <div className="relative px-8 pb-8 bg-[#0a0a0a]">
-            <h2 className="text-lg font-semibold text-white mb-4">
+          <div className="px-8 pb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Courses Available: {courses.length}
             </h2>
             <FreeLibrary courses={courses} />

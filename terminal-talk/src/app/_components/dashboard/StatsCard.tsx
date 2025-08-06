@@ -14,52 +14,44 @@ export default function StatsCard({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
       {/* Completed Courses */}
-      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-4 sm:p-6 border border-gray-700/50 backdrop-blur-sm">
-        <div className="flex items-center space-x-3 min-w-0">
-          <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Award className="h-5 w-5 text-white" />
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Award className="h-6 w-6 text-green-600" />
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-lg sm:text-2xl font-bold text-white leading-tight">
-              {completedCourses} Completed
+          <div className="flex-1">
+            <div className="text-2xl font-bold text-gray-900">
+              {completedCourses}
             </div>
-            <div className="text-gray-400 text-xs sm:text-sm whitespace-nowrap">
-              Completed
-            </div>
+            <div className="text-gray-600 text-sm">Completed</div>
           </div>
         </div>
       </div>
 
       {/* In Progress */}
-      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-4 sm:p-6 border border-gray-700/50 backdrop-blur-sm">
-        <div className="flex items-center space-x-3 min-w-0">
-          <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="h-5 w-5 text-white" />
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <TrendingUp className="h-6 w-6 text-blue-600" />
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-lg sm:text-2xl font-bold text-white leading-tight">
-              {inProgress} In Progress
-            </div>
-            <div className="text-gray-400 text-xs sm:text-sm whitespace-nowrap">
-              In Progress
-            </div>
+          <div className="flex-1">
+            <div className="text-2xl font-bold text-gray-900">{inProgress}</div>
+            <div className="text-gray-600 text-sm">In Progress</div>
           </div>
         </div>
       </div>
 
       {/* Certificates */}
-      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-4 sm:p-6 border border-gray-700/50 backdrop-blur-sm">
-        <div className="flex items-center space-x-3 min-w-0">
-          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Star className="h-5 w-5 text-white" />
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Star className="h-6 w-6 text-purple-600" />
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-lg sm:text-2xl font-bold text-white leading-tight">
-              {certificates} Certificates
+          <div className="flex-1">
+            <div className="text-2xl font-bold text-gray-900">
+              {certificates}
             </div>
-            <div className="text-gray-400 text-xs sm:text-sm whitespace-nowrap">
-              Certificates
-            </div>
+            <div className="text-gray-600 text-sm">Certificates</div>
           </div>
         </div>
       </div>

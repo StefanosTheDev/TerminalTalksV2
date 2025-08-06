@@ -19,9 +19,9 @@ export default async function ChatLayout({
 
   return (
     <ChatProvider initialConversations={conversations}>
-      <div className="flex h-screen bg-[#0a0a0a]">
+      <div className="flex h-screen bg-white">
         <ChatSidebar userName={user.username} />
-        <div className="flex-1">{children}</div>
+        <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     </ChatProvider>
   );

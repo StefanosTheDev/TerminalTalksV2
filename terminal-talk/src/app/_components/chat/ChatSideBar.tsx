@@ -46,72 +46,45 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
     <div
       className={`${
         isCollapsed ? 'w-[60px]' : 'w-[280px]'
-      } bg-[#1a1a1a] border-r border-gray-800 flex flex-col transition-all duration-200 h-full relative`}
+      } bg-white border-r border-gray-200 flex flex-col transition-all duration-200 h-full`}
     >
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-600/5 to-transparent pointer-events-none" />
-
       {/* Logo Section */}
-      <div className="relative flex items-center gap-3 p-4 border-b border-gray-800">
-        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-md flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-lg shadow-blue-500/25">
+      <div className="flex items-center gap-3 p-4 border-b border-gray-200">
+        <div className="w-8 h-8 bg-gray-900 text-white rounded-md flex items-center justify-center font-bold text-sm flex-shrink-0">
           TT
         </div>
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <span className="text-md font-semibold text-white">
-              Terminal Talks
-            </span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-5 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full" />
+              <span className="text-sm font-medium text-gray-900">Creator</span>
+            </div>
+            <span className="text-xs text-gray-500">Pro</span>
           </div>
         )}
       </div>
 
       {/* New Chat Button */}
-      <button
-        onClick={handleNewChat}
-        className={`m-4 ${
-          isCollapsed ? 'p-2' : 'px-4 py-2'
-        } bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-sm hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25`}
-      >
-        {isCollapsed ? '+' : 'New Chat'}
-      </button>
+      <div className="px-4 pt-4">
+        <button
+          onClick={handleNewChat}
+          className={`w-full ${
+            isCollapsed ? 'p-2' : 'px-4 py-2.5'
+          } bg-gray-100 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 hover:bg-gray-200 hover:border-gray-300 transition-all flex items-center justify-center gap-2`}
+        >
+          {isCollapsed ? '+' : 'New Chat'}
+        </button>
+      </div>
 
       {/* Navigation */}
-      <nav className="relative flex-1 overflow-y-auto px-4">
-        <div className="space-y-1 pb-4 border-b border-gray-800">
-          {/* Create Podcast */}
-          <button
-            onClick={() => handleViewChange('chat')}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
-              isActiveView('chat')
-                ? 'bg-gradient-to-r from-blue-600/20 to-blue-700/20 text-blue-400 border border-blue-500/30'
-                : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]/50'
-            }`}
-          >
-            <svg
-              className="w-5 h-5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            {!isCollapsed && (
-              <span className="text-sm font-medium">Create Podcast</span>
-            )}
-          </button>
-
-          {/* TT Classics */}
+      <nav className="flex-1 overflow-y-auto px-4 mt-4">
+        <div className="space-y-1 pb-3">
           <button
             onClick={() => handleViewChange('classics')}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
               isActiveView('classics')
-                ? 'bg-gradient-to-r from-blue-600/20 to-blue-700/20 text-blue-400 border border-blue-500/30'
-                : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]/50'
+                ? 'bg-gray-100 text-gray-900 font-medium'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
             <svg
@@ -124,21 +97,18 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                d="M12 2L2 7L12 12L22 7L12 2Z M2 17L12 22L22 17 M2 12L12 17L22 12"
               />
             </svg>
-            {!isCollapsed && (
-              <span className="text-sm font-medium">TT Classics</span>
-            )}
+            {!isCollapsed && <span className="text-sm">TT Classics</span>}
           </button>
 
-          {/* My Library */}
           <button
             onClick={() => handleViewChange('library')}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
               isActiveView('library')
-                ? 'bg-gradient-to-r from-blue-600/20 to-blue-700/20 text-blue-400 border border-blue-500/30'
-                : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]/50'
+                ? 'bg-gray-100 text-gray-900 font-medium'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
             <svg
@@ -151,24 +121,22 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
               />
             </svg>
-            {!isCollapsed && (
-              <span className="text-sm font-medium">My Library</span>
-            )}
+            {!isCollapsed && <span className="text-sm">My Library</span>}
           </button>
         </div>
 
-        {/* Recent Podcasts */}
+        {/* Recent Podcasts Dropdown */}
         {!isCollapsed && (
-          <div className="mt-4">
+          <div className="mt-2">
             <button
               onClick={() => setIsRecentsOpen(!isRecentsOpen)}
-              className="w-full flex items-center justify-between px-3 py-2 text-gray-500 hover:text-gray-300 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 text-gray-500 hover:text-gray-700 transition-colors"
             >
               <span className="text-xs font-semibold uppercase tracking-wider">
-                Recent Podcasts
+                Recents
               </span>
               <svg
                 className={`w-4 h-4 transition-transform ${
@@ -182,29 +150,23 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
             </button>
 
             {isRecentsOpen && (
-              <div className="mt-2 space-y-1">
-                {conversations.length > 0 ? (
-                  conversations.slice(0, 10).map((chat) => (
-                    <button
-                      key={chat.id}
-                      onClick={() => router.push(`/chat/${chat.id}`)}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all ${
-                        isActiveChat(chat.id)
-                          ? 'bg-gradient-to-r from-blue-600/20 to-blue-700/20 text-blue-400 border border-blue-500/30'
-                          : 'text-gray-400 hover:text-gray-300 hover:bg-[#2a2a2a]/50'
-                      }`}
-                    >
-                      <div className="truncate">{chat.title}</div>
-                      <div className="text-xs text-gray-600 mt-0.5">
-                        {new Date(chat.updatedAt).toLocaleDateString()}
-                      </div>
-                    </button>
-                  ))
-                ) : (
-                  <div className="px-3 py-2 text-sm text-gray-600 italic">
-                    No conversations yet
-                  </div>
-                )}
+              <div className="mt-1 space-y-0.5">
+                {conversations.slice(0, 10).map((chat) => (
+                  <button
+                    key={chat.id}
+                    onClick={() => router.push(`/chat/${chat.id}`)}
+                    className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all ${
+                      isActiveChat(chat.id)
+                        ? 'bg-gray-100 text-gray-900 font-medium'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="truncate">{chat.title}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      {new Date(chat.updatedAt).toLocaleDateString()}
+                    </div>
+                  </button>
+                ))}
               </div>
             )}
           </div>

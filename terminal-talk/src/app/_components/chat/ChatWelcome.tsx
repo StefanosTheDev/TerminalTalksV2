@@ -40,25 +40,21 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-[#0a0a0a] px-6">
+    <div className="flex flex-col items-center justify-center h-full px-6">
       <div className="max-w-2xl w-full">
         {/* Main heading */}
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-2">
           What podcast do you want to create?
         </h1>
-        <p className="text-gray-400 text-center mb-8">
+        <p className="text-gray-600 text-center mb-8">
           Create podcasts by chatting with AI
         </p>
 
         {/* Input container */}
         <div
           className={`
-          relative bg-[#1a1a1a] border rounded-2xl transition-all duration-200
-          ${
-            isFocused
-              ? 'border-gray-600 shadow-lg shadow-black/50'
-              : 'border-gray-800'
-          }
+          relative bg-white border rounded-2xl transition-all duration-200
+          ${isFocused ? 'border-gray-400 shadow-lg' : 'border-gray-300'}
         `}
         >
           <textarea
@@ -73,7 +69,7 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
               }
             }}
             placeholder="Ask Terminal Talks anything..."
-            className="w-full px-6 py-4 bg-transparent resize-none focus:outline-none text-white placeholder-gray-500"
+            className="w-full px-6 py-4 bg-transparent resize-none focus:outline-none text-gray-900 placeholder-gray-500"
             rows={1}
             style={{
               minHeight: '56px',
@@ -84,7 +80,7 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
           {/* Bottom toolbar */}
           <div className="flex items-center justify-between px-4 pb-3 pt-1">
             <div className="flex items-center gap-2">
-              <button className="p-2 hover:bg-[#2a2a2a] rounded-lg transition-colors">
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <svg
                   className="w-5 h-5 text-gray-500"
                   fill="none"
@@ -104,7 +100,7 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="px-4 py-2 bg-white text-[#0a0a0a] text-sm font-semibold rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               Send
             </button>
@@ -117,12 +113,12 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
             <button
               key={suggestion.title}
               onClick={() => setInput(suggestion.prompt)}
-              className="text-left p-3 rounded-lg border border-gray-800 bg-[#1a1a1a] hover:border-gray-700 hover:bg-[#2a2a2a] transition-all"
+              className="text-left p-4 rounded-xl border border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 transition-all group"
             >
-              <p className="text-sm text-white font-medium">
+              <p className="text-sm text-gray-900 font-medium">
                 {suggestion.title}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 {suggestion.description}
               </p>
             </button>
