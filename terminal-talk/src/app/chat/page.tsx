@@ -1,4 +1,3 @@
-// app/chat/page.tsx
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
 import {
@@ -10,19 +9,18 @@ import FreeLibrary from '../_components/dashboard/FreeLibrary';
 import { ChatInterface } from '../_components/chat/ChatInterface';
 import { LibraryView } from '../_components/chat/LibraryView';
 
-export default async function ChatPage({
-  searchParams,
-}: {
-  searchParams: { view?: string };
-}) {
-  const view = searchParams.view || 'chat';
+interface ChatPageProps {
+  searchParams?: { view?: string };
+}
+
+export default async function ChatPage({ searchParams }: ChatPageProps) {
+  const view = searchParams?.view || 'chat';
   const user = await currentUser();
 
   if (!user) {
     redirect('/auth/login');
   }
 
-  // Render different content based on the view
   switch (view) {
     case 'library':
       return <LibraryView />;
@@ -33,7 +31,6 @@ export default async function ChatPage({
 
       return (
         <div className="h-full overflow-y-auto bg-gray-50">
-          {/* Header */}
           <div className="bg-white border-b border-gray-200 px-8 py-6">
             <h1 className="text-2xl font-bold text-gray-900">
               Terminal Talks Classics
@@ -43,7 +40,6 @@ export default async function ChatPage({
             </p>
           </div>
 
-          {/* Stats Cards */}
           <div className="px-8 py-6">
             <StatsCard
               completedCourses={stats.certificates}
@@ -52,7 +48,6 @@ export default async function ChatPage({
             />
           </div>
 
-          {/* Course Grid */}
           <div className="px-8 pb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Courses Available: {courses.length}
