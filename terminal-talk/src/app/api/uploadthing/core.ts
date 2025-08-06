@@ -6,7 +6,7 @@ const f = createUploadthing();
 export const ourFileRouter = {
   // Define the audio uploader
   audioUploader: f({ audio: { maxFileSize: '16MB' } })
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       const user = await currentUser();
       if (!user) throw new Error('Unauthorized');
       return { userId: user.id };

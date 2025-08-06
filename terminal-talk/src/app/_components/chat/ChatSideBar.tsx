@@ -10,7 +10,7 @@ interface ChatSidebarProps {
 }
 
 export function ChatSidebar({ userName }: ChatSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed] = useState(false);
   const [isRecentsOpen, setIsRecentsOpen] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -42,6 +42,7 @@ export function ChatSidebar({ userName }: ChatSidebarProps) {
     return currentView === view;
   };
 
+  console.log(userName);
   return (
     <div
       className={`${

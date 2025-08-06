@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 
 export function ChatInput() {
   const [currentPlaceholder, setCurrentPlaceholder] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [setIsTyping] = useState(false);
   const indexRef = useRef(0);
 
   const baseText = 'Ask Terminal Talks to create a podcast about ';

@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { Play, Pause, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 interface Podcast {
   id: string;
@@ -91,12 +92,12 @@ export function LibraryClient({ podcasts }: LibraryClientProps) {
             <p className="text-gray-400 mb-6 max-w-sm mx-auto">
               Start a conversation and generate your first podcast episode.
             </p>
-            <a
+            <Link
               href="/chat"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-[#0a0a0a] bg-white hover:bg-gray-100"
             >
               Create Your First Podcast
-            </a>
+            </Link>
           </div>
         ) : (
           // Podcast list

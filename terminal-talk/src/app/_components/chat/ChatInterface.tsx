@@ -5,8 +5,10 @@ import { useState, useEffect } from 'react';
 import { useChat } from './ChatProvider';
 import { ChatWelcome } from './ChatWelcome';
 import { GeneratePodcastButton } from './GeneratePodcastButton';
-import { TypingMessage } from './TypingMessage';
-
+interface podcasttype {
+  role: string;
+  content: string;
+}
 export function ChatInterface({ conversationId }: { conversationId?: string }) {
   const [input, setInput] = useState('');
   const {
@@ -56,7 +58,7 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
     await sendMessage(message);
   };
 
-  const extractPodcastDetails = (messages: any[]) => {
+  const extractPodcastDetails = (messages: podcasttype[]) => {
     const summaryMessage = messages
       .filter(
         (m) =>
@@ -216,7 +218,6 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
       <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
         <div className="max-w-3xl mx-auto">
           {messages.map((message, index) => {
-            const isLastMessage = index === messages.length - 1;
             const messageContent = message.content
               .replace('[READY_TO_GENERATE]', '')
               .trim();

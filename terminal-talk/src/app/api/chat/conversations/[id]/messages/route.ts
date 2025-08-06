@@ -83,7 +83,6 @@ export async function POST(
       },
     });
 
-    // Update conversation timestamp and title if needed
     const updates: any = { updatedAt: new Date() };
 
     // Update title based on first user message if it's still the default

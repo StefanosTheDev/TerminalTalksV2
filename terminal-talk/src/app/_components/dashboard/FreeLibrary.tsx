@@ -5,7 +5,6 @@ import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { startCourse } from '../_actions/progress';
 import { CourseWithProgress } from '@/app/types';
-import { Button } from '../util/Button';
 
 export default function FreeLibrary({
   courses,
