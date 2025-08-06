@@ -11,14 +11,16 @@ import FreeLibrary from '../_components/dashboard/FreeLibrary';
 import { ChatInterface } from '../_components/chat/ChatInterface';
 import { LibraryView } from '../_components/chat/LibraryView';
 
-// ✅ Fix: Use Next.js App Router page props shape
+// ✅ Fix: Use Next.js 15+ App Router page props with Promise
 type Props = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  params: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export default async function ChatPage({ searchParams }: Props) {
-  const view =
-    typeof searchParams?.view === 'string' ? searchParams.view : 'chat';
+  // Await the searchParams promise
+  const params = await searchParams;
+  const view = typeof params?.view === 'string' ? params.view : 'chat';
   const user = await currentUser();
 
   if (!user) {
