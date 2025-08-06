@@ -1,7 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { ThemeProvider } from '@/app/_components/providers/ThemeProvider';
-
+import { ChatInterface } from '../_components/chat/ChatInterface';
+import { ChatSidebar } from '../_components/chat/ChatSideBar';
 export default async function ChatLayout({
   children,
 }: {
@@ -13,11 +13,15 @@ export default async function ChatLayout({
     redirect('/auth/login');
   }
 
+  // Get the chats for the Side Interface.
+
   return (
-    <ThemeProvider>
-      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
+    <div className="flex h-screen bg-gray-50">
+      <ChatSidebar />
+      <div className="flex-1">
+        <ChatInterface />
         {children}
       </div>
-    </ThemeProvider>
+    </div>
   );
 }

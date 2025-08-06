@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export function ChatSidebar() {
+export function ChatSidebar({ user }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRecentsOpen, setIsRecentsOpen] = useState(false);
   const router = useRouter();

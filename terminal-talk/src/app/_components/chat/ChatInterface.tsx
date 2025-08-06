@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { ChatSidebar } from './ChatNavBar';
+import { ChatSidebar } from './ChatSideBar';
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -41,8 +41,6 @@ export function ChatInterface() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <ChatSidebar />
-
       <div className="flex-1 flex flex-col bg-white">
         {/* Header */}
         <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-200">
