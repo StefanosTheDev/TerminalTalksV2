@@ -1,5 +1,6 @@
 // app/_services/messageService.ts
 import prisma from '@/app/_lib/prisma';
+import { openai, PODCAST_SYSTEM_PROMPT } from '@/app/_lib/services/openai';
 
 /**
  * Fetches all conversations for a user with the latest message preview.
@@ -58,3 +59,87 @@ export const loadConversationMessages = async (
 
   return conversation;
 };
+
+export async function getUserConversations(clerkId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+    });
+
+    if (!user) return [];
+
+    const conversations = await prisma.conversation.findMany({
+      where: { userId: user.id },
+      orderBy: { updatedAt: 'desc' },
+      take: 20,
+      select: {
+        id: true,
+        title: true,
+        updatedAt: true,
+      },
+    });
+
+    return conversations;
+  } catch (error) {
+    console.error('Error fetching conversations:', error);
+    return [];
+  }
+}
+
+export async function createConversation(
+  clerkId: string,
+  firstMessage: string
+) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+    });
+
+    if (!user) throw new Error('User not found');
+
+    // Get AI response for the first message
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4-turbo-preview',
+      messages: [
+        { role: 'system', content: PODCAST_SYSTEM_PROMPT },
+        { role: 'user', content: firstMessage },
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+    });
+
+    const aiResponse =
+      completion.choices[0].message.content ||
+      "I'm excited to help you create a podcast! Could you tell me more about what you have in mind?";
+
+    const conversation = await prisma.conversation.create({
+      data: {
+        title:
+          firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : ''),
+        userId: user.id,
+        messages: {
+          create: [
+            {
+              role: 'user',
+              content: firstMessage,
+            },
+            {
+              role: 'assistant',
+              content: aiResponse,
+            },
+          ],
+        },
+      },
+      include: {
+        messages: {
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+
+    return conversation;
+  } catch (error) {
+    console.error('Error creating conversation:', error);
+    throw error;
+  }
+}

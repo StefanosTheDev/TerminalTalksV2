@@ -1,20 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useChat } from './ChatProvider';
 
-export function ChatSidebar({ user }) {
+interface ChatSidebarProps {
+  userName: string;
+}
+
+export function ChatSidebar({ userName }: ChatSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isRecentsOpen, setIsRecentsOpen] = useState(false);
+  const [isRecentsOpen, setIsRecentsOpen] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
+  const { conversations } = useChat();
 
-  const recentChats = [
-    { id: '1', title: 'Startup Failures Analysis' },
-    { id: '2', title: 'Tech Industry Trends' },
-    { id: '3', title: 'Productivity Tips Episode' },
-    { id: '4', title: 'Interview with Jane Doe' },
-    { id: '5', title: 'Future of AI Discussion' },
-  ];
+  const handleNewChat = () => {
+    router.push('/chat');
+  };
+
+  const isActiveChat = (chatId: string) => {
+    return pathname === `/chat/${chatId}`;
+  };
 
   return (
     <div
@@ -30,19 +37,18 @@ export function ChatSidebar({ user }) {
         {!isCollapsed && (
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <div className="w-5 h-5 bg-gradient-to-br from-orange-400 to-pink-400 rounded-full"></div>
-              <span className="text-sm font-medium text-gray-900">
-                Personal
+              <span className="text-md font-semibold text-gray-900">
+                {userName}
               </span>
             </div>
-            <span className="text-xs text-gray-500">Free</span>
+            {/* <span className="text-xs text-gray-500">Free</span> */}
           </div>
         )}
       </div>
 
       {/* New Chat Button */}
       <button
-        onClick={() => router.push('/chat')}
+        onClick={handleNewChat}
         className={`m-4 ${
           isCollapsed ? 'p-2' : 'px-4 py-2'
         } bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-medium text-sm transition-colors`}
@@ -52,7 +58,10 @@ export function ChatSidebar({ user }) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto">
-        <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
+        <button
+          onClick={() => router.push('/chat/classics')}
+          className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+        >
           <svg
             className="w-5 h-5 flex-shrink-0"
             fill="none"
@@ -71,7 +80,10 @@ export function ChatSidebar({ user }) {
           )}
         </button>
 
-        <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
+        <button
+          onClick={() => router.push('/chat/library')}
+          className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+        >
           <svg
             className="w-5 h-5 flex-shrink-0"
             fill="none"
@@ -111,14 +123,25 @@ export function ChatSidebar({ user }) {
 
             {isRecentsOpen && (
               <div className="mt-1">
-                {recentChats.map((chat) => (
-                  <button
-                    key={chat.id}
-                    className="w-full text-left px-4 py-2 pl-8 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 truncate"
-                  >
-                    {chat.title}
-                  </button>
-                ))}
+                {conversations.length > 0 ? (
+                  conversations.map((chat) => (
+                    <button
+                      key={chat.id}
+                      onClick={() => router.push(`/chat/${chat.id}`)}
+                      className={`w-full text-left px-4 py-2 pl-8 text-sm truncate transition-colors ${
+                        isActiveChat(chat.id)
+                          ? 'bg-gray-100 text-gray-900 font-medium'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      {chat.title}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 pl-8 text-sm text-gray-500">
+                    No conversations yet
+                  </div>
+                )}
               </div>
             )}
           </div>
