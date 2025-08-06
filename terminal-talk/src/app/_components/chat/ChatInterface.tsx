@@ -217,7 +217,7 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          {messages.map((message, index) => {
+          {messages.map((message) => {
             const messageContent = message.content
               .replace('[READY_TO_GENERATE]', '')
               .trim();
