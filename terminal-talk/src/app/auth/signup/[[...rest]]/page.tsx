@@ -9,8 +9,8 @@ export default function SignUpPage() {
         path="/auth/signup"
         routing="path"
         signInUrl="/auth/login"
-        forceRedirectUrl="/dashboard" // ← always send here
-        fallbackRedirectUrl="/dashboard" // ← if no redirect_url present
+        forceRedirectUrl="/chat" // ← always send here
+        fallbackRedirectUrl="/chat" // ← if no redirect_url present
       />
     </div>
   );
