@@ -1,3 +1,5 @@
+// src/app/chat/page.tsx
+
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
 import {
@@ -9,12 +11,14 @@ import FreeLibrary from '../_components/dashboard/FreeLibrary';
 import { ChatInterface } from '../_components/chat/ChatInterface';
 import { LibraryView } from '../_components/chat/LibraryView';
 
-interface ChatPageProps {
-  searchParams?: { view?: string };
-}
+// ✅ Fix: Use Next.js App Router page props shape
+type Props = {
+  searchParams?: Record<string, string | string[] | undefined>;
+};
 
-export default async function ChatPage({ searchParams }: ChatPageProps) {
-  const view = searchParams?.view || 'chat';
+export default async function ChatPage({ searchParams }: Props) {
+  const view =
+    typeof searchParams?.view === 'string' ? searchParams.view : 'chat';
   const user = await currentUser();
 
   if (!user) {
