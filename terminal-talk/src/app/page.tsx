@@ -15,6 +15,14 @@ export default function Home() {
 
         {/* Hero Section */}
         <div className="flex flex-col items-center justify-center min-h-screen px-6">
+          {/* Status Badge */}
+          <div className="flex justify-center mb-4">
+            <span className="inline-block rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-4 py-1 text-xs font-semibold text-white shadow-md animate-pulse">
+              🚧 Currently in production – Coming soon!
+            </span>
+          </div>
+
+          {/* Title & Subtitle */}
           <div className="space-y-2 mb-8">
             <h1 className="text-3xl md:text-5xl font-bold text-white text-center leading-tight">
               What do you want to hear?

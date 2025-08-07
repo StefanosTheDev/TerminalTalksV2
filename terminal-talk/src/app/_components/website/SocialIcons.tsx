@@ -1,9 +1,13 @@
 // components/SocialIcons.tsx
 export function SocialIcons() {
+  const handleDisabledClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+  };
   return (
     <div className="flex items-center gap-2 mr-2">
       <a
         href="/discord"
+        onClick={handleDisabledClick}
         className="text-gray-400 hover:text-white transition-colors"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -12,6 +16,7 @@ export function SocialIcons() {
       </a>
       <a
         href="/linkedin"
+        onClick={handleDisabledClick}
         className="text-gray-400 hover:text-white transition-colors"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -20,6 +25,7 @@ export function SocialIcons() {
       </a>
       <a
         href="/twitter"
+        onClick={handleDisabledClick}
         className="text-gray-400 hover:text-white transition-colors"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -28,6 +34,7 @@ export function SocialIcons() {
       </a>
       <a
         href="/reddit"
+        onClick={handleDisabledClick}
         className="text-gray-400 hover:text-white transition-colors"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
