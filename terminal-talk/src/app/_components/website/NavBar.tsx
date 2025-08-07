@@ -1,12 +1,10 @@
 // components/Navbar.tsx
 'use client';
 
-import { JSX, useState } from 'react';
 import { SocialIcons } from './SocialIcons';
 
-import Link from 'next/link';
 export function Navbar() {
-  const [resourcesOpen, setResourcesOpen] = useState(false);
+  // const [resourcesOpen, setResourcesOpen] = useState(false);
 
   // Prevent default click behavior
   const handleDisabledClick = (e: React.MouseEvent) => {
