@@ -28,7 +28,7 @@ export default function Home() {
               What do you want to hear?
             </h1>
             <p className="text-sm md:text-base font-normal text-gray-400 text-center">
-              Create podcasts by chatting with AI.
+              Creating optimized developer podcasts by chatting with AI.
             </p>
           </div>
 
