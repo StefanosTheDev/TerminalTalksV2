@@ -24,5 +24,9 @@ export default async function ChatPage({ searchParams }: PageProps) {
     redirect('/auth/login');
   }
 
-  return <>Here</>;
+  return (
+    <>
+      <ChatInterface />
+    </>
+  );
 }
