@@ -22,7 +22,7 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
     'personal growth strategies',
     'interview techniques',
   ];
-
+  console.log(isFocused, isTyping);
   useEffect(() => {
     let charIndex = 0;
     let isDeleting = false;

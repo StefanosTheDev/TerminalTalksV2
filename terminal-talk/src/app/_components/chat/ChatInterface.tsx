@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useChat } from './ChatProvider';
 import { Send } from 'lucide-react';
 import { ChatWelcome } from './ChatWelcome';
@@ -15,7 +14,6 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps) {
   const [showWelcome, setShowWelcome] = useState(!conversationId);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const {
     messages,
     sendMessage,

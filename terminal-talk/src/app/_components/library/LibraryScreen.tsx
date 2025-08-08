@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Image from 'next/image';
 import placeholder from '@/app/public/TT.png';
 import SearchBar from './SearchBar';
-import Modal from './Modal';
 import LibraryBackground from './LibraryBackground';
 import { openPopup } from '@/app/_lib/util/openPopup';
 
@@ -131,42 +130,6 @@ export default function LibraryScreen({ items }: { items: Item[] }) {
                 </div>
               ))}
               {/* Modal — only addition */}
-              <Modal open={!!selected} onClose={() => setSelected(null)}>
-                {selected && (
-                  <div>
-                    <h2 className="mb-2 text-lg font-semibold">
-                      {selected.title}
-                    </h2>
-                    {selected.description && (
-                      <p className="mb-3 text-sm text-gray-600">
-                        {selected.description}
-                      </p>
-                    )}
-                    <audio
-                      controls
-                      src={selected.audioUrl}
-                      className="w-full"
-                    />
-
-                    {/* optional meta row */}
-                    <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-                      <span>
-                        {new Date(selected.createdAt).toLocaleString()}
-                      </span>
-                      <span>{formatDuration(selected.duration)}</span>
-                    </div>
-
-                    <div className="mt-4 text-right">
-                      <button
-                        onClick={() => setSelected(null)}
-                        className="rounded-md border px-3 py-1 text-sm"
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </Modal>
             </div>
           )}
         </main>
