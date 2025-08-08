@@ -35,11 +35,6 @@ export default function Home() {
 
           {/* Chat Input Component */}
           <ChatInput />
-          <AudibleSimple
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            cover={publicFace.src}
-            chapter="Chapter 3"
-          />
         </div>
       </div>
     </div>

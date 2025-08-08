@@ -78,10 +78,7 @@ export default function WebPlayerPage() {
           src={track.audioUrl}
           preload="metadata"
           showJumpControls={true}
-          /* NEWER versions: use the object with BOTH keys */
           progressJumpSteps={{ backward: 30000, forward: 30000 }}
-          /* OLDER versions: also pass the singular as a fallback */
-          // @ts-ignore
           progressJumpStep={30000}
           customControlsSection={[
             RHAP_UI.MAIN_CONTROLS,

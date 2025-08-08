@@ -19,8 +19,6 @@ type Item = {
 };
 
 export default function LibraryScreen({ items }: { items: Item[] }) {
-  const [selected, setSelected] = useState<Item | null>(null);
-
   const formatDuration = (duration: number | null) => {
     if (!duration) return 'Unknown duration';
     const minutes = Math.floor(duration / 60);
