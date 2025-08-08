@@ -4,6 +4,59 @@ import { prisma } from '@/app/_lib/prisma';
 import { openai, PODCAST_SYSTEM_PROMPT } from '@/app/_lib/services/openai';
 import { Prisma } from '@prisma/client';
 
+// GET method to fetch a conversation by ID
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get user from database
+    const dbUser = await prisma.user.findUnique({
+      where: { clerkId: user.id },
+    });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Get conversation with messages
+    const conversation = await prisma.conversation.findFirst({
+      where: {
+        id,
+        userId: dbUser.id, // Ensure user owns this conversation
+      },
+      include: {
+        messages: {
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+
+    if (!conversation) {
+      return NextResponse.json(
+        { error: 'Conversation not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(conversation);
+  } catch (error) {
+    console.error('Error fetching conversation:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch conversation' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST method remains the same
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -65,7 +118,7 @@ export async function POST(
 
     // Call OpenAI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview', // or 'gpt-3.5-turbo' for faster/cheaper
+      model: 'gpt-4-turbo-preview',
       messages: openAIMessages,
       temperature: 0.7,
       max_tokens: 500,

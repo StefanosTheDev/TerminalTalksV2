@@ -3,8 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --sidebar-bg: #1a1a1a; /* lighter dark */
-  --content-bg: #0a0a0a; /* nearly black */
+  --sidebar-bg: #1a1a1a;
+  --content-bg: #0a0a0a;
 }
 
 @theme inline {
@@ -12,11 +12,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-  }
 }
 
 body {
@@ -29,9 +24,60 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Hide scrollbars on mobile for cleaner look */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Touch-friendly tap targets */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Safe area padding for modern phones */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Existing styles */
 #elevenlabs-audionative-widget iframe {
   background-color: transparent !important;
-  /* if needed: */
   allowtransparency: true;
 }
 
@@ -39,4 +85,73 @@ html {
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
+}
+/* globals.css */
+.tt-player.rhap_container {
+  background: #121212;
+  box-shadow: none;
+  border-radius: 0 0 1rem 1rem; /* header above already rounded */
+  padding: 12px 16px;
+}
+
+.tt-player .rhap_controls-section {
+  gap: 12px;
+}
+
+.tt-player .rhap_main-controls-button {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.tt-player .rhap_progress-bar {
+  background: rgba(255, 255, 255, 0.12);
+  height: 6px;
+  border-radius: 9999px;
+}
+.tt-player .rhap_progress-filled {
+  background: rgba(255, 255, 255, 0.85);
+}
+.tt-player .rhap_progress-indicator {
+  width: 14px;
+  height: 14px;
+  top: -4px;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+.tt-player .rhap_time {
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-player .rhap_volume-bar {
+  background: rgba(255, 255, 255, 0.12);
+}
+.tt-player .rhap_volume-filled {
+  background: rgba(255, 255, 255, 0.85);
+}
+/* Dark container, rounded */
+.tt-player.rhap_container {
+  background: #000;
+  box-shadow: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+/* Progress bar styling */
+.tt-player .rhap_progress-bar {
+  background: rgba(255, 255, 255, 0.12);
+  height: 8px;
+  border-radius: 9999px;
+}
+.tt-player .rhap_progress-filled {
+  background: #f59e0b; /* amber-500 */
+  height: 8px;
+  border-radius: 9999px;
+}
+.tt-player .rhap_progress-indicator {
+  width: 16px;
+  height: 16px;
+  top: -4px;
+  background: #f59e0b;
 }

@@ -1,23 +1,21 @@
-import prisma from '@/app/_lib/prisma';
 import LibraryScreen from '@/app/_components/library/LibraryScreen';
+import { loadUserPodcasts } from '@/app/_lib/services/libraryService';
+import { currentUser } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 export default async function LibraryPage() {
-  const items = await prisma.podcast.findMany({
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      audioUrl: true,
-      duration: true,
-      createdAt: true,
-    },
-  });
+  const user = await currentUser();
 
-  // serialize Date for the client
-  const safeItems = items.map((i) => ({
-    ...i,
-    createdAt: i.createdAt.toISOString(),
+  if (!user) {
+    redirect('/auth/login');
+  }
+  const podcasts = await loadUserPodcasts(user.id);
+
+  // Just need to get into this a bit more.
+  const safePodcasts = podcasts.map((p) => ({
+    ...p,
+    createdAt: p.createdAt.toISOString(),
+    duration: p.duration ? Number(p.duration) : null,
   }));
 
-  return <LibraryScreen items={safeItems} />;
+  return <LibraryScreen items={safePodcasts} />;
 }

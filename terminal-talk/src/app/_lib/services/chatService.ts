@@ -143,29 +143,3 @@ export async function createConversation(
     throw error;
   }
 }
-
-export async function loadUserPodcasts(clerkId: string) {
-  const user = await prisma.user.findUnique({
-    where: { clerkId },
-  });
-
-  if (!user) {
-    return;
-  }
-
-  // Fetch all podcasts for this user
-  const podcasts = await prisma.podcast.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      audioUrl: true,
-      duration: true,
-      format: true,
-      createdAt: true,
-    },
-  });
-  return podcasts;
-}

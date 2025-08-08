@@ -1,7 +1,9 @@
 'use client';
+import AudibleSimple from './_components/library/AudibleSimple';
 import { BackgroundGradient } from './_components/website/BackgroundGradient';
 import { ChatInput } from './_components/website/ChatInput';
 import { Navbar } from './_components/website/NavBar';
+import publicFace from '@/app/public/TT.png';
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a]">
@@ -34,6 +36,11 @@ export default function Home() {
 
           {/* Chat Input Component */}
           <ChatInput />
+          <AudibleSimple
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            cover={publicFace.src}
+            chapter="Chapter 3"
+          />
         </div>
       </div>
     </div>

@@ -63,3 +63,11 @@ export interface UserCourseV2 {
   courseId: number;
   lectureProgress: LectureProgress[];
 }
+export type UserPodcastDTO = {
+  id: string;
+  title: string;
+  description: string | null;
+  audioUrl: string;
+  duration: number | null;
+  createdAt: string; // ISO
+};
