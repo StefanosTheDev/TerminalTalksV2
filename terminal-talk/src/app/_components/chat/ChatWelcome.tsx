@@ -1,7 +1,7 @@
 // app/_components/chat/ChatWelcome.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface ChatWelcomeProps {
   onSendMessage: (message: string) => void;
@@ -10,6 +10,62 @@ interface ChatWelcomeProps {
 export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
   const [input, setInput] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const indexRef = useRef(0);
+
+  const baseText = 'Ask Terminal Talks to create a podcast about ';
+  const topics = [
+    'startup failures and lessons learned',
+    'the future of AI development',
+    'debugging complex systems',
+    'personal growth strategies',
+    'interview techniques',
+  ];
+
+  useEffect(() => {
+    let charIndex = 0;
+    let isDeleting = false;
+    let currentTopic = topics[indexRef.current];
+
+    const typeEffect = () => {
+      if (!isDeleting && charIndex <= currentTopic.length) {
+        setCurrentPlaceholder(baseText + currentTopic.slice(0, charIndex));
+        charIndex++;
+
+        if (charIndex > currentTopic.length) {
+          setTimeout(() => {
+            isDeleting = true;
+            typeEffect();
+          }, 2000);
+          return;
+        }
+      } else if (isDeleting && charIndex >= 0) {
+        setCurrentPlaceholder(baseText + currentTopic.slice(0, charIndex));
+        charIndex--;
+
+        if (charIndex < 0) {
+          indexRef.current = (indexRef.current + 1) % topics.length;
+          currentTopic = topics[indexRef.current];
+          charIndex = 0;
+          isDeleting = false;
+          setTimeout(typeEffect, 500);
+          return;
+        }
+      }
+
+      const speed = isDeleting ? 30 : 80;
+      setTimeout(typeEffect, speed);
+    };
+
+    setCurrentPlaceholder(baseText);
+
+    const timeout = setTimeout(() => {
+      typeEffect();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -43,66 +99,61 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
     <div className="flex flex-col items-center justify-center h-full px-6">
       <div className="max-w-2xl w-full">
         {/* Main heading */}
-        <h1 className="text-3xl font-bold text-gray-900 text-center mb-2">
-          What podcast do you want to create?
+        <h1 className="text-3xl font-bold text-[#ececf1] text-center mb-2">
+          What do you want to hear?
         </h1>
-        <p className="text-gray-600 text-center mb-8">
+        <p className="text-[#8e8ea0] text-center mb-8">
           Create podcasts by chatting with AI
         </p>
 
         {/* Input container */}
-        <div
-          className={`
-          relative bg-white border rounded-2xl transition-all duration-200
-          ${isFocused ? 'border-gray-400 shadow-lg' : 'border-gray-300'}
-        `}
-        >
+        <div className="relative bg-[#1a1a1a]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl p-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onFocus={() => {
+              setIsFocused(true);
+              setIsTyping(true);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              if (e.target.value === '') setIsTyping(false);
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
               }
             }}
-            placeholder="Ask Terminal Talks anything..."
-            className="w-full px-6 py-4 bg-transparent resize-none focus:outline-none text-gray-900 placeholder-gray-500"
-            rows={1}
-            style={{
-              minHeight: '56px',
-              maxHeight: '200px',
-            }}
+            placeholder={currentPlaceholder}
+            className="w-full px-6 py-4 bg-transparent text-[#ececf1] placeholder-gray-500 focus:outline-none resize-none text-[15px]"
+            rows={3}
+            style={{ minHeight: '100px' }}
           />
 
-          {/* Bottom toolbar */}
-          <div className="flex items-center justify-between px-4 pb-3 pt-1">
-            <div className="flex items-center gap-2">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <svg
-                  className="w-5 h-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </button>
-            </div>
+          {/* Bottom controls */}
+          <div className="flex items-center justify-between px-4 pb-2">
+            <div className="flex items-center gap-2"></div>
 
+            {/* Send button */}
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="p-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -113,12 +164,12 @@ export function ChatWelcome({ onSendMessage }: ChatWelcomeProps) {
             <button
               key={suggestion.title}
               onClick={() => setInput(suggestion.prompt)}
-              className="text-left p-4 rounded-xl border border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 transition-all group"
+              className="text-left p-4 rounded-xl border border-[#565869]/30 bg-[#2a2b32]/50 hover:border-[#8e8ea0]/50 hover:bg-[#343541]/70 transition-all group backdrop-blur"
             >
-              <p className="text-sm text-gray-900 font-medium">
+              <p className="text-sm text-[#ececf1] font-medium">
                 {suggestion.title}
               </p>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-[#8e8ea0] mt-1">
                 {suggestion.description}
               </p>
             </button>

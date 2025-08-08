@@ -77,8 +77,7 @@ export function ChatProvider({
         setMessages(newConversation.messages);
 
         // Navigate to the new conversation
-        router.push(`/chat/${newConversation.id}`);
-
+        router.push(`/dashboardV2/chat/${newConversation.id}`);
         return newConversation.id;
       } catch (error) {
         console.error('Failed to create conversation:', error);

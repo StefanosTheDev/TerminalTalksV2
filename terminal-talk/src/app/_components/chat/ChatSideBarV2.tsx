@@ -54,22 +54,22 @@ export default function ChatSideBarV2() {
     <div
       className={`relative ${
         isCollapsed ? 'w-[60px]' : 'w-[280px]'
-      } bg-white border-r border-gray-200 flex flex-col transition-all duration-300 h-full`}
+      } bg-[#0a0a0a] border-r border-gray-800/50 flex flex-col transition-all duration-300 h-full`}
     >
       {/* Logo + App Info Section */}
-      <div className="flex items-center gap-3 p-4 border-b border-gray-200">
+      <div className="flex items-center gap-3 p-4">
         {/* TT Logo */}
-        <div className="w-9 h-9 bg-[#1a2332] text-white rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0">
+        <div className="w-9 h-9 bg-[#0a33f9] text-white rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0">
           TT
         </div>
 
         {/* App Info - Only show when not collapsed */}
         {!isCollapsed && (
           <div className="flex flex-col min-w-0">
-            <h1 className="font-semibold text-base text-gray-900">
+            <h1 className="font-semibold text-base text-white">
               Terminal Talks
             </h1>
-            <span className="text-sm text-gray-500">AI Assistant</span>
+            <span className="text-sm text-gray-400">AI Assistant</span>
           </div>
         )}
       </div>
@@ -78,7 +78,7 @@ export default function ChatSideBarV2() {
       <div className="p-3">
         <button
           onClick={handleNewChat}
-          className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors ${
+          className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1a1a1a]/80 backdrop-blur border border-gray-800/50 hover:bg-[#1a1a1a] hover:border-gray-700/50 transition-all ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >
@@ -88,7 +88,7 @@ export default function ChatSideBarV2() {
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="text-gray-600"
+            className="text-white"
           >
             <path
               d="M10 4V16M4 10H16"
@@ -99,16 +99,16 @@ export default function ChatSideBarV2() {
             />
           </svg>
           {!isCollapsed && (
-            <span className="text-sm font-medium text-gray-700">New Chat</span>
+            <span className="text-sm font-medium text-white">New Chat</span>
           )}
         </button>
       </div>
 
       {/* Library & Courses Section */}
-      <div className="px-3 pb-3 border-b border-gray-100">
+      <div className="px-3 pb-3 border-b border-gray-800/50">
         <button
           onClick={handleViewLibrary}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors ${
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >
@@ -118,7 +118,7 @@ export default function ChatSideBarV2() {
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="text-gray-600"
+            className="text-gray-400"
           >
             <path
               d="M12 2L2 7L12 12L22 7L12 2Z"
@@ -143,13 +143,13 @@ export default function ChatSideBarV2() {
             />
           </svg>
           {!isCollapsed && (
-            <span className="text-sm text-gray-700">My Library</span>
+            <span className="text-sm text-gray-200">My Library</span>
           )}
         </button>
 
         <button
           onClick={handleViewCourses}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors mt-1 ${
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors mt-1 ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >
@@ -159,7 +159,7 @@ export default function ChatSideBarV2() {
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="text-gray-600"
+            className="text-gray-400"
           >
             <path
               d="M2 3H8C9.10457 3 10 3.89543 10 5V17C10 16.4477 9.55228 16 9 16H3C2.44772 16 2 16.4477 2 17V3Z"
@@ -177,7 +177,7 @@ export default function ChatSideBarV2() {
             />
           </svg>
           {!isCollapsed && (
-            <span className="text-sm text-gray-700">View Courses</span>
+            <span className="text-sm text-gray-200">View Courses</span>
           )}
         </button>
       </div>
@@ -188,7 +188,7 @@ export default function ChatSideBarV2() {
           <>
             <button
               onClick={() => setIsRecentsOpen(!isRecentsOpen)}
-              className="w-full flex items-center justify-between py-3 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              className="w-full flex items-center justify-between py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors"
             >
               <span>Recent Chats</span>
               <svg
@@ -197,7 +197,7 @@ export default function ChatSideBarV2() {
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className={`text-gray-400 transition-transform ${
+                className={`text-gray-600 transition-transform ${
                   isRecentsOpen ? '' : '-rotate-90'
                 }`}
               >
@@ -221,8 +221,8 @@ export default function ChatSideBarV2() {
                       onClick={() => router.push(`/chat/${chat.id}`)}
                       className={`w-full flex items-start gap-3 px-2 py-2 rounded-lg transition-all text-left group ${
                         isActiveChat(chat.id)
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          ? 'bg-[#1a1a1a]/80 backdrop-blur border border-gray-800/50 text-white'
+                          : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]/50'
                       }`}
                     >
                       <svg
@@ -233,8 +233,8 @@ export default function ChatSideBarV2() {
                         xmlns="http://www.w3.org/2000/svg"
                         className={`mt-0.5 flex-shrink-0 ${
                           isActiveChat(chat.id)
-                            ? 'text-gray-600'
-                            : 'text-gray-400'
+                            ? 'text-gray-400'
+                            : 'text-gray-600'
                         }`}
                       >
                         <path
@@ -253,7 +253,7 @@ export default function ChatSideBarV2() {
                         >
                           {chat.title}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-600">
                           {new Date(chat.updatedAt).toLocaleDateString()}
                         </p>
                       </div>
@@ -273,7 +273,7 @@ export default function ChatSideBarV2() {
         {isCollapsed && (
           <div className="space-y-2 mt-4">
             <button
-              className="w-full p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="w-full p-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors"
               title="Recent chat: React Best Practices"
             >
               <svg
@@ -282,7 +282,7 @@ export default function ChatSideBarV2() {
                 viewBox="0 0 20 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="text-gray-400 mx-auto"
+                className="text-gray-600 mx-auto"
               >
                 <path
                   d="M7 9H13M7 13H10M6 17H14C15.1046 17 16 16.1046 16 15V5C16 3.89543 15.1046 3 14 3H6C4.89543 3 4 3.89543 4 5V15C4 16.1046 4.89543 17 6 17Z"
@@ -300,11 +300,11 @@ export default function ChatSideBarV2() {
       {/* Sidebar Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-[72px] w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm z-10"
+        className="absolute -right-3 top-[72px] w-6 h-6 bg-[#1a1a1a]/80 backdrop-blur border border-gray-800/50 rounded-full flex items-center justify-center hover:bg-[#1a1a1a] transition-colors shadow-sm z-10"
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         <PiSidebarThin
-          className={`w-4 h-4 text-gray-600 transition-transform ${
+          className={`w-4 h-4 text-gray-400 transition-transform ${
             isCollapsed ? 'rotate-180' : ''
           }`}
         />
@@ -312,7 +312,7 @@ export default function ChatSideBarV2() {
 
       {/* User Profile Section */}
       <SignedIn>
-        <div className="border-t border-gray-200 p-3 mt-auto">
+        <div className="border-t border-gray-800/50 p-3 mt-auto">
           <div
             className={`flex items-center gap-3 ${
               isCollapsed ? 'justify-center' : ''
@@ -329,7 +329,7 @@ export default function ChatSideBarV2() {
             />
             {!isCollapsed && user && (
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-sm font-medium text-gray-900 truncate">
+                <span className="text-sm font-medium text-white truncate">
                   {user.username}
                 </span>
               </div>

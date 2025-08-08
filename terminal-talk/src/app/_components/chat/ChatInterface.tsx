@@ -178,24 +178,174 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
   };
   if (!conversationId && showWelcome) {
     return (
-      <div className="flex flex-col h-screen bg-white">
-        <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-200">
-          <h1 className="text-base font-medium text-gray-900">TT 1.0</h1>
+      <div className="relative flex flex-col h-screen bg-[#0a0a0a] overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute inset-0">
+          <svg
+            width="100%"
+            height="100%"
+            preserveAspectRatio="none"
+            viewBox="0 0 1920 1080"
+          >
+            <defs>
+              <radialGradient id="topGlow1" cx="50%" cy="-10%" r="80%">
+                <stop offset="30%" stopColor="#0a33f9" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+              </radialGradient>
+
+              <radialGradient id="topGlow2" cx="30%" cy="0%" r="40%">
+                <stop offset="20%" stopColor="#0a33f9" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+              </radialGradient>
+
+              <radialGradient id="topGlow3" cx="70%" cy="0%" r="40%">
+                <stop offset="30%" stopColor="#0a33f9" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+              </radialGradient>
+
+              <radialGradient id="bottomGlow" cx="50%" cy="100%" r="60%">
+                <stop offset="30%" stopColor="#0a33f9" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+              </radialGradient>
+
+              <filter id="blur">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="60" />
+              </filter>
+            </defs>
+
+            {/* Background */}
+            <rect width="100%" height="100%" fill="#0a0a0a" />
+
+            {/* Main gradient layers */}
+            <g filter="url(#blur)" opacity="0.8">
+              <ellipse
+                cx="50%"
+                cy="0%"
+                rx="60%"
+                ry="50%"
+                fill="url(#topGlow1)"
+              />
+              <ellipse
+                cx="30%"
+                cy="20%"
+                rx="40%"
+                ry="40%"
+                fill="url(#topGlow2)"
+              />
+              <ellipse
+                cx="80%"
+                cy="20%"
+                rx="40%"
+                ry="40%"
+                fill="url(#topGlow3)"
+              />
+              <ellipse
+                cx="50%"
+                cy="100%"
+                rx="80%"
+                ry="40%"
+                fill="url(#bottomGlow)"
+              />
+            </g>
+          </svg>
         </div>
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+
+        {/* Very subtle grain texture */}
+        <div
+          className="absolute inset-0 opacity-[0.01] pointer-events-none z-[1]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 flex-1 overflow-y-auto p-6">
           <ChatWelcome onSendMessage={handleWelcomeMessage} />
         </div>
       </div>
     );
   }
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="relative flex flex-col h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Background Gradient */}
+      <div className="absolute inset-0">
+        <svg
+          width="100%"
+          height="100%"
+          preserveAspectRatio="none"
+          viewBox="0 0 1920 1080"
+        >
+          <defs>
+            <radialGradient id="topGlow1" cx="50%" cy="-10%" r="80%">
+              <stop offset="50%" stopColor="#0a33f9" stopOpacity="0.4" />
+              <stop offset="120%" stopColor="#0a33f9" stopOpacity="0" />
+            </radialGradient>
+
+            <radialGradient id="topGlow2" cx="30%" cy="0%" r="40%">
+              <stop offset="0%" stopColor="#0a33f9" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+            </radialGradient>
+
+            <radialGradient id="topGlow3" cx="70%" cy="0%" r="40%">
+              <stop offset="0%" stopColor="#0a33f9" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+            </radialGradient>
+
+            <radialGradient id="bottomGlow" cx="50%" cy="100%" r="60%">
+              <stop offset="0%" stopColor="#0a33f9" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#0a33f9" stopOpacity="0" />
+            </radialGradient>
+
+            <filter id="blur">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="60" />
+            </filter>
+          </defs>
+
+          {/* Background */}
+          <rect width="100%" height="100%" fill="#0a0a0a" />
+
+          {/* Main gradient layers */}
+          <g filter="url(#blur)" opacity="0.8">
+            <ellipse cx="50%" cy="0%" rx="60%" ry="50%" fill="url(#topGlow1)" />
+            <ellipse
+              cx="30%"
+              cy="20%"
+              rx="40%"
+              ry="40%"
+              fill="url(#topGlow2)"
+            />
+            <ellipse
+              cx="80%"
+              cy="20%"
+              rx="40%"
+              ry="40%"
+              fill="url(#topGlow3)"
+            />
+            <ellipse
+              cx="50%"
+              cy="100%"
+              rx="80%"
+              ry="40%"
+              fill="url(#bottomGlow)"
+            />
+          </g>
+        </svg>
+      </div>
+
+      {/* Very subtle grain texture */}
+      <div
+        className="absolute inset-0 opacity-[0.01] pointer-events-none z-[1]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
       {/* Chat Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-gray-800/50 bg-[#0a0a0a]/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
-          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors md:hidden">
+          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-800/50 transition-colors md:hidden">
             <svg
-              className="w-5 h-5 text-gray-600"
+              className="w-5 h-5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -208,14 +358,14 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
               />
             </svg>
           </button>
-          <h2 className="text-base font-medium text-gray-900">
+          <h2 className="text-base font-medium text-white">
             {currentConversation?.title || 'New Podcast Creation'}
           </h2>
         </div>
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+      <div className="relative z-10 flex-1 overflow-y-auto p-6">
         <div className="max-w-3xl mx-auto">
           {messages.map((message) => {
             const messageContent = message.content
@@ -234,14 +384,14 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                     <div
                       className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-medium ${
                         message.role === 'user'
-                          ? 'bg-gray-900 text-white'
+                          ? 'bg-[#0a33f9] text-white'
                           : message.role === 'system'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 border border-gray-200'
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-800/50 text-gray-300 border border-gray-700/50'
                       }`}
                     >
                       {message.role === 'user'
-                        ? 'U'
+                        ? ''
                         : message.role === 'system'
                         ? 'S'
                         : 'AI'}
@@ -254,15 +404,15 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                       }`}
                     >
                       {message.role === 'user' ? (
-                        <div className="inline-block px-4 py-3 rounded-xl bg-gray-900 text-white">
+                        <div className="inline-block px-4 py-3 rounded-xl bg-[#0a33f9] text-white">
                           {messageContent}
                         </div>
                       ) : message.role === 'system' ? (
-                        <div className="inline-block px-4 py-3 rounded-xl bg-blue-50 text-blue-900 border border-blue-200">
+                        <div className="inline-block px-4 py-3 rounded-xl bg-[#1a1a1a]/80 backdrop-blur-xl text-white border border-gray-800/50 shadow-xl">
                           {messageContent}
                           {/* Show audio player if message has audioUrl */}
                           {message.audioUrl && (
-                            <div className="mt-3 pt-3 border-t border-blue-200">
+                            <div className="mt-3 pt-3 border-t border-gray-800/50">
                               <audio controls className="w-full">
                                 <source
                                   src={message.audioUrl}
@@ -274,7 +424,9 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
                           )}
                         </div>
                       ) : (
-                        <div className="text-gray-900">{messageContent}</div>
+                        <div className="inline-block px-4 py-3 rounded-xl bg-[#1a1a1a]/80 backdrop-blur-xl text-gray-100 border border-gray-800/50 shadow-xl">
+                          {messageContent}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -297,18 +449,18 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex gap-4 mb-6 fade-in">
-              <div className="w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-700">AI</span>
+              <div className="w-9 h-9 rounded-lg bg-gray-800/50 border border-gray-700/50 flex items-center justify-center">
+                <span className="text-sm font-medium text-gray-300">AI</span>
               </div>
-              <div className="text-gray-900">
+              <div className="inline-block px-4 py-3 rounded-xl bg-[#1a1a1a]/80 backdrop-blur-xl border border-gray-800/50">
                 <div className="flex space-x-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
                   <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
                     style={{ animationDelay: '0.1s' }}
                   />
                   <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
                     style={{ animationDelay: '0.2s' }}
                   />
                 </div>
@@ -319,75 +471,70 @@ export function ChatInterface({ conversationId }: { conversationId?: string }) {
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 p-5 bg-white">
+      <div className="relative z-10 border-t border-gray-800/50 p-5 bg-[#0a0a0a]/50 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-2">
-            <div className="flex items-center gap-2 px-2">
-              <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100 transition-all">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) =>
-                e.key === 'Enter' && !e.shiftKey && handleSend()
-              }
-              placeholder="Reply to Terminal Talks..."
-              className="flex-1 py-3 bg-transparent text-gray-900 placeholder-gray-400 outline-none"
-            />
-
-            <div className="flex items-center gap-2 px-2">
-              <div className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md">
-                Terminal Talks Pro
-                <svg
-                  className="inline-block w-3 h-3 ml-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+          <div className="relative bg-[#1a1a1a]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl p-2">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-2">
+                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800/50">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </button>
               </div>
 
-              <button
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className="w-10 h-10 flex items-center justify-center bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) =>
+                  e.key === 'Enter' && !e.shiftKey && handleSend()
+                }
+                placeholder="Reply to Terminal Talks..."
+                className="flex-1 py-3 bg-transparent text-white placeholder-gray-500 outline-none"
+              />
+
+              <div className="flex items-center gap-2 px-2">
+                <div className="px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-800/50 rounded-md">
+                  Terminal Talks O1
+                  <svg
+                    className="inline-block w-3 h-3 ml-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  ></svg>
+                </div>
+
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || !input.trim()}
+                  className="p-1.5 bg-[#0a33f9] hover:bg-[#0829c7] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M7 11l5-5m0 0l5 5m-5-5v12"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    className="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>

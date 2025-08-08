@@ -1,0 +1,67 @@
+/* app/components/ttplayer-compact.css */
+
+/* overall container: flatter, tighter */
+.tt-compact.rhap_container {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 6px 10px !important;
+}
+
+/* progress bar: thinner */
+.tt-compact .rhap_progress-bar {
+  height: 4px !important;
+  border-radius: 9999px !important;
+}
+.tt-compact .rhap_download-progress,
+.tt-compact .rhap_progress-filled {
+  border-radius: 9999px !important;
+}
+
+/* controls spacing + button size */
+.tt-compact .rhap_controls-section {
+  gap: 6px !important;
+}
+.tt-compact .rhap_main-controls-button,
+.tt-compact .rhap_volume-button {
+  transform: scale(0.88);
+}
+
+/* volume area narrower */
+.tt-compact .rhap_volume-container {
+  min-width: 110px !important;
+}
+
+/* time labels smaller */
+.tt-compact .rhap_time,
+.tt-compact .rhap_current-time,
+.tt-compact .rhap_total-time {
+  font-size: 12px !important;
+  opacity: 0.9;
+}
+
+/* dark theme to match your UI */
+.tt-dark .rhap_time,
+.tt-dark .rhap_current-time,
+.tt-dark .rhap_total-time {
+  color: #ececf1 !important;
+}
+
+.tt-dark .rhap_progress-bar-show-download {
+  background: #4b4d57 !important;
+}
+.tt-dark .rhap_download-progress {
+  background: #6a6d78 !important;
+}
+.tt-dark .rhap_progress-filled {
+  background: #10a37f !important;
+} /* accent */
+.tt-dark .rhap_volume-bar {
+  background: #4b4d57 !important;
+}
+.tt-dark .rhap_volume-indicator {
+  background: #c9cbd3 !important;
+}
+.tt-dark .rhap_main-controls-button svg,
+.tt-dark .rhap_volume-button svg {
+  fill: #c9cbd3 !important;
+}
