@@ -2,7 +2,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/app/_lib/prisma';
-import { LibraryClient } from '../_components/library/Library';
+import { LibraryClient } from '../../_components/library/Library';
 export default async function LibraryPage() {
   const user = await currentUser();
   if (!user) redirect('/sign-in');

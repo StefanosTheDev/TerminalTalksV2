@@ -1,9 +1,14 @@
-// app/_components/library/LibraryClient.tsx
 'use client';
-
-import { useState } from 'react';
-import { Play, Pause, Clock } from 'lucide-react';
-import Link from 'next/link';
+import { useState, useRef, useEffect } from 'react';
+import {
+  Play,
+  Pause,
+  Clock,
+  Calendar,
+  Headphones,
+  Download,
+  MoreVertical,
+} from 'lucide-react';
 
 interface Podcast {
   id: string;
@@ -20,12 +25,14 @@ interface LibraryClientProps {
 }
 
 export function LibraryClient({ podcasts }: LibraryClientProps) {
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState<Record<string, number>>({});
+  const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
-    return `${mins} min`;
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const formatDate = (date: Date) => {
@@ -36,127 +43,190 @@ export function LibraryClient({ podcasts }: LibraryClientProps) {
     });
   };
 
-  const handlePlayPause = (podcast: Podcast) => {
-    if (currentlyPlaying === podcast.id) {
-      audio?.pause();
-      setCurrentlyPlaying(null);
+  const togglePlay = (podcastId: string) => {
+    if (playingId === podcastId) {
+      audioRefs.current[podcastId]?.pause();
+      setPlayingId(null);
     } else {
-      audio?.pause();
+      // Pause any currently playing audio
+      if (playingId && audioRefs.current[playingId]) {
+        audioRefs.current[playingId].pause();
+      }
 
-      const newAudio = new Audio(podcast.audioUrl);
-      newAudio.play();
-      newAudio.addEventListener('ended', () => {
-        setCurrentlyPlaying(null);
-      });
-
-      setAudio(newAudio);
-      setCurrentlyPlaying(podcast.id);
+      // Play the selected audio
+      audioRefs.current[podcastId]?.play();
+      setPlayingId(podcastId);
     }
   };
 
+  const handleTimeUpdate = (podcastId: string, time: number) => {
+    setCurrentTime((prev) => ({ ...prev, [podcastId]: time }));
+  };
+
+  const handleAudioEnd = (podcastId: string) => {
+    setPlayingId(null);
+    setCurrentTime((prev) => ({ ...prev, [podcastId]: 0 }));
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-2xl font-semibold text-white">My Library</h1>
-          <p className="text-sm text-gray-400 mt-1">
-            {podcasts.length} {podcasts.length === 1 ? 'podcast' : 'podcasts'}
-          </p>
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+              My Audio Library
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              {podcasts.length}{' '}
+              {podcasts.length === 1 ? 'recording' : 'recordings'}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {podcasts.length === 0 ? (
-          // Empty state
-          <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#1a1a1a] rounded-full mb-4">
-              <svg
-                className="w-8 h-8 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-white mb-2">
-              No podcasts created yet!
+          <div className="text-center py-12">
+            <Headphones className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No recordings yet
             </h3>
-            <p className="text-gray-400 mb-6 max-w-sm mx-auto">
-              Start a conversation and generate your first podcast episode.
+            <p className="mt-1 text-sm text-gray-500">
+              Create your first audio recording to see it here.
             </p>
-            <Link
-              href="/chat"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-[#0a0a0a] bg-white hover:bg-gray-100"
-            >
-              Create Your First Podcast
-            </Link>
           </div>
         ) : (
-          // Podcast list
-          <div className="space-y-4">
-            {podcasts.map((podcast) => (
-              <div
-                key={podcast.id}
-                className="bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-medium text-white mb-1">
-                      {podcast.title}
-                    </h3>
-                    {podcast.description && (
-                      <p className="text-sm text-gray-400 mb-3 line-clamp-2">
-                        {podcast.description}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {formatDuration(podcast.duration)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {podcasts.map((podcast) => {
+              const progress = currentTime[podcast.id]
+                ? (currentTime[podcast.id] / podcast.duration) * 100
+                : 0;
+              const isPlaying = playingId === podcast.id;
+
+              return (
+                <div
+                  key={podcast.id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                >
+                  {/* Audio Thumbnail/Waveform Area */}
+                  <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    {/* Play Button Overlay */}
+                    <button
+                      onClick={() => togglePlay(podcast.id)}
+                      className="absolute inset-0 flex items-center justify-center group"
+                    >
+                      <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:bg-white transition-colors">
+                        {isPlaying ? (
+                          <Pause className="w-6 h-6 text-gray-900 ml-0.5" />
+                        ) : (
+                          <Play className="w-6 h-6 text-gray-900 ml-1" />
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Waveform visualization (decorative) */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                      <div className="flex items-center gap-1">
+                        {[...Array(20)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-1 bg-white rounded-full"
+                            style={{
+                              height: `${Math.random() * 60 + 20}px`,
+                              opacity: isPlaying ? 1 : 0.5,
+                              animation: isPlaying
+                                ? `pulse ${
+                                    Math.random() * 0.5 + 0.5
+                                  }s ease-in-out infinite`
+                                : 'none',
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Format Badge */}
+                    <div className="absolute top-4 right-4">
+                      <span className="px-2 py-1 bg-black/20 backdrop-blur-sm text-white text-xs font-medium rounded">
+                        {podcast.format.toUpperCase()}
                       </span>
-                      <span>•</span>
-                      <span>{podcast.format}</span>
-                      <span>•</span>
-                      <span>{formatDate(podcast.createdAt)}</span>
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handlePlayPause(podcast)}
-                    className="ml-4 flex-shrink-0 w-12 h-12 bg-white hover:bg-gray-100 text-[#0a0a0a] rounded-full flex items-center justify-center transition-colors"
-                  >
-                    {currentlyPlaying === podcast.id ? (
-                      <Pause className="w-5 h-5" />
-                    ) : (
-                      <Play className="w-5 h-5 ml-0.5" />
+                  {/* Content */}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 truncate">
+                      {podcast.title}
+                    </h3>
+                    {podcast.description && (
+                      <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                        {podcast.description}
+                      </p>
                     )}
-                  </button>
-                </div>
 
-                {/* Show audio player when playing */}
-                {currentlyPlaying === podcast.id && (
-                  <div className="mt-4 pt-4 border-t border-gray-800">
-                    <audio
-                      controls
-                      className="w-full"
-                      src={podcast.audioUrl}
-                      autoPlay
-                    />
+                    {/* Progress Bar */}
+                    {progress > 0 && (
+                      <div className="mt-3">
+                        <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-600 transition-all duration-300"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Metadata */}
+                    <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {formatDuration(podcast.duration)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {formatDate(podcast.createdAt)}
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      <button className="p-1 hover:bg-gray-100 rounded">
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {/* Hidden Audio Element */}
+                  <audio
+                    ref={(el) => {
+                      if (el) audioRefs.current[podcast.id] = el;
+                    }}
+                    src={podcast.audioUrl}
+                    onTimeUpdate={(e) =>
+                      handleTimeUpdate(podcast.id, e.currentTarget.currentTime)
+                    }
+                    onEnded={() => handleAudioEnd(podcast.id)}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%,
+          100% {
+            transform: scaleY(1);
+          }
+          50% {
+            transform: scaleY(1.3);
+          }
+        }
+      `}</style>
     </div>
   );
 }

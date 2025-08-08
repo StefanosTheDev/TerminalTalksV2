@@ -3,9 +3,8 @@ import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getUserConversations } from '@/app/_lib/services/chatService';
 import { ChatProvider } from '@/app/_components/chat/ChatProvider';
-import { ChatSidebar } from '@/app/_components/chat/ChatSideBar';
-
-export default async function ChatLayout({
+import ChatSideBarV2 from '../_components/chat/ChatSideBarV2';
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -20,7 +19,7 @@ export default async function ChatLayout({
   return (
     <ChatProvider initialConversations={conversations}>
       <div className="flex h-screen bg-white">
-        <ChatSidebar userName={user.username} />
+        <ChatSideBarV2 />
         <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     </ChatProvider>
