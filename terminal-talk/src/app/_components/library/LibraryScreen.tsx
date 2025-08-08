@@ -49,39 +49,39 @@ export default function LibraryScreen({ items }: { items: Item[] }) {
   };
 
   // 🔎 Title-only live filter + relevance sorting
-  const filtered = useMemo(() => {
+  type Scored<T> = { p: T; score: number };
+
+  const filtered: Item[] = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) {
-      // default sort: newest first
       return [...items].sort(
-        (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
     }
 
     const now = Date.now();
+
     return items
-      .map((p) => {
+      .map<Scored<Item> | null>((p) => {
         const title = p.title.toLowerCase();
         const idx = title.indexOf(q);
-
         if (idx === -1) return null;
 
-        // Relevance scoring
         let score = 0;
         if (title === q) score += 300; // exact title
         if (idx === 0) score += 200; // starts with
         score += Math.max(0, 80 - idx); // earlier position = better
 
-        // Recency boost (within ~30 days)
-        const ageDays = (now - +new Date(p.createdAt)) / 86_400_000;
-        const recency = Math.max(0, 30 - ageDays); // newer = higher
-        score += recency;
+        // Recency boost (~30 days)
+        const ageDays = (now - new Date(p.createdAt).getTime()) / 86_400_000;
+        score += Math.max(0, 30 - ageDays);
 
         return { p, score };
       })
-      .filter(Boolean)
-      .sort((a, b) => b!.score - a!.score)
-      .map((x) => (x as any).p as Item);
+      .filter((x): x is Scored<Item> => x !== null) // <- type guard
+      .sort((a, b) => b.score - a.score)
+      .map((x) => x.p);
   }, [items, search]);
 
   return (
