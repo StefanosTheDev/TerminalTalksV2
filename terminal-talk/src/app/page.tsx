@@ -1,5 +1,4 @@
 'use client';
-import AudibleSimple from './_components/library/AudibleSimple';
 import { BackgroundGradient } from './_components/website/BackgroundGradient';
 import { ChatInput } from './_components/website/ChatInput';
 import { Navbar } from './_components/website/NavBar';
