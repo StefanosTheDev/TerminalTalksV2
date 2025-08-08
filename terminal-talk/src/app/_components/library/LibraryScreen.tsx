@@ -1,10 +1,11 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import placeholder from '@/app/public/TT.png';
 import SearchBar from './SearchBar';
 import LibraryBackground from './LibraryBackground';
-import { openPopup } from '@/app/_lib/util/openPopup';
+import { openPopup } from '@/app/_components/library/openPopup';
 
 let playerWin: Window | null = null;
 
@@ -13,40 +14,75 @@ type Item = {
   title: string;
   description: string | null;
   audioUrl: string;
-  duration: number | null;
-  createdAt: string;
+  duration: number | null; // seconds
+  createdAt: string; // ISO
 };
 
 export default function LibraryScreen({ items }: { items: Item[] }) {
+  const [search, setSearch] = useState('');
+
   const formatDuration = (duration: number | null) => {
     if (!duration) return 'Unknown duration';
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
-    return `${minutes}m ${seconds}s`;
+    const m = Math.floor(duration / 60);
+    const s = Math.floor(duration % 60)
+      .toString()
+      .padStart(2, '0');
+    return `${m}m ${s}s`;
   };
 
-  // Why did this work and not have to do it liek p" {item}
-  // 👉 Save the selected item and open /webplayer
   const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
 
   const openWebPlayer = (p: Item) => {
-    localStorage.setItem('tt:webplayer:nowPlaying', JSON.stringify(p));
-
+    try {
+      localStorage.setItem('tt:webplayer:nowPlaying', JSON.stringify(p));
+    } catch {}
     if (isMobile()) {
-      // On mobile: just open full-screen
       window.location.href = '/webplayer';
     } else {
-      // On desktop: try popup
       if (!playerWin || playerWin.closed) {
         playerWin = openPopup('/webplayer', 'TTWebPlayer', 520, 760);
-        if (!playerWin) {
-          window.open('/webplayer', '_blank', 'noopener');
-        }
+        if (!playerWin) window.open('/webplayer', '_blank', 'noopener');
       } else {
         playerWin.focus();
       }
     }
   };
+
+  // 🔎 Title-only live filter + relevance sorting
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) {
+      // default sort: newest first
+      return [...items].sort(
+        (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)
+      );
+    }
+
+    const now = Date.now();
+    return items
+      .map((p) => {
+        const title = p.title.toLowerCase();
+        const idx = title.indexOf(q);
+
+        if (idx === -1) return null;
+
+        // Relevance scoring
+        let score = 0;
+        if (title === q) score += 300; // exact title
+        if (idx === 0) score += 200; // starts with
+        score += Math.max(0, 80 - idx); // earlier position = better
+
+        // Recency boost (within ~30 days)
+        const ageDays = (now - +new Date(p.createdAt)) / 86_400_000;
+        const recency = Math.max(0, 30 - ageDays); // newer = higher
+        score += recency;
+
+        return { p, score };
+      })
+      .filter(Boolean)
+      .sort((a, b) => b!.score - a!.score)
+      .map((x) => (x as any).p as Item);
+  }, [items, search]);
 
   return (
     <div className="relative h-[100dvh] bg-[#0a0a0a]">
@@ -64,30 +100,34 @@ export default function LibraryScreen({ items }: { items: Item[] }) {
 
               <div className="flex-1 max-w-md">
                 <SearchBar
-                  placeholder="Search podcasts..."
-                  onSearch={(query) => console.log('Searching for:', query)}
+                  placeholder="Search podcast by title..."
+                  onChange={(q) => setSearch(q)} // 👈 live update
+                  onSearch={(q) => setSearch(q)} // enter/submit still works
                 />
               </div>
             </div>
+            {search && (
+              <p className="mt-2 text-xs text-white/60">
+                Showing {filtered.length} of {items.length} for “{search}”
+              </p>
+            )}
           </div>
         </header>
 
         {/* Scrollable episode list */}
         <main className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 pb-32 md:pb-24">
-          {!items.length ? (
+          {!filtered.length ? (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-400 mb-2">
-                No podcasts yet
+                No matches
               </h3>
-              <p className="text-sm text-gray-500">
-                Create your first podcast in the chat
-              </p>
+              <p className="text-sm text-gray-500">Try a different title.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {items.map((p, i) => (
+              {filtered.map((p) => (
                 <div
-                  key={i}
+                  key={p.id}
                   className="group p-4 md:p-6 rounded-xl md:rounded-2xl bg-[#1a1a1a]/30 backdrop-blur-sm border border-gray-800/30 hover:bg-[#1a1a1a]/50 hover:border-gray-700/50 transition-all"
                 >
                   <div className="flex flex-col md:flex-row gap-4 md:items-start">
@@ -126,7 +166,6 @@ export default function LibraryScreen({ items }: { items: Item[] }) {
                   </div>
                 </div>
               ))}
-              {/* Modal — only addition */}
             </div>
           )}
         </main>

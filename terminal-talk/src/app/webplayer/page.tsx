@@ -37,7 +37,7 @@ export default function WebPlayerPage() {
   if (!track) {
     return (
       <main className="min-h-screen grid place-items-center bg-[#0a0a0a] text-white">
-        <p>No track loaded — open from your Library to play.</p>
+        <p>loading </p>
       </main>
     );
   }
@@ -74,23 +74,26 @@ export default function WebPlayerPage() {
         <SpeedToggle />
 
         {/* Audio Player */}
-        <AudioPlayer
-          src={track.audioUrl}
-          preload="metadata"
-          showJumpControls={true}
-          progressJumpSteps={{ backward: 30000, forward: 30000 }}
-          progressJumpStep={30000}
-          customControlsSection={[
-            RHAP_UI.MAIN_CONTROLS,
-            RHAP_UI.VOLUME_CONTROLS,
-          ]}
-          customProgressBarSection={[
-            RHAP_UI.CURRENT_TIME,
-            RHAP_UI.PROGRESS_BAR,
-            RHAP_UI.DURATION,
-          ]}
-          className="tt-player"
-        />
+        {/* Audio Player */}
+        <div className="flex justify-center mt-4">
+          <AudioPlayer
+            src={track.audioUrl}
+            preload="metadata"
+            showJumpControls={true}
+            progressJumpSteps={{ backward: 30000, forward: 30000 }}
+            progressJumpStep={30000}
+            customControlsSection={[
+              RHAP_UI.MAIN_CONTROLS,
+              RHAP_UI.VOLUME_CONTROLS,
+            ]}
+            customProgressBarSection={[
+              RHAP_UI.CURRENT_TIME,
+              RHAP_UI.PROGRESS_BAR,
+              RHAP_UI.DURATION,
+            ]}
+            className="tt-player w-full max-w-sm" // limit width & keep centered
+          />
+        </div>
       </div>
     </main>
   );

@@ -1,17 +1,18 @@
-// components/SearchBar.tsx
 'use client';
 
 import { useState } from 'react';
 
 interface SearchBarProps {
   placeholder?: string;
-  onSearch?: (query: string) => void;
+  onSearch?: (query: string) => void; // fires on submit (optional)
+  onChange?: (query: string) => void; // fires on each keystroke (live)
   className?: string;
 }
 
 export default function SearchBar({
-  placeholder = 'Search...',
+  placeholder = 'Search By Title...',
   onSearch,
+  onChange,
   className = '',
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
@@ -27,7 +28,11 @@ export default function SearchBar({
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            const q = e.target.value;
+            setQuery(q);
+            onChange?.(q); // 🔴 live updates
+          }}
           placeholder={placeholder}
           className="w-full px-4 py-3 bg-transparent text-white placeholder-gray-500 focus:outline-none text-[15px] pr-8"
         />
@@ -35,6 +40,7 @@ export default function SearchBar({
         <button
           type="submit"
           className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800/50"
+          aria-label="Search"
         >
           <svg
             className="w-5 h-5"
