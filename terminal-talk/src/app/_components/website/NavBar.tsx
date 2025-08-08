@@ -1,12 +1,10 @@
 // components/Navbar.tsx
 'use client';
 
+import Link from 'next/link';
 import { SocialIcons } from './SocialIcons';
 
 export function Navbar() {
-  // const [resourcesOpen, setResourcesOpen] = useState(false);
-
-  // Prevent default click behavior
   const handleDisabledClick = (e: React.MouseEvent) => {
     e.preventDefault();
   };
@@ -34,7 +32,6 @@ export function Navbar() {
         >
           Pricing
         </a>
-
         <a
           href="/blog"
           onClick={handleDisabledClick}
@@ -47,19 +44,22 @@ export function Navbar() {
       {/* Right side actions */}
       <div className="flex items-center gap-3">
         <SocialIcons />
-        <div
-          onClick={handleDisabledClick}
-          className="px-4 py-2 bg-[#2a2a2a]/80 backdrop-blur-xl border border-gray-700/50 text-gray-400 text-[13px] font-medium rounded-lg cursor-not-allowed opacity-60"
+
+        {/* Log in button */}
+        <Link
+          href="/auth/login"
+          className="px-4 py-2 bg-[#2a2a2a]/80 backdrop-blur-xl border border-gray-700/50 text-gray-200 text-[13px] font-medium rounded-lg hover:bg-[#2a2a2a]"
         >
           Log in
-        </div>
+        </Link>
 
-        <div
-          onClick={handleDisabledClick}
-          className="px-4 py-2 bg-gray-600 text-gray-300 text-[13px] font-semibold rounded-lg cursor-not-allowed opacity-60"
+        {/* Get started button */}
+        <Link
+          href="/auth/login"
+          className="px-4 py-2 bg-gray-600 text-white text-[13px] font-semibold rounded-lg hover:bg-gray-500"
         >
           Get started
-        </div>
+        </Link>
       </div>
     </nav>
   );
