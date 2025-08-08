@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import placeholder from '@/app/public/TT.png';
 import SearchBar from './SearchBar';

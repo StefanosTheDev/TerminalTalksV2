@@ -2,7 +2,6 @@
 import { BackgroundGradient } from './_components/website/BackgroundGradient';
 import { ChatInput } from './_components/website/ChatInput';
 import { Navbar } from './_components/website/NavBar';
-import publicFace from '@/app/public/TT.png';
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a]">
