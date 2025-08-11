@@ -90,56 +90,49 @@ export async function createConversation(
   clerkId: string,
   firstMessage: string
 ) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { clerkId },
-    });
+  // Step 1: Validate User Exists.
 
-    if (!user) throw new Error('User not found');
+  const user = await prisma.user.findUnique({
+    where: { clerkId },
+  });
 
-    // Get AI response for the first message
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        { role: 'system', content: PODCAST_SYSTEM_PROMPT },
-        { role: 'user', content: firstMessage },
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
+  if (!user) throw new Error('User not found');
 
-    const aiResponse =
-      completion.choices[0].message.content ||
-      "I'm excited to help you create a podcast! Could you tell me more about what you have in mind?";
+  // Step 2: Get AI response for the first message That we Passed.
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-5',
+    messages: [
+      { role: 'system', content: PODCAST_SYSTEM_PROMPT },
+      { role: 'user', content: firstMessage },
+    ],
+    temperature: 0.7,
+    max_tokens: 500,
+  });
 
-    const conversation = await prisma.conversation.create({
-      data: {
-        title:
-          firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : ''),
-        userId: user.id,
-        messages: {
-          create: [
-            {
-              role: 'user',
-              content: firstMessage,
-            },
-            {
-              role: 'assistant',
-              content: aiResponse,
-            },
-          ],
-        },
+  // Step 3Access the AI Response. Just In Case Response Lags Or Goes Bad. Leverage the || Symbol.
+  const aiResponse =
+    completion.choices[0].message.content ||
+    "I'm excited to help you create a podcast! Could you tell me more about what you have in mind?";
+
+  // Step 4. So now that the AI Has responded. We Need TO Create The Conversation InThe DB>
+  const conversation = await prisma.conversation.create({
+    data: {
+      title:
+        firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : ''),
+      userId: user.id,
+      messages: {
+        create: [
+          {
+            role: 'user',
+            content: firstMessage,
+          },
+          {
+            role: 'assistant',
+            content: aiResponse,
+          },
+        ],
       },
-      include: {
-        messages: {
-          orderBy: { createdAt: 'asc' },
-        },
-      },
-    });
-
-    return conversation;
-  } catch (error) {
-    console.error('Error creating conversation:', error);
-    throw error;
-  }
+    },
+  });
+  return conversation;
 }

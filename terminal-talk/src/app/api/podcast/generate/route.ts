@@ -1,7 +1,7 @@
+// src/app/api/chat/conversations/[id]/generate-podcast/route.ts
 import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { prisma } from '@/app/_lib/prisma';
-import { openai } from '@/app/_lib/services/openai';
 import { ElevenLabsClient } from 'elevenlabs';
 import { UTApi } from 'uploadthing/server';
 
@@ -11,135 +11,184 @@ const elevenlabs = new ElevenLabsClient({
 
 const utapi = new UTApi();
 
-// System prompt for transcript generation
-const TRANSCRIPT_SYSTEM_PROMPT = `You are a professional podcast script writer. Create engaging, natural-sounding podcast scripts that are ready for text-to-speech conversion.
-
-Rules:
-- Write in a conversational, engaging tone
-- Include natural speech patterns
-- No stage directions or sound effects
-- No markdown or special formatting
-- Write as if speaking directly to the listener
-- Keep it focused and valuable`;
-
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
+    console.log('Starting podcast generation...');
+
+    const { id: conversationId } = await context.params;
+
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { conversationId, podcastDetails } = await req.json();
+    const body = await req.json();
+    const { lectureDetails } = body;
 
-    // Get user from DB
+    console.log('Lecture details:', lectureDetails);
+
+    // Get user from database
     const dbUser = await prisma.user.findUnique({
       where: { clerkId: user.id },
     });
+
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Step 1: Generate transcript
-    const transcriptPrompt = `Create a ${
-      podcastDetails.length || '5-minute'
-    } podcast script about:
-
-Topic: ${podcastDetails.topic}
-Format: ${podcastDetails.format}
-Tone: ${podcastDetails.tone}
-Target Audience: ${podcastDetails.audience}
-
-Create an engaging podcast script that delivers value to the audience. Start with a hook, deliver the main content, and end with a clear takeaway.`;
-
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: TRANSCRIPT_SYSTEM_PROMPT },
-        { role: 'user', content: transcriptPrompt },
-      ],
-      temperature: 0.7,
-      max_tokens: 2000,
-    });
-
-    const transcript = completion.choices[0].message.content || '';
-
-    // Step 2: Generate audio with ElevenLabs
-    const audio = await elevenlabs.generate({
-      voice: 'pNInz6obpgDQGcFmaJgB', // Adam voice
-      text: transcript,
-      model_id: 'eleven_monolingual_v1',
-    });
-
-    // Convert the readable stream to a buffer
-    const chunks: Uint8Array[] = [];
-    for await (const chunk of audio) {
-      chunks.push(chunk);
-    }
-    const audioBuffer = Buffer.concat(chunks);
-
-    // Step 3: Upload to UploadThing
-    const file = new File([audioBuffer], `podcast-${Date.now()}.mp3`, {
-      type: 'audio/mpeg',
-    });
-
-    const uploadResponse = await utapi.uploadFiles(file);
-    const uploadedFile = Array.isArray(uploadResponse)
-      ? uploadResponse[0]
-      : uploadResponse;
-
-    if (!uploadedFile.data?.url) {
-      throw new Error('Failed to upload audio file');
-    }
-
-    // Step 4: Calculate duration from length string
-    const calculateDuration = (lengthStr: string): number => {
-      const match = lengthStr.match(/(\d+)/);
-      if (match) {
-        return parseInt(match[1]) * 60; // Convert minutes to seconds
-      }
-      return 300; // Default to 5 minutes
-    };
-
-    // Step 5: Save to database with ALL required fields
-    const podcast = await prisma.podcast.create({
-      data: {
-        conversationId,
+    // Get the conversation with the latest transcript
+    const conversation = await prisma.conversation.findFirst({
+      where: {
+        id: conversationId,
         userId: dbUser.id,
-        title: podcastDetails.topic.slice(0, 100),
-        description: `A ${podcastDetails.format} podcast about ${podcastDetails.topic}`,
-        script: transcript, // The generated transcript
-        audioUrl: uploadedFile.data.url,
-        duration: calculateDuration(podcastDetails.length || '5 minutes'),
-        format: podcastDetails.format || 'solo',
-        tone: podcastDetails.tone || 'professional',
-        audience: podcastDetails.audience || 'general',
+      },
+      include: {
+        messages: {
+          where: {
+            role: 'system', // Where we stored the transcript
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
       },
     });
 
-    // Step 6: Add a system message to the conversation
-    await prisma.message.create({
-      data: {
-        content: `🎙️ **Your podcast is ready!**\n\n**Title:** ${
-          podcast.title
-        }\n\nYour ${
-          podcast.format
-        } podcast has been generated successfully. Click play below to listen to your episode!\n\n**Duration:** ${Math.ceil(
-          podcast.duration / 60
-        )} minutes`,
-        role: 'system',
-        conversationId: conversationId,
-      },
-    });
+    if (!conversation) {
+      return NextResponse.json(
+        { error: 'Conversation not found' },
+        { status: 404 }
+      );
+    }
 
-    return NextResponse.json({
-      success: true,
-      podcastId: podcast.id,
-      audioUrl: podcast.audioUrl,
-      title: podcast.title,
-      duration: podcast.duration,
-    });
+    if (!conversation.messages[0]) {
+      return NextResponse.json(
+        { error: 'No transcript found in conversation' },
+        { status: 404 }
+      );
+    }
+
+    const transcript = conversation.messages[0].content;
+    console.log('Transcript length:', transcript.length);
+
+    // Check if ElevenLabs API key exists
+    if (!process.env.ELEVENLABS_API_KEY) {
+      console.error('ElevenLabs API key missing');
+      return NextResponse.json(
+        { error: 'Audio generation service not configured' },
+        { status: 500 }
+      );
+    }
+
+    // Generate audio with ElevenLabs
+    try {
+      console.log('Calling ElevenLabs API...');
+      const audio = await elevenlabs.generate({
+        voice: 'pNInz6obpgDQGcFmaJgB', // Adam voice
+        text: transcript.substring(0, 5000), // ElevenLabs has character limits
+        model_id: 'eleven_monolingual_v1',
+      });
+
+      // Convert stream to buffer
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of audio) {
+        chunks.push(chunk);
+      }
+      const audioBuffer = Buffer.concat(chunks);
+      console.log('Audio generated, size:', audioBuffer.length);
+
+      // For testing, you can skip UploadThing and use a dummy URL
+      // Remove this in production
+      if (
+        process.env.NODE_ENV === 'development' &&
+        !process.env.UPLOADTHING_SECRET
+      ) {
+        console.warn('UploadThing not configured, using dummy URL');
+
+        // Create podcast record with dummy URL
+        const podcast = await prisma.podcast.create({
+          data: {
+            title: `${lectureDetails.topic} - ${lectureDetails.level} level`,
+            description: lectureDetails.focus,
+            script: transcript,
+            audioUrl: 'https://example.com/dummy-audio.mp3', // Dummy URL
+            duration: Math.ceil(transcript.split(' ').length / 150) * 60,
+            format: 'lecture',
+            tone: 'educational',
+            audience: lectureDetails.level,
+            userId: dbUser.id,
+            conversationId: conversation.id,
+          },
+        });
+
+        return NextResponse.json({
+          id: podcast.id,
+          title: podcast.title,
+          description: podcast.description,
+          audioUrl: podcast.audioUrl,
+          duration: podcast.duration,
+          createdAt: podcast.createdAt,
+        });
+      }
+
+      // Upload to UploadThing
+      console.log('Uploading to UploadThing...');
+      const fileName = `lecture-${Date.now()}.mp3`;
+      const file = new File([audioBuffer], fileName, {
+        type: 'audio/mpeg',
+      });
+
+      const uploadResponse = await utapi.uploadFiles(file);
+      const uploadedFile = Array.isArray(uploadResponse)
+        ? uploadResponse[0]
+        : uploadResponse;
+
+      if (!uploadedFile || uploadedFile.error) {
+        console.error('Upload failed:', uploadedFile?.error);
+        throw new Error('Failed to upload audio file');
+      }
+
+      console.log('Audio uploaded:', uploadedFile.data.url);
+
+      // Create podcast record
+      const podcast = await prisma.podcast.create({
+        data: {
+          title: `${lectureDetails.topic} - ${lectureDetails.level} level`,
+          description: lectureDetails.focus,
+          script: transcript,
+          audioUrl: uploadedFile.data.url,
+          duration: Math.ceil(transcript.split(' ').length / 150) * 60,
+          format: 'lecture',
+          tone: 'educational',
+          audience: lectureDetails.level,
+          userId: dbUser.id,
+          conversationId: conversation.id,
+        },
+      });
+
+      console.log('Podcast created:', podcast.id);
+
+      return NextResponse.json({
+        id: podcast.id,
+        title: podcast.title,
+        description: podcast.description,
+        audioUrl: podcast.audioUrl,
+        duration: podcast.duration,
+        createdAt: podcast.createdAt,
+      });
+    } catch (elevenLabsError) {
+      console.error('ElevenLabs error:', elevenLabsError);
+      return NextResponse.json(
+        { error: 'Failed to generate audio. Please try again.' },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Podcast generation error:', error);
+    console.error('Error in podcast generation:', error);
     return NextResponse.json(
       {
         error: 'Failed to generate podcast',

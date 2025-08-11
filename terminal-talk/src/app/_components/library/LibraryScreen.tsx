@@ -21,14 +21,14 @@ type Item = {
 export default function LibraryScreen({ items }: { items: Item[] }) {
   const [search, setSearch] = useState('');
 
-  const formatDuration = (duration: number | null) => {
-    if (!duration) return 'Unknown duration';
-    const m = Math.floor(duration / 60);
-    const s = Math.floor(duration % 60)
-      .toString()
-      .padStart(2, '0');
-    return `${m}m ${s}s`;
-  };
+  // const formatDuration = (duration: number | null) => {
+  //   if (!duration) return 'Unknown duration';
+  //   const m = Math.floor(duration / 60);
+  //   const s = Math.floor(duration % 60)
+  //     .toString()
+  //     .padStart(2, '0');
+  //   return `${m}m ${s}s`;
+  // };
 
   const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
 
@@ -153,7 +153,7 @@ export default function LibraryScreen({ items }: { items: Item[] }) {
                       {/* Duration and play button */}
                       <div className="flex items-center justify-between">
                         <span className="text-xs md:text-sm text-gray-500">
-                          {formatDuration(p.duration)}
+                          {/* {formatDuration(p.duration)} */}
                         </span>
                         <button
                           onClick={() => openWebPlayer(p)}

@@ -1,3 +1,4 @@
+// src/app/_components/chat/ChatProvider.tsx
 'use client';
 
 import {
@@ -31,7 +32,7 @@ interface ChatContextType {
   messages: Message[];
   isLoading: boolean;
 
-  // Actions
+  // Actions - Update sendMessage return type
   createNewConversation: (firstMessage: string) => Promise<string>;
   loadConversation: (id: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
@@ -56,6 +57,7 @@ export function ChatProvider({
     useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const createNewConversation = useCallback(
@@ -63,6 +65,7 @@ export function ChatProvider({
       try {
         setIsLoading(true);
 
+        // Send Request To Backend.
         const response = await fetch('/api/chat/conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -72,9 +75,9 @@ export function ChatProvider({
         const newConversation = await response.json();
 
         // Update conversations list immediately
-        setConversations((prev) => [newConversation, ...prev]);
-        setCurrentConversation(newConversation);
-        setMessages(newConversation.messages);
+        setConversations((prev) => [newConversation, ...prev]); // Update Conversation Sidebar
+        setCurrentConversation(newConversation); // Set as Current Conversation.
+        setMessages(newConversation.messages); // Load Messages Into Chat View.
 
         // Navigate to the new conversation
         router.push(`/dashboardV2/chat/${newConversation.id}`);
@@ -108,7 +111,6 @@ export function ChatProvider({
   const sendMessage = useCallback(
     async (content: string) => {
       if (!currentConversation) {
-        // Create new conversation with this message
         await createNewConversation(content);
         return;
       }
@@ -143,7 +145,7 @@ export function ChatProvider({
           return [...filtered, savedUserMessage, assistantMessage];
         });
 
-        // Update conversation in sidebar with new timestamp
+        // Update conversation in sidebar
         setConversations((prev) =>
           prev
             .map((conv) =>
@@ -159,7 +161,6 @@ export function ChatProvider({
         );
       } catch (error) {
         console.error('Failed to send message:', error);
-        // Remove optimistic message on error
         setMessages((prev) => prev.filter((m) => m.id !== userMessage.id));
       } finally {
         setIsLoading(false);
@@ -195,7 +196,7 @@ export function ChatProvider({
         sendMessage,
         refreshConversations,
         clearCurrentConversation,
-        setMessages, // Add setMessages to the provider value
+        setMessages,
       }}
     >
       {children}

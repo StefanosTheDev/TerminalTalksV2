@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useChat } from './ChatProvider';
 import { PiSidebarThin } from 'react-icons/pi';
-import { useUser, SignedIn, UserButton } from '@clerk/nextjs';
+// import { useUser, SignedIn, UserButton } from '@clerk/nextjs';
 
 export default function ChatSideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -12,9 +12,9 @@ export default function ChatSideBar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useUser();
+  // const { user } = useUser();
   const { conversations } = useChat();
-
+  console.log(`PRINTING CONVERSATIONS : ${conversations}`);
   // Check if current chat is active
   const isActiveChat = (chatId: string) => {
     return pathname === `/chat/${chatId}`;
@@ -116,7 +116,6 @@ export default function ChatSideBar() {
             />
           </svg>
         </button>
-
         {/* Logo + App Info Section */}
         <div className="flex items-center gap-3 p-4">
           <div className="w-9 h-9 bg-[#0a33f9] text-white rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0">
@@ -131,7 +130,6 @@ export default function ChatSideBar() {
             </div>
           )}
         </div>
-
         {/* New Chat Button */}
         <div className="p-3">
           <button
@@ -161,7 +159,6 @@ export default function ChatSideBar() {
             )}
           </button>
         </div>
-
         {/* Library & Courses Section */}
         <div className="px-3 pb-3 border-b border-gray-800/50">
           <button
@@ -232,7 +229,6 @@ export default function ChatSideBar() {
             )}
           </button>
         </div>
-
         {/* Recent Chats */}
         <div className="flex-1 overflow-y-auto px-3 py-2">
           {!isCollapsed && (
@@ -264,9 +260,9 @@ export default function ChatSideBar() {
               {isRecentsOpen && (
                 <div className="mt-2 space-y-1">
                   {conversations.length > 0 ? (
-                    conversations.map((chat) => (
+                    conversations.map((chat, i) => (
                       <button
-                        key={chat.id}
+                        key={i}
                         onClick={() => navigateToChat(chat.id)}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-all group ${
                           isActiveChat(chat.id)
@@ -328,7 +324,6 @@ export default function ChatSideBar() {
             </div>
           )}
         </div>
-
         {/* Sidebar Toggle Button - Desktop only */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -341,8 +336,7 @@ export default function ChatSideBar() {
             }`}
           />
         </button>
-
-        {/* User Profile Section */}
+        {/* User Profile Section
         <SignedIn>
           <div className="border-t border-gray-800/50 p-3 mt-auto">
             <div
@@ -363,7 +357,7 @@ export default function ChatSideBar() {
               )}
             </div>
           </div>
-        </SignedIn>
+        </SignedIn> */}
       </div>
     </>
   );
