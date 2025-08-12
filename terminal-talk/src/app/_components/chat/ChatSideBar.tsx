@@ -4,7 +4,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useChat } from './ChatProvider';
 import { PiSidebarThin } from 'react-icons/pi';
-// import { useUser, SignedIn, UserButton } from '@clerk/nextjs';
+import {
+  Plus,
+  Library,
+  BookOpen,
+  Menu,
+  X,
+  ChevronDown,
+  MessageSquare,
+} from 'lucide-react';
 
 export default function ChatSideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -12,10 +20,8 @@ export default function ChatSideBar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  // const { user } = useUser();
   const { conversations } = useChat();
-  console.log(`PRINTING CONVERSATIONS : ${conversations}`);
-  // Check if current chat is active
+
   const isActiveChat = (chatId: string) => {
     return pathname === `/chat/${chatId}`;
   };
@@ -37,22 +43,22 @@ export default function ChatSideBar() {
   }, []);
 
   const handleNewChat = () => {
-    router.push('/dashboardV2');
+    router.push('/dashboard/chat');
     setIsMobileOpen(false);
   };
 
   const handleViewLibrary = () => {
-    router.push('/dashboardV2/library');
+    router.push('/dashboard/library');
     setIsMobileOpen(false);
   };
 
   const handleViewCourses = () => {
-    router.push('/dashboardV2/courses');
+    router.push('/dashboard/courses');
     setIsMobileOpen(false);
   };
 
   const navigateToChat = (chatId: string) => {
-    router.push(`/dashboardV2/chat/${chatId}`);
+    router.push(`/dashboard/chat/${chatId}`);
     setIsMobileOpen(false);
   };
 
@@ -71,19 +77,7 @@ export default function ChatSideBar() {
         onClick={() => setIsMobileOpen(true)}
         className="fixed top-4 left-4 z-30 md:hidden bg-[#1a1a1a]/80 backdrop-blur p-2 rounded-lg border border-gray-800/50"
       >
-        <svg
-          className="w-5 h-5 text-white"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
+        <Menu className="w-5 h-5 text-white" />
       </button>
 
       {/* Sidebar */}
@@ -102,20 +96,9 @@ export default function ChatSideBar() {
           onClick={() => setIsMobileOpen(false)}
           className="absolute top-4 right-4 md:hidden"
         >
-          <svg
-            className="w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <X className="w-5 h-5 text-gray-400" />
         </button>
+
         {/* Logo + App Info Section */}
         <div className="flex items-center gap-3 p-4">
           <div className="w-9 h-9 bg-[#0a33f9] text-white rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0">
@@ -130,6 +113,7 @@ export default function ChatSideBar() {
             </div>
           )}
         </div>
+
         {/* New Chat Button */}
         <div className="p-3">
           <button
@@ -138,27 +122,13 @@ export default function ChatSideBar() {
               isCollapsed ? 'justify-center' : ''
             }`}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-white"
-            >
-              <path
-                d="M10 4V16M4 10H16"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Plus className="w-5 h-5 text-white" />
             {!isCollapsed && (
               <span className="text-sm font-medium text-white">New Chat</span>
             )}
           </button>
         </div>
+
         {/* Library & Courses Section */}
         <div className="px-3 pb-3 border-b border-gray-800/50">
           <button
@@ -167,36 +137,7 @@ export default function ChatSideBar() {
               isCollapsed ? 'justify-center' : ''
             }`}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-400"
-            >
-              <path
-                d="M12 2L2 7L12 12L22 7L12 2Z"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 17L12 22L22 17"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 12L12 17L22 12"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Library className="w-5 h-5 text-gray-400" />
             {!isCollapsed && (
               <span className="text-sm text-gray-200">My Library</span>
             )}
@@ -208,27 +149,13 @@ export default function ChatSideBar() {
               isCollapsed ? 'justify-center' : ''
             }`}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-400"
-            >
-              <path
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <BookOpen className="w-5 h-5 text-gray-400" />
             {!isCollapsed && (
               <span className="text-sm text-gray-200">Courses</span>
             )}
           </button>
         </div>
+
         {/* Recent Chats */}
         <div className="flex-1 overflow-y-auto px-3 py-2">
           {!isCollapsed && (
@@ -240,21 +167,11 @@ export default function ChatSideBar() {
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Recents
                 </span>
-                <svg
+                <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     isRecentsOpen ? 'rotate-180' : ''
                   }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                />
               </button>
 
               {isRecentsOpen && (
@@ -303,27 +220,13 @@ export default function ChatSideBar() {
                   className="w-full p-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors"
                   title={chat.title}
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="text-gray-600 mx-auto"
-                  >
-                    <path
-                      d="M7 9H13M7 13H10M6 17H14C15.1046 17 16 16.1046 16 15V5C16 3.89543 15.1046 3 14 3H6C4.89543 3 4 3.89543 4 5V15C4 16.1046 4.89543 17 6 17Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <MessageSquare className="w-5 h-5 text-gray-600 mx-auto" />
                 </button>
               ))}
             </div>
           )}
         </div>
+
         {/* Sidebar Toggle Button - Desktop only */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -336,28 +239,6 @@ export default function ChatSideBar() {
             }`}
           />
         </button>
-        {/* User Profile Section
-        <SignedIn>
-          <div className="border-t border-gray-800/50 p-3 mt-auto">
-            <div
-              className={`flex items-center gap-3 ${
-                isCollapsed ? 'justify-center' : ''
-              }`}
-            >
-              <UserButton afterSignOutUrl="/auth/login" />
-              {!isCollapsed && user && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
-                    {user.firstName || user.username}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user.emailAddresses[0]?.emailAddress}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </SignedIn> */}
       </div>
     </>
   );

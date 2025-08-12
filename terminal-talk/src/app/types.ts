@@ -71,3 +71,17 @@ export type UserPodcastDTO = {
   duration: number | null;
   createdAt: string; // ISO
 };
+
+export interface Message {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  createdAt: Date;
+  audioUrl?: string;
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+  updatedAt: Date;
+}

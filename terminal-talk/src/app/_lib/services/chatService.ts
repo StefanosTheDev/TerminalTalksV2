@@ -60,6 +60,7 @@ export const loadConversationMessages = async (
   return conversation;
 };
 
+// This Returns Minimalist Version Of Everything.
 export async function getUserConversations(clerkId: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -134,5 +135,59 @@ export async function createConversation(
       },
     },
   });
+  return conversation;
+}
+/**
+ * Get user by Clerk ID - used internally by other functions
+ */
+async function getUserByClerkId(clerkId: string) {
+  const user = await prisma.user.findUnique({
+    where: { clerkId },
+  });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  return user;
+}
+
+// Get All Conversations for SideBar. (Minimal)
+export async function getMinimalConversationList(clerkId: string) {
+  const user = await getUserByClerkId(clerkId);
+
+  return await prisma.conversation.findMany({
+    where: { userId: user.id },
+    orderBy: { updatedAt: 'desc' }, // Retrieved in Chronoligal Order.
+    take: 20,
+    select: {
+      id: true,
+      title: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function getFullConversationByID(
+  conversationId: string,
+  clerkId: string
+) {
+  const user = await getUserByClerkId(clerkId);
+
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      userId: user.id, // Security Make sure they won it. Will Review later
+    },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'asc' }, // All Messages For This One Convo.
+      },
+    },
+  });
+  if (!conversation) {
+    throw new Error('Conversation Not Found');
+  }
+
   return conversation;
 }

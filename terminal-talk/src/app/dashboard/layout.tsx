@@ -1,6 +1,9 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { getUserConversations } from '@/app/_lib/services/chatService';
+import {
+  getMinimalConversationList,
+  getUserConversations,
+} from '@/app/_lib/services/chatService';
 import { ChatProvider } from '@/app/_components/chat/ChatProvider';
 import ChatSideBar from '../_components/chat/ChatSideBar';
 export default async function DashboardLayout({
@@ -13,8 +16,8 @@ export default async function DashboardLayout({
     redirect('/auth/login');
   }
 
+  // Server Side. Get User Conversations.
   const conversations = await getUserConversations(user.id);
-
   return (
     <ChatProvider initialConversations={conversations}>
       <div className="flex h-screen bg-white">

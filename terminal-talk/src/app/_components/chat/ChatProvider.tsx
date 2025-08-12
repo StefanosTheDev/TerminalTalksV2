@@ -32,15 +32,16 @@ interface ChatContextType {
   messages: Message[];
   isLoading: boolean;
 
-  // Actions - Update sendMessage return type
+  // Actions
   createNewConversation: (firstMessage: string) => Promise<string>;
   loadConversation: (id: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
   refreshConversations: () => Promise<void>;
   clearCurrentConversation: () => void;
 
-  // Add setMessages to the interface
+  // Setters
   setMessages: Dispatch<SetStateAction<Message[]>>;
+  setCurrentConversation: (conversation: Conversation | null) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -52,6 +53,7 @@ export function ChatProvider({
   children: ReactNode;
   initialConversations: Conversation[];
 }) {
+  // Conversations Get Loaded Minimalist
   const [conversations, setConversations] = useState(initialConversations);
   const [currentConversation, setCurrentConversation] =
     useState<Conversation | null>(null);
@@ -80,7 +82,7 @@ export function ChatProvider({
         setMessages(newConversation.messages); // Load Messages Into Chat View.
 
         // Navigate to the new conversation
-        router.push(`/dashboardV2/chat/${newConversation.id}`);
+        router.push(`/dashboard/chat/${newConversation.id}`);
         return newConversation.id;
       } catch (error) {
         console.error('Failed to create conversation:', error);
@@ -109,24 +111,30 @@ export function ChatProvider({
   }, []);
 
   const sendMessage = useCallback(
-    async (content: string) => {
-      if (!currentConversation) {
-        await createNewConversation(content);
-        return;
-      }
-
-      // Add user message optimistically
-      const userMessage: Message = {
-        id: `temp-${Date.now()}`,
-        role: 'user',
-        content,
-        createdAt: new Date(),
-      };
-
-      setMessages((prev) => [...prev, userMessage]);
-      setIsLoading(true);
+    async (content: string): Promise<void> => {
+      if (!content.trim()) return;
 
       try {
+        // Case 1: No current conversation - create one first
+        if (!currentConversation) {
+          await createNewConversation(content);
+          return; // createNewConversation handles everything
+        }
+
+        // Case 2: Existing conversation - add message
+        setIsLoading(true);
+
+        // Add user message optimistically
+        const tempUserMessage: Message = {
+          id: `temp-${Date.now()}`,
+          role: 'user',
+          content,
+          createdAt: new Date(),
+        };
+
+        setMessages((prev) => [...prev, tempUserMessage]);
+
+        // Send to backend
         const response = await fetch(
           `/api/chat/conversations/${currentConversation.id}/messages`,
           {
@@ -136,32 +144,39 @@ export function ChatProvider({
           }
         );
 
+        if (!response.ok) {
+          throw new Error('Failed to send message');
+        }
+
         const { userMessage: savedUserMessage, assistantMessage } =
           await response.json();
 
         // Replace temp message with saved one and add AI response
         setMessages((prev) => {
-          const filtered = prev.filter((m) => m.id !== userMessage.id);
+          const filtered = prev.filter((m) => m.id !== tempUserMessage.id);
           return [...filtered, savedUserMessage, assistantMessage];
         });
 
-        // Update conversation in sidebar
-        setConversations((prev) =>
-          prev
-            .map((conv) =>
-              conv.id === currentConversation.id
-                ? { ...conv, updatedAt: new Date() }
-                : conv
-            )
-            .sort(
-              (a, b) =>
-                new Date(b.updatedAt).getTime() -
-                new Date(a.updatedAt).getTime()
-            )
-        );
+        // Update conversation in sidebar (move to top)
+        setConversations((prev) => {
+          const updated = prev.map((conv) =>
+            conv.id === currentConversation.id
+              ? { ...conv, updatedAt: new Date() }
+              : conv
+          );
+          // Sort by most recent first
+          return updated.sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+        });
       } catch (error) {
         console.error('Failed to send message:', error);
-        setMessages((prev) => prev.filter((m) => m.id !== userMessage.id));
+        // Remove optimistic message on error
+        if (currentConversation) {
+          setMessages((prev) => prev.filter((m) => !m.id.startsWith('temp-')));
+        }
+        throw error; // Re-throw so components can handle it
       } finally {
         setIsLoading(false);
       }
@@ -197,6 +212,7 @@ export function ChatProvider({
         refreshConversations,
         clearCurrentConversation,
         setMessages,
+        setCurrentConversation,
       }}
     >
       {children}
