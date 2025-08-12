@@ -1,7 +1,7 @@
 // app/_components/chat/MessageList.tsx
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bot, User } from 'lucide-react';
 import { Message } from '@/app/types';
 
@@ -12,15 +12,32 @@ interface MessageListProps {
 
 export default function MessageList({ messages, isLoading }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  // Initial scroll to bottom without animation on first load
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (!hasInitialized && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+      setHasInitialized(true);
+    }
+  }, [messages, hasInitialized]);
+
+  // Auto-scroll for new messages
+  useEffect(() => {
+    if (hasInitialized) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages.length, hasInitialized]);
+
+  // Guard against undefined messages
+  if (!messages) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-gray-500">
+        <Bot className="w-12 h-12 mb-4 text-gray-600" />
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
+  }
 
   if (messages.length === 0 && !isLoading) {
     return (
@@ -33,15 +50,15 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
   }
 
   return (
-    <div className="flex flex-col space-y-4 p-4 max-w-4xl mx-auto">
+    <div className="flex flex-col space-y-6 p-4 pt-8 max-w-4xl mx-auto">
       {messages.map((message) => (
         <MessageBubble key={message.id} message={message} />
       ))}
 
       {/* Loading indicator */}
       {isLoading && (
-        <div className="flex items-center space-x-2 text-gray-500">
-          <div className="flex space-x-1">
+        <div className="flex items-start space-x-3 px-2">
+          <div className="flex space-x-1 mt-2">
             <div
               className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
               style={{ animationDelay: '0ms' }}
@@ -55,7 +72,6 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
               style={{ animationDelay: '300ms' }}
             />
           </div>
-          <span className="text-sm">AI is thinking...</span>
         </div>
       )}
 
@@ -81,48 +97,25 @@ function MessageBubble({ message }: { message: Message }) {
   }
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} px-2`}>
       <div
-        className={`flex items-start space-x-2 max-w-[80%] ${
+        className={`flex items-start space-x-3 max-w-[85%] ${
           isUser ? 'flex-row-reverse space-x-reverse' : ''
         }`}
       >
-        {/* Avatar */}
-        <div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-            isUser ? 'bg-blue-600' : 'bg-gray-700'
-          }`}
-        >
-          {isUser ? (
-            <User className="w-5 h-5 text-white" />
-          ) : (
-            <Bot className="w-5 h-5 text-white" />
-          )}
-        </div>
-
         {/* Message content */}
         <div
           className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
         >
           <div
-            className={`px-4 py-2 rounded-lg ${
-              isUser
-                ? 'bg-blue-600 text-white'
-                : 'bg-[#1a1a1a] text-gray-100 border border-gray-800'
+            className={`px-4 py-3 rounded-2xl ${
+              isUser ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-100'
             }`}
           >
-            <p className="text-sm whitespace-pre-wrap break-words">
+            <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">
               {message.content}
             </p>
           </div>
-
-          {/* Timestamp */}
-          <span className="text-xs text-gray-500 mt-1 px-1">
-            {new Date(message.createdAt).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </span>
         </div>
       </div>
     </div>

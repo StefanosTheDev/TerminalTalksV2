@@ -3,31 +3,6 @@ import prisma from '@/app/_lib/prisma';
 import { openai, PODCAST_SYSTEM_PROMPT } from '@/app/_lib/services/openai';
 
 /**
- * Fetches all conversations for a user with the latest message preview.
- * Used for sidebar list of conversations.
- */
-export const loadAccountConversations = async (clerkId: string) => {
-  const user = await prisma.user.findUnique({ where: { clerkId } });
-
-  if (!user) {
-    throw new Error('No User Found');
-  }
-
-  const conversations = await prisma.conversation.findMany({
-    where: { userId: user.id },
-    orderBy: { updatedAt: 'desc' },
-    include: {
-      messages: {
-        take: 1,
-        orderBy: { createdAt: 'desc' }, // Get last message
-      },
-    },
-  });
-
-  return conversations;
-};
-
-/**
  * Fetches all messages for a specific conversation the user owns.
  * Used when rendering the chat screen.
  */
@@ -98,6 +73,7 @@ export async function getUserConversations(clerkId: string) {
   }
 }
 
+// Create Conversation.
 export async function createConversation(
   clerkId: string,
   firstMessage: string
@@ -112,7 +88,7 @@ export async function createConversation(
 
   // Step 2: Get AI response for the first message That we Passed.
   const completion = await openai.chat.completions.create({
-    model: 'gpt-5',
+    model: 'gpt-4-turbo-preview',
     messages: [
       { role: 'system', content: PODCAST_SYSTEM_PROMPT },
       { role: 'user', content: firstMessage },
@@ -145,60 +121,13 @@ export async function createConversation(
         ],
       },
     },
-  });
-  return conversation;
-}
-/**
- * Get user by Clerk ID - used internally by other functions
- */
-async function getUserByClerkId(clerkId: string) {
-  const user = await prisma.user.findUnique({
-    where: { clerkId },
-  });
-
-  if (!user) {
-    throw new Error('User not found');
-  }
-
-  return user;
-}
-
-// Get All Conversations for SideBar. (Minimal)
-export async function getMinimalConversationList(clerkId: string) {
-  const user = await getUserByClerkId(clerkId);
-
-  return await prisma.conversation.findMany({
-    where: { userId: user.id },
-    orderBy: { updatedAt: 'desc' }, // Retrieved in Chronoligal Order.
-    take: 20,
-    select: {
-      id: true,
-      title: true,
-      updatedAt: true,
-    },
-  });
-}
-
-export async function getFullConversationByID(
-  conversationId: string,
-  clerkId: string
-) {
-  const user = await getUserByClerkId(clerkId);
-
-  const conversation = await prisma.conversation.findFirst({
-    where: {
-      id: conversationId,
-      userId: user.id, // Security Make sure they won it. Will Review later
-    },
     include: {
+      // ← ADD THIS!
       messages: {
-        orderBy: { createdAt: 'asc' }, // All Messages For This One Convo.
+        orderBy: { createdAt: 'asc' },
       },
     },
   });
-  if (!conversation) {
-    throw new Error('Conversation Not Found');
-  }
 
   return conversation;
 }

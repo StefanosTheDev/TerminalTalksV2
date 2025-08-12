@@ -20,10 +20,13 @@ export default function ChatSideBar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { conversations } = useChat();
+  const { conversations, clearCurrentConversation } = useChat();
 
   const isActiveChat = (chatId: string) => {
-    return pathname === `/chat/${chatId}`;
+    // More flexible pathname matching
+    return (
+      pathname === `/chat/${chatId}` || pathname === `/dashboard/chat/${chatId}`
+    );
   };
 
   // Auto-collapse on small screens
@@ -43,17 +46,13 @@ export default function ChatSideBar() {
   }, []);
 
   const handleNewChat = () => {
+    clearCurrentConversation();
     router.push('/dashboard/chat');
     setIsMobileOpen(false);
   };
 
   const handleViewLibrary = () => {
     router.push('/dashboard/library');
-    setIsMobileOpen(false);
-  };
-
-  const handleViewCourses = () => {
-    router.push('/dashboard/courses');
     setIsMobileOpen(false);
   };
 
@@ -118,13 +117,29 @@ export default function ChatSideBar() {
         <div className="p-3">
           <button
             onClick={handleNewChat}
-            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1a1a1a]/80 backdrop-blur border border-gray-800/50 hover:bg-[#1a1a1a] hover:border-gray-700/50 transition-all ${
+            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
               isCollapsed ? 'justify-center' : ''
+            } ${
+              pathname === '/dashboard/chat'
+                ? 'bg-[#1a1a1a]/80 border border-gray-700/50'
+                : 'hover:bg-[#1a1a1a]/50'
             }`}
           >
-            <Plus className="w-5 h-5 text-white" />
+            <Plus
+              className={`w-5 h-5 ${
+                pathname === '/dashboard/chat' ? 'text-white' : 'text-gray-400'
+              }`}
+            />
             {!isCollapsed && (
-              <span className="text-sm font-medium text-white">New Chat</span>
+              <span
+                className={`text-sm font-medium ${
+                  pathname === '/dashboard/chat'
+                    ? 'text-white'
+                    : 'text-gray-300'
+                }`}
+              >
+                New Chat
+              </span>
             )}
           </button>
         </div>
@@ -133,25 +148,31 @@ export default function ChatSideBar() {
         <div className="px-3 pb-3 border-b border-gray-800/50">
           <button
             onClick={handleViewLibrary}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors ${
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
               isCollapsed ? 'justify-center' : ''
+            } ${
+              pathname === '/dashboard/library'
+                ? 'bg-[#1a1a1a]/80 border border-gray-700/50'
+                : 'hover:bg-[#1a1a1a]/50'
             }`}
           >
-            <Library className="w-5 h-5 text-gray-400" />
+            <Library
+              className={`w-5 h-5 ${
+                pathname === '/dashboard/library'
+                  ? 'text-white'
+                  : 'text-gray-400'
+              }`}
+            />
             {!isCollapsed && (
-              <span className="text-sm text-gray-200">My Library</span>
-            )}
-          </button>
-
-          <button
-            onClick={handleViewCourses}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors mt-1 ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
-          >
-            <BookOpen className="w-5 h-5 text-gray-400" />
-            {!isCollapsed && (
-              <span className="text-sm text-gray-200">Courses</span>
+              <span
+                className={`text-sm ${
+                  pathname === '/dashboard/library'
+                    ? 'text-white font-medium'
+                    : 'text-gray-200'
+                }`}
+              >
+                My Library
+              </span>
             )}
           </button>
         </div>
@@ -181,12 +202,16 @@ export default function ChatSideBar() {
                       <button
                         key={i}
                         onClick={() => navigateToChat(chat.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-all group ${
+                        className={`w-full text-left px-3 py-2.5 rounded-lg transition-all group relative ${
                           isActiveChat(chat.id)
                             ? 'bg-[#1a1a1a]/80 border border-gray-700/50'
                             : 'hover:bg-[#1a1a1a]/50'
                         }`}
                       >
+                        {/* Active indicator */}
+                        {isActiveChat(chat.id) && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gray-400 rounded-r-full" />
+                        )}
                         <p
                           className={`text-sm truncate ${
                             isActiveChat(chat.id)
@@ -195,9 +220,6 @@ export default function ChatSideBar() {
                           }`}
                         >
                           {chat.title}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {new Date(chat.updatedAt).toLocaleDateString()}
                         </p>
                       </button>
                     ))
@@ -217,10 +239,22 @@ export default function ChatSideBar() {
                 <button
                   key={chat.id}
                   onClick={() => navigateToChat(chat.id)}
-                  className="w-full p-2 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors"
+                  className={`w-full p-2 rounded-lg transition-colors relative ${
+                    isActiveChat(chat.id)
+                      ? 'bg-[#1a1a1a]/80 border border-gray-700/50'
+                      : 'hover:bg-[#1a1a1a]/50'
+                  }`}
                   title={chat.title}
                 >
-                  <MessageSquare className="w-5 h-5 text-gray-600 mx-auto" />
+                  {/* Active indicator for collapsed mode */}
+                  {isActiveChat(chat.id) && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-gray-400 rounded-r-full" />
+                  )}
+                  <MessageSquare
+                    className={`w-5 h-5 mx-auto ${
+                      isActiveChat(chat.id) ? 'text-white' : 'text-gray-600'
+                    }`}
+                  />
                 </button>
               ))}
             </div>

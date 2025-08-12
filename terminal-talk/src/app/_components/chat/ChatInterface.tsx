@@ -38,10 +38,12 @@ export function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-800/50 p-4">
+      <div className="border-t border-gray-800/50 py-2 px-4">
         <ChatBubble
           placeholder="Continue the conversation..."
-          maxWidth="max-w-4xl"
+          maxWidth="max-w-3xl"
+          minHeight="33px"
+          rows={1}
           containerClassName="mx-auto"
         />
       </div>

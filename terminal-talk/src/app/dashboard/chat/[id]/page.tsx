@@ -3,7 +3,6 @@ import { ChatInterface } from '@/app/_components/chat/ChatInterface';
 import { notFound, redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
 import { loadConversationMessages } from '@/app/_lib/services/chatService';
-import { ConversationWithMessages } from '@/app/types';
 
 export default async function ChatConversationPage({
   params,

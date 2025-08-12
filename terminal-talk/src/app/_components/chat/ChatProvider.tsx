@@ -53,27 +53,56 @@ export function ChatProvider({
   const createNewConversation = useCallback(
     async (firstMessage: string) => {
       try {
+        // First, clear any existing conversation and set up the UI
+        setCurrentConversation(null);
         setIsLoading(true);
 
-        // Send Request To Backend.
+        // Show the user message immediately
+        const tempUserMessage: Message = {
+          id: `user-${Date.now()}`,
+          role: 'user',
+          content: firstMessage,
+          createdAt: new Date(),
+        };
+        setMessages([tempUserMessage]);
+
+        // Navigate to chat page immediately (no ID needed)
+        router.push('/dashboard/chat');
+
+        // Then create the conversation in the background
         const response = await fetch('/api/chat/conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: firstMessage }),
         });
 
+        if (!response.ok) {
+          throw new Error('Failed to create conversation');
+        }
+
         const newConversation = await response.json();
 
-        // Update conversations list immediately
-        setConversations((prev) => [newConversation, ...prev]); // Update Conversation Sidebar
-        setCurrentConversation(newConversation); // Set as Current Conversation.
-        setMessages(newConversation.messages); // Load Messages Into Chat View.
+        // Update with real data (this includes both user and AI messages)
+        setConversations((prev) => [newConversation, ...prev]);
+        setCurrentConversation(newConversation);
+        setMessages(newConversation.messages);
 
-        // Navigate to the new conversation
-        router.push(`/dashboard/chat/${newConversation.id}`);
+        // Update URL to include the conversation ID
+        router.push(`/dashboard/chat/${newConversation.id}`, { scroll: false });
+
         return newConversation.id;
       } catch (error) {
         console.error('Failed to create conversation:', error);
+        // Keep the user message visible but show error
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `error-${Date.now()}`,
+            role: 'assistant',
+            content: 'Sorry, I encountered an error. Please try again.',
+            createdAt: new Date(),
+          },
+        ]);
         throw error;
       } finally {
         setIsLoading(false);
@@ -101,7 +130,7 @@ export function ChatProvider({
   const sendMessage = useCallback(
     async (content: string): Promise<void> => {
       if (!content.trim()) return;
-
+      debugger;
       try {
         // Case 1: No current conversation - create one first
         if (!currentConversation) {

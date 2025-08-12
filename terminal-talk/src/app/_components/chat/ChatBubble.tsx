@@ -27,12 +27,11 @@ interface ChatBubbleProps {
 export function ChatBubble({
   width = 'w-full',
   maxWidth = 'max-w-2xl',
-  minHeight = '100px',
-  rows = 3,
+  minHeight = '50px', // Reduced from 100px
+  rows = 1, // Reduced from 3
   className = '',
   containerClassName = '',
   placeholder = 'Type your message...',
-  onSend,
   clearOnSend = true,
 }: ChatBubbleProps) {
   const [input, setInput] = useState('');
@@ -42,7 +41,7 @@ export function ChatBubble({
     if (!input.trim() || isLoading) return;
 
     const message = input.trim();
-
+    debugger;
     await sendMessage(message);
 
     // Clear input if specified
@@ -55,7 +54,7 @@ export function ChatBubble({
     <div className={`${width} ${maxWidth} ${containerClassName}`}>
       {/* Input Bubble */}
       <div
-        className={`relative bg-[#1a1a1a]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl p-2 ${className}`}
+        className={`relative bg-[#1a1a1a]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl p-1.5 ${className}`}
       >
         <textarea
           value={input}
@@ -67,26 +66,33 @@ export function ChatBubble({
             }
           }}
           placeholder={placeholder}
-          className="w-full px-6 py-4 bg-transparent text-[#ececf1] placeholder-gray-500 focus:outline-none resize-none text-[15px]"
+          className="w-full px-4 py-2 pr-12 bg-transparent text-[#ececf1] placeholder-gray-500 focus:outline-none resize-none text-[15px]"
           rows={rows}
           style={{ minHeight }}
           disabled={isLoading}
         />
 
-        {/* Bottom controls */}
-        <div className="flex items-center justify-between px-4 pb-2">
-          <div className="flex items-center gap-2"></div>
-
-          {/* Right side - Send button */}
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            className="p-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
-            aria-label="Send message"
+        {/* Send button - positioned absolutely and centered */}
+        <button
+          onClick={handleSend}
+          disabled={!input.trim() || isLoading}
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center"
+          aria-label="Send message"
+        >
+          <svg
+            className="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <Send className="w-4 h-4 text-white" />
-          </button>
-        </div>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );
