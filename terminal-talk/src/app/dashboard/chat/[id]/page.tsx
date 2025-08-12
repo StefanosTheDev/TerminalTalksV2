@@ -3,6 +3,7 @@ import { ChatInterface } from '@/app/_components/chat/ChatInterface';
 import { notFound, redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
 import { loadConversationMessages } from '@/app/_lib/services/chatService';
+import { ConversationWithMessages } from '@/app/types';
 
 export default async function ChatConversationPage({
   params,
@@ -15,7 +16,7 @@ export default async function ChatConversationPage({
   // Check if ID is valid BEFORE making any database calls
   if (!id || id === 'undefined') {
     console.error('Invalid chat ID:', id);
-    redirect('/dashboard/chat'); // Redirect to new chat page
+    notFound();
   }
 
   // Get Current User
@@ -25,34 +26,13 @@ export default async function ChatConversationPage({
   }
 
   try {
-    // Load conversation with messages
-    const conversation = await loadConversationMessages(id, user.id);
+    // This returns ConversationWithMessages type
+    const conversationData = await loadConversationMessages(id, user.id);
 
-    if (!conversation) {
-      notFound();
-    }
-
-    // Type the messages properly
-    const typedMessages = conversation.messages.map((msg) => ({
-      id: msg.id,
-      content: msg.content,
-      role: msg.role as 'user' | 'assistant' | 'system',
-      createdAt: msg.createdAt,
-    }));
-
-    // Pass the server-loaded data to the client component
-    return (
-      <ChatInterface
-        initialConversation={{
-          id: conversation.id,
-          title: conversation.title,
-          updatedAt: conversation.updatedAt,
-        }}
-        initialMessages={typedMessages}
-      />
-    );
+    // Just pass it straight through!
+    return <ChatInterface conversationData={conversationData} />;
   } catch (error) {
-    console.error('Error loading conversation:', error);
+    console.error('Failed to load conversation:', error);
     notFound();
   }
 }

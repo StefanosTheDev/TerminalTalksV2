@@ -11,21 +11,9 @@ import {
   SetStateAction,
 } from 'react';
 import { useRouter } from 'next/navigation';
+import { Message } from '@/app/types';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  createdAt: Date;
-  audioUrl?: string;
-}
-
-interface Conversation {
-  id: string;
-  title: string;
-  updatedAt: Date;
-}
-
+import { Conversation } from '@/app/types';
 interface ChatContextType {
   conversations: Conversation[];
   currentConversation: Conversation | null;

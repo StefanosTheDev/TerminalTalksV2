@@ -3,13 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Bot, User } from 'lucide-react';
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  createdAt: Date;
-}
+import { Message } from '@/app/types';
 
 interface MessageListProps {
   messages: Message[];

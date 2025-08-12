@@ -44,11 +44,11 @@ export const loadConversationMessages = async (
   const conversation = await prisma.conversation.findFirst({
     where: {
       id: conversationId,
-      userId: user.id, // Ensures this conversation belongs to the user
+      userId: user.id,
     },
     include: {
       messages: {
-        orderBy: { createdAt: 'asc' }, // Oldest to newest (chat-style)
+        orderBy: { createdAt: 'asc' },
       },
     },
   });
@@ -57,9 +57,20 @@ export const loadConversationMessages = async (
     throw new Error('Conversation not found or unauthorized');
   }
 
-  return conversation;
+  // Return the full conversation with typed messages
+  return {
+    id: conversation.id,
+    title: conversation.title,
+    createdAt: conversation.createdAt,
+    updatedAt: conversation.updatedAt,
+    messages: conversation.messages.map((msg) => ({
+      id: msg.id,
+      content: msg.content,
+      role: msg.role as 'user' | 'assistant' | 'system',
+      createdAt: msg.createdAt,
+    })),
+  };
 };
-
 // This Returns Minimalist Version Of Everything.
 export async function getUserConversations(clerkId: string) {
   try {
