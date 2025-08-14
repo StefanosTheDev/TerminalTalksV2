@@ -7,7 +7,7 @@ import {
   PodcastIntent,
   extractPodcastIntent,
 } from './openai';
-
+import { ConversationMetadata } from './openai';
 const elevenlabs = new ElevenLabsClient({
   apiKey: process.env.ELEVENLABS_API_KEY!,
 });
@@ -26,7 +26,7 @@ function parseTranscriptForSpeakers(
   const segments: Array<{ speaker: string; text: string }> = [];
 
   // Remove stage directions and sound effects
-  let cleanedTranscript = transcript
+  const cleanedTranscript = transcript
     .replace(/\[PAUSE\]/gi, '')
     .replace(/\[.*?MUSIC.*?\]/gi, '')
     .replace(/\[.*?SOUND.*?\]/gi, '')
@@ -92,9 +92,9 @@ export async function generatePodcastFromConversation({
   let intent: PodcastIntent | null = null;
 
   if (conversation.metadata && typeof conversation.metadata === 'object') {
-    const metadata = conversation.metadata as any;
+    const metadata = conversation.metadata as ConversationMetadata;
     if (metadata.intent) {
-      intent = metadata.intent as PodcastIntent;
+      intent = metadata.intent;
     }
   }
 

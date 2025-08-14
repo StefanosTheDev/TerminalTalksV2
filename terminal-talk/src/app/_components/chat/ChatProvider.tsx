@@ -219,11 +219,15 @@ export function ChatProvider({
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           );
         });
-      } catch (error: any) {
-        // Handle abort separately
-        if (error.name === 'AbortError') {
-          console.log('Message was cancelled');
-          return;
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            console.log('Message was cancelled');
+            return;
+          }
+          console.error('Error:', error.message);
+        } else {
+          console.error('Unknown error:', error);
         }
 
         console.error('Error sending message:', error);
