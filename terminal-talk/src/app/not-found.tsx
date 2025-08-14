@@ -18,7 +18,7 @@ export default function NotFound() {
 
       {/* Call-to-action */}
       <Link
-        href="/dashboard"
+        href="/dashboard/chat"
         className="group inline-flex items-center gap-2 mt-8 rounded-lg
                    border border-gray-700 bg-white/5 px-6 py-3 text-lg font-medium
                    backdrop-blur-sm transition hover:bg-white/10

@@ -21,15 +21,6 @@ type Item = {
 export default function LibraryScreen({ items }: { items: Item[] }) {
   const [search, setSearch] = useState('');
 
-  // const formatDuration = (duration: number | null) => {
-  //   if (!duration) return 'Unknown duration';
-  //   const m = Math.floor(duration / 60);
-  //   const s = Math.floor(duration % 60)
-  //     .toString()
-  //     .padStart(2, '0');
-  //   return `${m}m ${s}s`;
-  // };
-
   const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
 
   const openWebPlayer = (p: Item) => {
@@ -94,7 +85,7 @@ export default function LibraryScreen({ items }: { items: Item[] }) {
         <header className="flex-shrink-0 p-4 md:p-6">
           <div className="mb-6 md:mb-8">
             <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-center">
-              <h1 className="text-xl md:text-2xl text-white font-medium">
+              <h1 className="text-xl md:text-2xl text-white font-medium ml-14 md:ml-0">
                 Podcast Library
               </h1>
 

@@ -8,7 +8,7 @@ export default function Login() {
       path="/auth/login"
       routing="path"
       signUpUrl="/auth/signup"
-      afterSignInUrl="/dashboard"
+      afterSignInUrl="/dashboard/chat"
     />
   );
 }

@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
+  --background: #171717;
   --foreground: #171717;
   --sidebar-bg: #1a1a1a;
   --content-bg: #0a0a0a;
@@ -154,4 +154,22 @@ html {
   height: 16px;
   top: -4px;
   background: #f59e0b;
+}
+/* Clerk UserButton Popover positioning fix */
+.cl-userButtonPopoverRootBox {
+  position: fixed !important;
+  bottom: 80px !important;
+  left: 20px !important;
+  z-index: 9999 !important;
+}
+
+/* When sidebar is collapsed */
+.sidebar-collapsed .cl-userButtonPopoverRootBox {
+  left: 70px !important;
+}
+
+/* Ensure popover appears above everything */
+.cl-userButtonPopoverCard {
+  position: relative !important;
+  z-index: 9999 !important;
 }

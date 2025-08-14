@@ -9,11 +9,12 @@ import {
   ReactNode,
   Dispatch,
   SetStateAction,
+  useRef,
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { Message } from '@/app/types';
-
 import { Conversation } from '@/app/types';
+
 interface ChatContextType {
   conversations: Conversation[];
   currentConversation: Conversation | null;
@@ -26,6 +27,7 @@ interface ChatContextType {
   sendMessage: (content: string) => Promise<void>;
   refreshConversations: () => Promise<void>;
   clearCurrentConversation: () => void;
+  cancelGeneration: () => void; // NEW: Cancel function
 
   // Setters
   setMessages: Dispatch<SetStateAction<Message[]>>;
@@ -41,23 +43,45 @@ export function ChatProvider({
   children: ReactNode;
   initialConversations: Conversation[];
 }) {
-  // Conversations Get Loaded Minimalist
   const [conversations, setConversations] = useState(initialConversations);
   const [currentConversation, setCurrentConversation] =
     useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // NEW: Keep track of the current request
+  const abortControllerRef = useRef<AbortController | null>(null);
   const router = useRouter();
+
+  // NEW: Cancel generation function
+  const cancelGeneration = useCallback(() => {
+    if (abortControllerRef.current && isLoading) {
+      // Check if actually loading
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsLoading(false);
+
+      // Add a system message to show cancellation
+      const cancelMessage: Message = {
+        id: `cancel-${Date.now()}`,
+        role: 'system',
+        content: 'Response generation was cancelled.',
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, cancelMessage]);
+    }
+  }, []);
 
   const createNewConversation = useCallback(
     async (firstMessage: string) => {
       try {
-        // First, clear any existing conversation and set up the UI
+        // Clear any existing abort controller
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
+
         setCurrentConversation(null);
         setIsLoading(true);
 
-        // Show the user message immediately
         const tempUserMessage: Message = {
           id: `user-${Date.now()}`,
           role: 'user',
@@ -66,46 +90,53 @@ export function ChatProvider({
         };
         setMessages([tempUserMessage]);
 
-        // Navigate to chat page immediately (no ID needed)
         router.push('/dashboard/chat');
-
-        // Then create the conversation in the background
         const response = await fetch('/api/chat/conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: firstMessage }),
+          signal: abortControllerRef.current.signal,
         });
 
         if (!response.ok) {
           throw new Error('Failed to create conversation');
         }
 
-        const newConversation = await response.json();
+        const data = await response.json();
 
-        // Update with real data (this includes both user and AI messages)
-        setConversations((prev) => [newConversation, ...prev]);
-        setCurrentConversation(newConversation);
-        setMessages(newConversation.messages);
+        // Check if we got an error response
+        if (data.error) {
+          throw new Error(data.error);
+        }
 
-        // Update URL to include the conversation ID
-        router.push(`/dashboard/chat/${newConversation.id}`, { scroll: false });
+        // Now we can safely access the conversation
+        setCurrentConversation(data);
+        setMessages(data.messages || []); // Add fallback
+        setConversations((prev) => [data, ...prev]);
 
-        return newConversation.id;
-      } catch (error) {
-        console.error('Failed to create conversation:', error);
-        // Keep the user message visible but show error
+        router.push(`/dashboard/chat/${data.id}`);
+        return data.id;
+      } catch (error: any) {
+        // Handle abort separately
+        if (error.name === 'AbortError') {
+          console.log('Request was cancelled');
+          return '';
+        }
+
+        console.error('Error creating conversation:', error);
         setMessages((prev) => [
           ...prev,
           {
             id: `error-${Date.now()}`,
-            role: 'assistant',
-            content: 'Sorry, I encountered an error. Please try again.',
+            role: 'system',
+            content: 'Failed to create conversation. Please try again.',
             createdAt: new Date(),
           },
         ]);
         throw error;
       } finally {
         setIsLoading(false);
+        abortControllerRef.current = null;
       }
     },
     [router]
@@ -130,18 +161,19 @@ export function ChatProvider({
   const sendMessage = useCallback(
     async (content: string): Promise<void> => {
       if (!content.trim()) return;
-      debugger;
+
       try {
-        // Case 1: No current conversation - create one first
+        // Clear any existing abort controller
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
+
         if (!currentConversation) {
           await createNewConversation(content);
-          return; // createNewConversation handles everything
+          return;
         }
 
-        // Case 2: Existing conversation - add message
         setIsLoading(true);
 
-        // Add user message optimistically
         const tempUserMessage: Message = {
           id: `temp-${Date.now()}`,
           role: 'user',
@@ -151,13 +183,13 @@ export function ChatProvider({
 
         setMessages((prev) => [...prev, tempUserMessage]);
 
-        // Send to backend
         const response = await fetch(
           `/api/chat/conversations/${currentConversation.id}/messages`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content }),
+            signal: abortControllerRef.current.signal, // Add abort signal
           }
         );
 
@@ -168,34 +200,42 @@ export function ChatProvider({
         const { userMessage: savedUserMessage, assistantMessage } =
           await response.json();
 
-        // Replace temp message with saved one and add AI response
         setMessages((prev) => {
           const filtered = prev.filter((m) => m.id !== tempUserMessage.id);
           return [...filtered, savedUserMessage, assistantMessage];
         });
 
-        // Update conversation in sidebar (move to top)
         setConversations((prev) => {
           const updated = prev.map((conv) =>
             conv.id === currentConversation.id
               ? { ...conv, updatedAt: new Date() }
               : conv
           );
-          // Sort by most recent first
           return updated.sort(
             (a, b) =>
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           );
         });
-      } catch (error) {
-        console.error('Failed to send message:', error);
-        // Remove optimistic message on error
-        if (currentConversation) {
-          setMessages((prev) => prev.filter((m) => !m.id.startsWith('temp-')));
+      } catch (error: any) {
+        // Handle abort separately
+        if (error.name === 'AbortError') {
+          console.log('Message was cancelled');
+          return;
         }
-        throw error; // Re-throw so components can handle it
+
+        console.error('Error sending message:', error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `error-${Date.now()}`,
+            role: 'system',
+            content: 'Failed to send message. Please try again.',
+            createdAt: new Date(),
+          },
+        ]);
       } finally {
         setIsLoading(false);
+        abortControllerRef.current = null;
       }
     },
     [currentConversation, createNewConversation]
@@ -216,31 +256,28 @@ export function ChatProvider({
     setMessages([]);
   }, []);
 
-  return (
-    <ChatContext.Provider
-      value={{
-        conversations,
-        currentConversation,
-        messages,
-        isLoading,
-        createNewConversation,
-        loadConversation,
-        sendMessage,
-        refreshConversations,
-        clearCurrentConversation,
-        setMessages,
-        setCurrentConversation,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
-  );
+  const value: ChatContextType = {
+    conversations,
+    currentConversation,
+    messages,
+    isLoading,
+    createNewConversation,
+    loadConversation,
+    sendMessage,
+    refreshConversations,
+    clearCurrentConversation,
+    cancelGeneration, // NEW: Add to context
+    setMessages,
+    setCurrentConversation,
+  };
+
+  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }
 
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (!context) {
-    throw new Error('useChat must be used within ChatProvider');
+    throw new Error('useChat must be used within a ChatProvider');
   }
   return context;
 };

@@ -39,16 +39,6 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
     );
   }
 
-  if (messages.length === 0 && !isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500">
-        <Bot className="w-12 h-12 mb-4 text-gray-600" />
-        <p className="text-lg">No messages yet</p>
-        <p className="text-sm">Send a message to start the conversation</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col space-y-6 p-4 pt-8 max-w-4xl mx-auto">
       {messages.map((message) => (

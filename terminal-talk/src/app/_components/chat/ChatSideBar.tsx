@@ -7,12 +7,12 @@ import { PiSidebarThin } from 'react-icons/pi';
 import {
   Plus,
   Library,
-  BookOpen,
   Menu,
   X,
   ChevronDown,
   MessageSquare,
 } from 'lucide-react';
+import ClientUserButton from './ClientUserButton';
 
 export default function ChatSideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -23,20 +23,17 @@ export default function ChatSideBar() {
   const { conversations, clearCurrentConversation } = useChat();
 
   const isActiveChat = (chatId: string) => {
-    // More flexible pathname matching
     return (
       pathname === `/chat/${chatId}` || pathname === `/dashboard/chat/${chatId}`
     );
   };
 
-  // Auto-collapse on small screens
+  // Remove auto-collapse on mobile - let it be full width when open
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsCollapsed(true);
-        setIsMobileOpen(false);
-      } else if (window.innerWidth > 1024) {
+      if (window.innerWidth >= 1024) {
         setIsCollapsed(false);
+        setIsMobileOpen(false);
       }
     };
 
@@ -61,12 +58,18 @@ export default function ChatSideBar() {
     setIsMobileOpen(false);
   };
 
+  const HomeButton = () => {
+    clearCurrentConversation();
+
+    router.push('/dashboard/chat');
+    setIsMobileOpen(false);
+  };
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Mobile overlay - darker like Claude */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/70 z-40 lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -74,7 +77,7 @@ export default function ChatSideBar() {
       {/* Mobile menu button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="fixed top-4 left-4 z-30 md:hidden bg-[#1a1a1a]/80 backdrop-blur p-2 rounded-lg border border-gray-800/50"
+        className="fixed top-4 left-4 z-30 lg:hidden bg-[#1a1a1a]/80 backdrop-blur p-2 rounded-lg border border-gray-800/50"
       >
         <Menu className="w-5 h-5 text-white" />
       </button>
@@ -82,38 +85,45 @@ export default function ChatSideBar() {
       {/* Sidebar */}
       <div
         className={`
-          ${isCollapsed ? 'w-[60px]' : 'w-[280px]'} 
+          ${isCollapsed ? 'w-[60px]' : 'lg:w-[280px] w-[85vw] max-w-[320px]'} 
           bg-[#0a0a0a] border-r border-gray-800/50 flex flex-col 
           transition-all duration-300 h-full
-          fixed md:relative
-          ${isMobileOpen ? 'left-0' : '-left-full md:left-0'}
-          z-50 md:z-auto
+          fixed lg:relative
+          ${isMobileOpen ? 'left-0' : '-left-full lg:left-0'}
+          z-50 lg:z-auto
+          shadow-2xl lg:shadow-none
         `}
       >
-        {/* Mobile close button */}
-        <button
-          onClick={() => setIsMobileOpen(false)}
-          className="absolute top-4 right-4 md:hidden"
-        >
-          <X className="w-5 h-5 text-gray-400" />
-        </button>
+        {/* Header Section with Logo and Close Button */}
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <button
+              className="w-9 h-9 bg-[#0a33f9] text-white rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0"
+              onClick={HomeButton}
+            >
+              TT
+            </button>
 
-        {/* Logo + App Info Section */}
-        <div className="flex items-center gap-3 p-4">
-          <div className="w-9 h-9 bg-[#0a33f9] text-white rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0">
-            TT
+            {!isCollapsed && (
+              <div className="flex flex-col min-w-0">
+                <h1 className="font-semibold text-base text-white">
+                  Terminal Talks
+                </h1>
+                <span className="text-sm text-gray-400">AI Assistant</span>
+              </div>
+            )}
           </div>
-          {!isCollapsed && (
-            <div className="flex flex-col min-w-0">
-              <h1 className="font-semibold text-base text-white">
-                Terminal Talks
-              </h1>
-              <span className="text-sm text-gray-400">AI Assistant</span>
-            </div>
-          )}
+
+          {/* Mobile close button */}
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="lg:hidden p-1.5 hover:bg-[#1a1a1a]/50 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
         </div>
 
-        {/* New Chat Button */}
+        {/* New Chat Button - keeping your styling */}
         <div className="p-3">
           <button
             onClick={handleNewChat}
@@ -261,10 +271,13 @@ export default function ChatSideBar() {
           )}
         </div>
 
+        {/* User Profile Section */}
+        <ClientUserButton isCollapsed={isCollapsed} />
+
         {/* Sidebar Toggle Button - Desktop only */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="hidden md:flex absolute -right-3 top-[72px] w-6 h-6 bg-[#1a1a1a]/80 backdrop-blur border border-gray-800/50 rounded-full items-center justify-center hover:bg-[#1a1a1a] transition-colors shadow-sm z-10"
+          className="hidden lg:flex absolute -right-3 top-[72px] w-6 h-6 bg-[#1a1a1a]/80 backdrop-blur border border-gray-800/50 rounded-full items-center justify-center hover:bg-[#1a1a1a] transition-colors shadow-sm z-10"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           <PiSidebarThin
