@@ -19,6 +19,43 @@ interface GeneratePodcastParams {
   clerkId: string;
 }
 
+// Helper function to parse speakers from transcript
+function parseTranscriptForSpeakers(
+  transcript: string
+): Array<{ speaker: string; text: string }> {
+  const segments: Array<{ speaker: string; text: string }> = [];
+
+  // Remove stage directions and sound effects
+  let cleanedTranscript = transcript
+    .replace(/\[PAUSE\]/gi, '')
+    .replace(/\[.*?MUSIC.*?\]/gi, '')
+    .replace(/\[.*?SOUND.*?\]/gi, '')
+    .replace(/\[.*?FADE.*?\]/gi, '')
+    .replace(/\(.*?MUSIC.*?\)/gi, '')
+    .replace(/\(.*?SOUND.*?\)/gi, '');
+
+  // Split by speaker patterns like "HOST:", "GUEST:", "Speaker 1:", etc.
+  const speakerPattern =
+    /^(HOST|GUEST|SPEAKER\s*\d+|INTERVIEWER|EXPERT|NARRATOR):\s*/gim;
+  const parts = cleanedTranscript.split(speakerPattern);
+
+  // If no speaker markers found, assume it's a single narrator
+  if (parts.length === 1) {
+    return [{ speaker: 'narrator', text: cleanedTranscript.trim() }];
+  }
+
+  // Parse speakers and their text
+  for (let i = 1; i < parts.length; i += 2) {
+    const speaker = parts[i].toLowerCase().replace(/\s+/g, '');
+    const text = parts[i + 1]?.trim();
+    if (text) {
+      segments.push({ speaker, text });
+    }
+  }
+
+  return segments;
+}
+
 export async function generatePodcastFromConversation({
   conversationId,
   clerkId,
@@ -34,7 +71,7 @@ export async function generatePodcastFromConversation({
     throw new Error('User not found');
   }
 
-  // Get the conversation with metadata
+  // Get the conversation with metadata AND messages
   const conversation = await prisma.conversation.findFirst({
     where: {
       id: conversationId,
@@ -51,13 +88,25 @@ export async function generatePodcastFromConversation({
     throw new Error('Conversation not found');
   }
 
-  // Extract intent from conversation
-  const messages = conversation.messages.map((m) => ({
-    role: m.role as 'user' | 'assistant',
-    content: m.content,
-  }));
+  // Check if we have intent in metadata first
+  let intent: PodcastIntent | null = null;
 
-  const intent = extractPodcastIntent(messages);
+  if (conversation.metadata && typeof conversation.metadata === 'object') {
+    const metadata = conversation.metadata as any;
+    if (metadata.intent) {
+      intent = metadata.intent as PodcastIntent;
+    }
+  }
+
+  // If not in metadata, extract from messages
+  if (!intent) {
+    const messages = conversation.messages.map((m) => ({
+      role: m.role as 'user' | 'assistant',
+      content: m.content,
+    }));
+
+    intent = extractPodcastIntent(messages);
+  }
 
   if (!intent) {
     throw new Error('Could not extract podcast intent from conversation');
@@ -80,7 +129,7 @@ export async function generatePodcastFromConversation({
 
   console.log('Transcript generated, generating audio...');
 
-  // Generate audio
+  // Generate audio with multiple speakers if needed
   const audioBuffer = await generateAudio(transcript);
 
   console.log('Audio generated, uploading...');
@@ -118,28 +167,82 @@ export async function generatePodcastFromConversation({
   };
 }
 
-// Generate audio with better error handling
+// Generate audio with multiple voices support
 export async function generateAudio(text: string): Promise<Buffer> {
   console.log('Generating audio with ElevenLabs...');
-  console.log('Text length:', text.length);
+
+  // Parse the transcript for multiple speakers
+  const segments = parseTranscriptForSpeakers(text);
+  console.log(
+    `Found ${segments.length} segments with speakers:`,
+    segments.map((s) => s.speaker)
+  );
+
+  // Define voice mappings for different speakers
+  // Using Chris and Jessica from ElevenLabs
+  const voiceMap: Record<string, string> = {
+    host: 'iP95p4xoKVk53GoZ742B', // Chris - male voice
+    guest: 'cgSgspJ2msm6clMCkdW9', // Jessica - female voice
+    speaker1: 'iP95p4xoKVk53GoZ742B', // Chris
+    speaker2: 'cgSgspJ2msm6clMCkdW9', // Jessica
+    interviewer: 'iP95p4xoKVk53GoZ742B', // Chris
+    expert: 'cgSgspJ2msm6clMCkdW9', // Jessica
+    narrator: 'iP95p4xoKVk53GoZ742B', // Chris for single speaker
+  };
 
   try {
-    const audio = await elevenlabs.generate({
-      voice: 'pNInz6obpgDQGcFmaJgB', // Adam voice
-      text: text,
-      model_id: 'eleven_monolingual_v1',
-    });
+    // If only one speaker, generate simple audio
+    if (
+      segments.length === 1 ||
+      !segments.some((s) => s.speaker !== segments[0].speaker)
+    ) {
+      const audio = await elevenlabs.generate({
+        voice: voiceMap['narrator'],
+        text: segments[0].text,
+        model_id: 'eleven_monolingual_v1',
+      });
 
-    // Convert stream to buffer
-    const chunks: Uint8Array[] = [];
-    for await (const chunk of audio) {
-      chunks.push(chunk);
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of audio) {
+        chunks.push(chunk);
+      }
+
+      return Buffer.concat(chunks);
     }
 
-    const buffer = Buffer.concat(chunks);
-    console.log('Audio buffer size:', buffer.length);
+    // For multiple speakers, generate each segment separately and combine
+    const audioBuffers: Buffer[] = [];
 
-    return buffer;
+    for (const segment of segments) {
+      const voice = voiceMap[segment.speaker] || voiceMap['narrator'];
+      console.log(
+        `Generating audio for ${segment.speaker} with voice ${voice}`
+      );
+
+      const audio = await elevenlabs.generate({
+        voice: voice,
+        text: segment.text,
+        model_id: 'eleven_monolingual_v1',
+      });
+
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of audio) {
+        chunks.push(chunk);
+      }
+
+      audioBuffers.push(Buffer.concat(chunks));
+
+      // Add a small pause between speakers (silence)
+      // This is a simple approach - for production you'd want proper audio mixing
+      const silenceBuffer = Buffer.alloc(22050); // 0.5 seconds of silence at 44.1kHz
+      audioBuffers.push(silenceBuffer);
+    }
+
+    // Combine all audio buffers
+    const finalBuffer = Buffer.concat(audioBuffers);
+    console.log('Combined audio buffer size:', finalBuffer.length);
+
+    return finalBuffer;
   } catch (error) {
     console.error('ElevenLabs error:', error);
     throw new Error(

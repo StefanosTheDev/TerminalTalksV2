@@ -20,6 +20,15 @@ export async function createConversation(
   });
 
   if (!user) throw new Error('User not found');
+  // DEBUG: Log what we're sending to OpenAI
+  console.log('=== CREATE CONVERSATION DEBUG ===');
+  console.log('Model:', CHAT_MODEL);
+  console.log('First Message:', firstMessage);
+  console.log('System Prompt Length:', INTENT_EXTRACTION_PROMPT.length);
+  console.log(
+    'First 200 chars of prompt:',
+    INTENT_EXTRACTION_PROMPT.substring(0, 200)
+  );
 
   // Use intent extraction prompt for new conversations
   const completion = await openai.chat.completions.create({
@@ -30,6 +39,7 @@ export async function createConversation(
     ],
     max_completion_tokens: 200, // Changed from max_tokens
   });
+  console.log('OpenAI Response:', completion.choices[0].message);
 
   const aiResponse =
     completion.choices[0].message.content ||
@@ -107,6 +117,8 @@ export async function sendMessageToConversation(
     })),
     { role: 'user' as const, content },
   ];
+  console.log('=== SEND MESSAGE DEBUG ===');
+  console.log('Conversation messages:', conversationMessages);
 
   // Check if last assistant message indicated readiness
   const lastAssistantMsg = conversation.messages
@@ -162,6 +174,7 @@ export async function sendMessageToConversation(
     ],
     max_completion_tokens: 200, // Changed from max_tokens
   });
+  console.log('OpenAI Response:', completion.choices[0].message);
 
   aiResponse =
     completion.choices[0].message.content ||

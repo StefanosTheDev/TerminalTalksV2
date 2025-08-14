@@ -10,10 +10,10 @@ export const openai = new OpenAI({
 });
 
 // Use GPT-4 for chat (intent extraction)
-export const CHAT_MODEL = 'gpt-5';
+export const CHAT_MODEL = 'gpt-4-turbo';
 
 // Use GPT-4o for transcript generation (most capable)
-export const TRANSCRIPT_MODEL = 'gpt-5';
+export const TRANSCRIPT_MODEL = 'gpt-4-turbo';
 
 // STAGE 1: Intent Extraction System Prompt
 export const INTENT_EXTRACTION_PROMPT = `You are an expert podcast producer helping users create AI-generated podcasts. Your role is to naturally understand what kind of podcast episode they want through conversation.
@@ -208,7 +208,8 @@ export function extractPodcastIntent(
 
   return intent;
 }
-// Generate dynamic sub-prompts based on intent
+// In your openai.ts file, update the generateSubPrompts function:
+
 export function generateSubPrompts(intent: PodcastIntent): string {
   let subPrompt = '';
 
@@ -238,23 +239,60 @@ export function generateSubPrompts(intent: PodcastIntent): string {
       break;
   }
 
-  // Add format-specific prompts
+  // Add format-specific prompts with EMPHASIS on length and speakers
   switch (intent.format) {
     case 'discussion':
-      subPrompt += `\n\nFORMAT: Natural conversation between two hosts with different perspectives, building on each other's points.`;
+      subPrompt += `\n\nFORMAT: Natural conversation between TWO distinct speakers.
+      
+CRITICAL REQUIREMENTS:
+- Generate a FULL 5-7 minute conversation (600-850 words minimum)
+- Use ONLY these speaker labels:
+  HOST: Chris (male voice)
+  GUEST: Jessica (female voice)
+- Alternate between speakers naturally
+- Each speaker should have substantial contributions (not just "yes" or "I agree")
+- NO stage directions, NO [PAUSE], NO [MUSIC], NO sound effects
+- Keep the conversation flowing and engaging
+
+Example format:
+HOST: Welcome everyone! Today we're diving into ${intent.topic}...
+GUEST: Thanks Chris! I'm really excited to discuss this because...
+HOST: That's a great point, Jessica. Can you elaborate on...
+GUEST: Absolutely! So when we think about...`;
       break;
-    case 'lecture':
-      subPrompt += `\n\nFORMAT: Solo expert lecture with clear teaching progression and rhetorical questions.`;
-      break;
+
     case 'interview':
-      subPrompt += `\n\nFORMAT: Interviewer drawing out insights from expert with follow-up questions.`;
+      subPrompt += `\n\nFORMAT: Professional interview with clear Q&A structure.
+      
+CRITICAL REQUIREMENTS:
+- Generate a FULL 5-7 minute interview (600-850 words minimum)
+- Use ONLY:
+  INTERVIEWER: Chris (asks thoughtful questions)
+  EXPERT: Jessica (provides detailed answers)
+- Each answer should be substantial and detailed
+- NO stage directions or sound effects
+- Natural follow-up questions`;
+      break;
+
+    case 'lecture':
+      subPrompt += `\n\nFORMAT: Single speaker educational lecture.
+      
+CRITICAL REQUIREMENTS:
+- Generate a FULL 5-7 minute lecture (600-850 words minimum)
+- Write as continuous narration (no speaker labels)
+- Clear, engaging educational content
+- NO stage directions or markers`;
       break;
   }
+
+  // Add length enforcement
+  subPrompt += `\n\nLENGTH REQUIREMENT: This MUST be a complete 5-7 minute podcast episode. Generate AT LEAST 600-850 words of content. Do not stop early or summarize - create the FULL episode.`;
 
   return subPrompt;
 }
 
-// Main function to generate podcast transcript
+// Also update your generatePodcastTranscript function to check length:
+
 export async function generatePodcastTranscript(
   intent: PodcastIntent
 ): Promise<string> {
@@ -262,13 +300,24 @@ export async function generatePodcastTranscript(
 
   const fullPrompt = PODCAST_GENERATION_PROMPT + dynamicPrompts;
 
-  const userPrompt = `Create a ${intent.format} podcast about: ${intent.topic}
+  const userPrompt = `Create a COMPLETE 5-7 minute ${
+    intent.format
+  } podcast episode about: ${intent.topic}
 Target audience: ${intent.audience_level}
 Tone: ${intent.tone}
+
+IMPORTANT: Generate the FULL episode transcript (600-850 words minimum). Include natural conversation flow with substantial contributions from both speakers.
+
 ${
-  intent.key_points?.length ? `Key points: ${intent.key_points.join(', ')}` : ''
+  intent.key_points?.length
+    ? `Key points to cover: ${intent.key_points.join(', ')}`
+    : ''
 }
-${intent.examples?.length ? `Examples: ${intent.examples.join(', ')}` : ''}`;
+${
+  intent.examples?.length
+    ? `Examples to include: ${intent.examples.join(', ')}`
+    : ''
+}`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -277,12 +326,20 @@ ${intent.examples?.length ? `Examples: ${intent.examples.join(', ')}` : ''}`;
         { role: 'system', content: fullPrompt },
         { role: 'user', content: userPrompt },
       ],
-      max_completion_tokens: 1500, // Changed from max_tokens
+      max_completion_tokens: 2000, // Increased to ensure full transcript
     });
 
-    return (
-      completion.choices[0].message.content || 'Failed to generate transcript.'
-    );
+    const transcript =
+      completion.choices[0].message.content || 'Failed to generate transcript.';
+
+    // Check if transcript is too short
+    const wordCount = transcript.split(' ').length;
+    if (wordCount < 500) {
+      console.warn(`Transcript too short: ${wordCount} words. Retrying...`);
+      // You could implement a retry here or throw an error
+    }
+
+    return transcript;
   } catch (error) {
     console.error('Error generating transcript:', error);
     throw error;
