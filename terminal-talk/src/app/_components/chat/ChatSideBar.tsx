@@ -11,6 +11,7 @@ import {
   X,
   ChevronDown,
   MessageSquare,
+  Rainbow,
 } from 'lucide-react';
 import ClientUserButton from './ClientUserButton';
 
@@ -48,6 +49,10 @@ export default function ChatSideBar() {
     setIsMobileOpen(false);
   };
 
+  const handleViewCourses = () => {
+    router.push('/dashboard/courses');
+    setIsMobileOpen(false);
+  };
   const handleViewLibrary = () => {
     router.push('/dashboard/library');
     setIsMobileOpen(false);
@@ -182,6 +187,36 @@ export default function ChatSideBar() {
                 }`}
               >
                 My Library
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={handleViewCourses}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+              isCollapsed ? 'justify-center' : ''
+            } ${
+              pathname === '/dashboard/courses'
+                ? 'bg-[#1a1a1a]/80 border border-gray-700/50'
+                : 'hover:bg-[#1a1a1a]/50'
+            }`}
+          >
+            <Rainbow
+              className={`w-5 h-5 ${
+                pathname === '/dashboard/courses'
+                  ? 'text-white'
+                  : 'text-gray-400'
+              }`}
+            />
+            {!isCollapsed && (
+              <span
+                className={`text-sm ${
+                  pathname === '/dashboard/courses'
+                    ? 'text-white font-medium'
+                    : 'text-gray-200'
+                }`}
+              >
+                Courses
               </span>
             )}
           </button>

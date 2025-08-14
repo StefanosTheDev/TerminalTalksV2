@@ -14,7 +14,7 @@ export default function Header() {
       {/*  Dashboard Back Link */}
       <div className="flex items-center space-x-4">
         <Link
-          href="/chat?view=classics"
+          href="/dashboard/chat"
           className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
         >
           <ChevronLeft className="h-5 w-5 text-gray-400" />
