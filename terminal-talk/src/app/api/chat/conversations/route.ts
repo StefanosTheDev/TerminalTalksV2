@@ -14,7 +14,6 @@ export async function POST(req: Request) {
     // Step 1. Get The Request From User.
     const { message } = await req.json();
 
-    // Message isnt getting passed.
     // Step 2: Create Conversation.
     const conversation = await createConversation(user.id, message);
 
