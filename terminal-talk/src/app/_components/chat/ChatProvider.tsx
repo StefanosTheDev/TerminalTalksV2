@@ -116,14 +116,17 @@ export function ChatProvider({
 
         router.push(`/dashboard/chat/${data.id}`);
         return data.id;
-      } catch (error: any) {
-        // Handle abort separately
-        if (error.name === 'AbortError') {
-          console.log('Request was cancelled');
-          return '';
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            console.log('Message was cancelled');
+            return;
+          }
+          console.error('Error:', error.message);
+        } else {
+          console.error('Unknown error:', error);
         }
 
-        console.error('Error creating conversation:', error);
         setMessages((prev) => [
           ...prev,
           {

@@ -15,6 +15,30 @@ export const CHAT_MODEL = 'gpt-4-turbo';
 // Use GPT-4o for transcript generation (most capable)
 export const TRANSCRIPT_MODEL = 'gpt-4-turbo';
 
+// Types for podcast details
+export interface PodcastIntent {
+  topic: string;
+  angle?: string;
+  audience_level: 'beginner' | 'intermediate' | 'advanced';
+  format: 'lecture' | 'discussion' | 'interview' | 'debate';
+  tone: 'professional' | 'casual' | 'funny' | 'mixed';
+  key_points?: string[];
+  examples?: string[];
+  special_requirements?: string;
+}
+
+// Export this interface so podcastService.ts can use it
+export interface ConversationMetadata {
+  readyToGenerate?: boolean;
+  intent?: PodcastIntent | null;
+}
+
+// Define a proper type for conversation messages
+interface ConversationMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 // STAGE 1: Intent Extraction System Prompt
 export const INTENT_EXTRACTION_PROMPT = `You are an expert podcast producer helping users create AI-generated podcasts. Your role is to naturally understand what kind of podcast episode they want through conversation.
 
@@ -69,18 +93,6 @@ PRODUCTION PRINCIPLES:
 
 CRITICAL: Write for the ear, not the eye. Natural speech patterns only.`;
 
-// Types for podcast details
-export interface PodcastIntent {
-  topic: string;
-  angle?: string;
-  audience_level: 'beginner' | 'intermediate' | 'advanced';
-  format: 'lecture' | 'discussion' | 'interview' | 'debate';
-  tone: 'professional' | 'casual' | 'funny' | 'mixed';
-  key_points?: string[];
-  examples?: string[];
-  special_requirements?: string;
-}
-
 // Helper function to check if ready to generate
 export function isReadyToGenerate(message: string): boolean {
   return (
@@ -89,12 +101,9 @@ export function isReadyToGenerate(message: string): boolean {
   );
 }
 
-// Extract intent from conversation
-// Add this improved function to your openai.ts file, replacing the basic one:
-
 // Extract intent from conversation with better parsing
 export function extractPodcastIntent(
-  conversation: any[]
+  conversation: ConversationMessage[]
 ): PodcastIntent | null {
   // Look through the conversation for extracted details
   const lastAssistantMessage = [...conversation]
@@ -108,7 +117,7 @@ export function extractPodcastIntent(
     return null;
   }
 
-  // Initialize with defaults
+  // Initialize with defaults INSIDE the function
   const intent: PodcastIntent = {
     topic: '',
     audience_level: 'intermediate',
@@ -208,8 +217,8 @@ export function extractPodcastIntent(
 
   return intent;
 }
-// In your openai.ts file, update the generateSubPrompts function:
 
+// Generate dynamic sub-prompts based on intent
 export function generateSubPrompts(intent: PodcastIntent): string {
   let subPrompt = '';
 
@@ -291,8 +300,7 @@ CRITICAL REQUIREMENTS:
   return subPrompt;
 }
 
-// Also update your generatePodcastTranscript function to check length:
-
+// Generate podcast transcript
 export async function generatePodcastTranscript(
   intent: PodcastIntent
 ): Promise<string> {
@@ -326,7 +334,7 @@ ${
         { role: 'system', content: fullPrompt },
         { role: 'user', content: userPrompt },
       ],
-      max_completion_tokens: 2000, // Increased to ensure full transcript
+      max_completion_tokens: 2000,
     });
 
     const transcript =
@@ -336,7 +344,6 @@ ${
     const wordCount = transcript.split(' ').length;
     if (wordCount < 500) {
       console.warn(`Transcript too short: ${wordCount} words. Retrying...`);
-      // You could implement a retry here or throw an error
     }
 
     return transcript;

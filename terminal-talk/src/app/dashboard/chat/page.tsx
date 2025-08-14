@@ -4,7 +4,6 @@
 import { useChat } from '@/app/_components/chat/ChatProvider';
 import { ChatBubble } from '@/app/_components/chat/ChatBubble';
 import MessageList from '@/app/_components/chat/MessageList';
-import { BackgroundGradient } from '@/app/_components/website/BackgroundGradient';
 
 export default function WelcomeChatPage() {
   const { messages, isLoading } = useChat();

@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Bot, User } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { Message } from '@/app/types';
 
 interface MessageListProps {

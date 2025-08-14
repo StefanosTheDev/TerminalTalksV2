@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useChat } from './ChatProvider';
-import { Send, Square } from 'lucide-react';
+import { Square } from 'lucide-react';
 
 interface ChatBubbleProps {
   width?: string;

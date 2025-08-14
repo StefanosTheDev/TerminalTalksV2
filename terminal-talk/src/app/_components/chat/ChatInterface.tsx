@@ -13,6 +13,14 @@ import { Loader2, Mic, Library } from 'lucide-react';
 function generateMessageId(prefix: string = 'msg'): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
+interface Podcast {
+  id: string;
+  title: string;
+  description: string;
+  audioUrl: string;
+  duration: number;
+  createdAt: Date;
+}
 
 export function ChatInterface({
   conversationData,
@@ -30,7 +38,9 @@ export function ChatInterface({
   const router = useRouter();
   const [isGeneratingPodcast, setIsGeneratingPodcast] = useState(false);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
-  const [generatedPodcast, setGeneratedPodcast] = useState<any>(null);
+  const [generatedPodcast, setGeneratedPodcast] = useState<Podcast | null>(
+    null
+  );
 
   // Sync server data with client state
   useEffect(() => {
