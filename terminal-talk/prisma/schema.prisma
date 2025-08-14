@@ -90,6 +90,8 @@ model Conversation {
   id          String    @id @default(cuid())
   title       String    
   userId      Int
+  metadata  Json?     // Add this field for storing intent and other data
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   
